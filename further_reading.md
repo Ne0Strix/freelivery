@@ -1,1 +1,2 @@
-https://dev.to/michael-gokey/building-a-multi-module-angular-application-with-ngrx-11p6
+- [multi-module angular app](https://dev.to/michael-gokey/building-a-multi-module-angular-application-with-ngrx-11p6)
+- [API naming conventions](https://restfulapi.net/resource-naming/)

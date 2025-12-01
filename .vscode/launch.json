@@ -1,0 +1,62 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Chrome: Debug Angular Client",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200",
+            "webRoot": "${workspaceFolder}/client",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "webpack:/*": "${webRoot}/*",
+                "/./*": "${webRoot}/*",
+                "/src/*": "${webRoot}/src/*",
+                "/*": "*",
+                "/./~/*": "${webRoot}/node_modules/*"
+            },
+            "trace": true
+        },
+        {
+            "name": "Node: Attach to Server",
+            "type": "node",
+            "request": "attach",
+            "port": 9229,
+            "address": "localhost",
+            "localRoot": "${workspaceFolder}/server",
+            "remoteRoot": "/usr/src/app",
+            "skipFiles": ["<node_internals>/**"],
+            "restart": true,
+            "timeout": 30000,
+            "continueOnAttach": true
+        },
+        {
+            "name": "Containers: Node.js Launch",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run: debug",
+            "platform": "node",
+            "node": {
+                "package": "${workspaceFolder}/server/package.json",
+                "localRoot": "${workspaceFolder}/server"
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Full Stack: Debug Client + Server",
+            "configurations": [
+                "Chrome: Debug Angular Client",
+                "Node: Attach to Server"
+            ],
+            "preLaunchTask": "Docker Compose: Start Full Stack",
+            "postDebugTask": "Docker Compose: Stop Full Stack",
+            "presentation": {
+                "hidden": false,
+                "group": "",
+                "order": 1
+            },
+            "stopAll": true
+        }
+    ]
+}
