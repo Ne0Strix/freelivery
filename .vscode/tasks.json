@@ -1,0 +1,77 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Docker Compose: Start Full Stack",
+            "type": "shell",
+            "command": "docker compose up -d && docker compose logs -f node-backend-dev angular-dev",
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^$",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "Attaching to|Starting|Creating",
+                    "endsPattern": "Server running on port|Listening on|listening on"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Docker Compose: Stop Full Stack",
+            "type": "shell",
+            "command": "docker compose down",
+            "problemMatcher": []
+        },
+        {
+            "label": "Docker Compose: Restart Full Stack",
+            "type": "shell",
+            "command": "docker compose restart",
+            "problemMatcher": []
+        },
+        {
+            "type": "docker-build",
+            "label": "docker-build",
+            "platform": "node",
+            "dockerBuild": {
+                "dockerfile": "${workspaceFolder}/server/Dockerfile",
+                "context": "${workspaceFolder}/server",
+                "pull": true
+            },
+            "node": {
+                "package": "${workspaceFolder}/server/package.json"
+            }
+        },
+        {
+            "type": "docker-run",
+            "label": "docker-run: release",
+            "dependsOn": ["docker-build"],
+            "platform": "node",
+            "node": {
+                "package": "${workspaceFolder}/server/package.json"
+            }
+        },
+        {
+            "type": "docker-run",
+            "label": "docker-run: debug",
+            "dependsOn": ["docker-build"],
+            "dockerRun": {
+                "env": {
+                    "DEBUG": "*",
+                    "NODE_ENV": "development"
+                }
+            },
+            "node": {
+                "package": "${workspaceFolder}/server/package.json",
+                "enableDebugging": true
+            }
+        }
+    ]
+}

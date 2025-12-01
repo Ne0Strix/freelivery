@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "angular.ng-template",
+        "bierner.markdown-mermaid",
+        "docker.docker",
+        "dbaeumer.vscode-eslint"
+    ]
+}
