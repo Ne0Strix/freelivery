@@ -13,6 +13,7 @@ COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
 RUN npm ci --omit=dev --silent || npm install --omit=dev --silent
 # Copy compiled app
 COPY --from=builder /usr/src/app/dist ./dist
+RUN chown -R node:node /usr/src/app
 EXPOSE 3000
 USER node
 CMD ["npm", "start"]
