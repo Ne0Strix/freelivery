@@ -1,7 +1,7 @@
 import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import globals from 'globals';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
     {
@@ -39,6 +39,8 @@ export default tseslint.config(
                     caughtErrorsIgnorePattern: '^_',
                 },
             ],
+            // Allow Prettier issues to be handled by Prettier, not ESLint
+            'prettier/prettier': 'off',
         },
     },
     {
