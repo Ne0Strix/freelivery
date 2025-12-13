@@ -61,10 +61,14 @@ export abstract class Repository<T> {
     /**
      * Safely quotes an identifier for use in SQL queries.
      * This uses PostgreSQL's double-quote escaping rules.
-     * @param identifier - The validated identifier to quote
+     * The identifier is validated before quoting to ensure it meets PostgreSQL identifier requirements.
+     * @param identifier - The identifier to validate and quote
      * @returns The quoted identifier
+     * @throws Error if identifier is invalid
      */
     protected quoteIdentifier(identifier: string): string {
+        // Validate before quoting for defense in depth
+        this.validateIdentifier(identifier);
         // Escape double quotes by doubling them, then wrap in double quotes
         return '"' + identifier.replace(/"/g, '""') + '"';
     }
