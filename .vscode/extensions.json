@@ -3,6 +3,7 @@
         "angular.ng-template",
         "bierner.markdown-mermaid",
         "docker.docker",
-        "dbaeumer.vscode-eslint"
+        "dbaeumer.vscode-eslint",
+        "loiane.angular-extension-pack"
     ]
 }
