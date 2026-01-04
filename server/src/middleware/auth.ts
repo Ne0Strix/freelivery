@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 import { UnauthorizedError } from '../commons/errors.js';
 
 const getBearerToken = (authHeader: string | undefined): string | undefined => {
@@ -16,13 +17,17 @@ export const requireAuth = (
     _res: Response,
     next: NextFunction
 ) => {
-    const requiredToken = process.env.API_TOKEN;
-    if (!requiredToken) return next();
-
     const token = getBearerToken(req.header('authorization'));
-    if (!token || token !== requiredToken) {
-        throw new UnauthorizedError('Missing or invalid bearer token');
+    const secret = process.env.JWT_SECRET || 'dev-secret';
+
+    if (!token) {
+        throw new UnauthorizedError('Missing bearer token');
     }
 
-    return next();
+    try {
+        jwt.verify(token, secret);
+        return next();
+    } catch {
+        throw new UnauthorizedError('Invalid or expired token');
+    }
 };
