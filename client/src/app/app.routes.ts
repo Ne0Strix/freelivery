@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { CustomerHomeComponent } from '../feature/customer/customer-home/customer-home.component';
 import { RestaurantHomeComponent } from '../feature/restaurant/restaurant-home/restaurant-home.component';
 import { SiteManagerHomeComponent } from '../feature/site-manager/site-manager-home/site-manager-home.component';
+import { LoginComponent } from '../shared/login/login.component';
 
 export const routes: Routes = [
     {
@@ -18,5 +19,10 @@ export const routes: Routes = [
         path: 'site-manager',
         component: SiteManagerHomeComponent,
         title: 'Site Manager Home',
+    },
+    {
+        path: 'login',
+        component: LoginComponent,
+        title: 'Login',
     },
 ];

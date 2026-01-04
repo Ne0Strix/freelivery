@@ -5,6 +5,7 @@ import { requireAuth } from './src/middleware/auth.js';
 import { requestLogger } from './src/middleware/logger.js';
 import { notFoundHandler } from './src/middleware/not-found.js';
 import addressRoutes from './src/routes/address.routes.js';
+import authRoutes from './src/routes/auth.routes.js';
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 3000;
@@ -19,23 +20,27 @@ app.use(requestLogger);
 // Test endpoint
 app.get('/api/test', (_req: Request, res: Response) => {
     res.json({
-        message: 'Server is working!!! Yay!',
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development',
+        status: 'ok',
+        data: {
+            message: 'Server is working!!! Yay!',
+            timestamp: new Date().toISOString(),
+            environment: process.env.NODE_ENV || 'development',
+        },
     });
 });
 
 // Health check endpoint
 app.get('/health', (_req: Request, res: Response) => {
-    res.json({ status: 'ok' });
+    res.json({ status: 'ok', data: { health: true } });
 });
 
 // Root endpoint
 app.get('/', (_req: Request, res: Response) => {
-    res.json({ message: 'Freelivery API Server' });
+    res.json({ status: 'ok', data: { message: 'Freelivery API Server' } });
 });
 
 // Address routes
+app.use('/api', authRoutes);
 app.use('/api', requireAuth);
 app.use('/api/addresses', addressRoutes);
 
