@@ -12,7 +12,7 @@ const pool = new Pool({
     port: Number(process.env.POSTGRES_PORT ?? process.env.DB_PORT ?? 5432),
 });
 
-router.post('/auth/login', async (req, res) => {
+router.post('/login', async (req, res) => {
     try {
         const { email, username, password } = req.body ?? {};
         if ((!email && !username) || !password) {
@@ -36,12 +36,22 @@ router.post('/auth/login', async (req, res) => {
                 .json({ status: 'error', error: 'Invalid credentials' });
         }
 
+        // Fetch user roles
+        const rolesResult = await pool.query(
+            `SELECT r.name FROM role r
+             INNER JOIN user_role ur ON r.role_id = ur.role_id
+             WHERE ur.user_id = $1`,
+            [user.user_id]
+        );
+        const roles = rolesResult.rows.map((row) => row.name);
+
         const secret = process.env.JWT_SECRET || 'dev-secret';
         const token = jwt.sign(
             {
                 sub: user.user_id,
                 username: user.username,
                 email: user.email,
+                roles,
             },
             secret,
             { expiresIn: '1h' }

@@ -10,12 +10,20 @@ INSERT INTO role (role_id, name, description) VALUES
 -- Users
 INSERT INTO "user" (user_id, username, email, password_hash, salt, is_active) VALUES
   (1, 'alice', 'alice@example.com', 'passhash1', 'salt1', true),
-  (2, 'bob', 'bob@example.com', 'passhash2', 'salt2', true);
+  (2, 'bob', 'bob@example.com', 'passhash2', 'salt2', true),
+  (3, 'customer', 'customer@freelivery.com', 'customer', 'salt3', true),
+  (4, 'restaurant-owner', 'restaurant-owner@freelivery.com', 'restaurant-owner', 'salt4', true),
+  (5, 'site-admin', 'site-admin@freelivery.com', 'site-admin', 'salt5', true),
+  (6, 'deus', 'deus@freelivery.com', 'deus', 'salt6', true);
 
 -- User data
 INSERT INTO user_data (user_id, first_name, last_name, salutation, phone_number, date_of_birth) VALUES
   (1, 'Alice', 'Anderson', 'Ms', '+10000000001', '1990-01-01'),
-  (2, 'Bob', 'Baker', 'Mr', '+10000000002', '1985-05-05');
+  (2, 'Bob', 'Baker', 'Mr', '+10000000002', '1985-05-05'),
+  (3, 'Customer', 'User', 'Mr', '+10000000003', '1995-03-15'),
+  (4, 'Restaurant', 'Owner', 'Ms', '+10000000004', '1988-07-20'),
+  (5, 'Site', 'Admin', 'Mr', '+10000000005', '1992-11-10'),
+  (6, 'Deus', 'ExMachina', 'Mx', '+10000000006', '2000-01-01');
 
 -- Addresses
 INSERT INTO address (address_id, label, street_name, house_number, additional_info, city_name, zip_code, country) VALUES
@@ -30,7 +38,13 @@ INSERT INTO user_address (user_id, address_id, is_default) VALUES
 -- User roles
 INSERT INTO user_role (user_id, role_id) VALUES
   (1, 3), -- Alice is a customer
-  (2, 2); -- Bob is a restaurant owner
+  (2, 2), -- Bob is a restaurant owner
+  (3, 3), -- customer is a customer
+  (4, 2), -- restaurant-owner is a restaurant owner
+  (5, 1), -- site-admin is an admin
+  (6, 1), -- deus has all roles
+  (6, 2),
+  (6, 3);
 
 -- Delivery zone
 INSERT INTO delivery_zone (delivery_zone_id, code, name, description) VALUES
