@@ -1,4 +1,5 @@
 import {
+    HttpErrorResponse,
     HttpEvent,
     HttpResponse,
     HttpStatusCode,
@@ -6,7 +7,7 @@ import {
 } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { tap } from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
 // source: https://dev.to/cezar-plescan/error-handling-with-angular-interceptors-2548
 
 class HttpResponseFormatError extends Error {
@@ -29,6 +30,24 @@ export const serverErrorInterceptor: HttpInterceptorFn = (req, next) => {
                 console.warn(error);
                 throw error;
             }
+        }),
+        catchError((err) => {
+            // If we've already surfaced a format error above, just rethrow.
+            if (err instanceof HttpResponseFormatError) {
+                return throwError(() => err);
+            }
+
+            if (err instanceof HttpErrorResponse) {
+                console.error(err);
+                const message = err?.message ?? String(err);
+                snackbar.open(message, 'Close', { duration: 5000 });
+            } else {
+                snackbar.open('Unexpected error occurred.', 'Close', {
+                    duration: 5000,
+                });
+            }
+
+            return throwError(() => err);
         })
     );
 };
