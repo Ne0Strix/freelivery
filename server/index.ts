@@ -39,10 +39,11 @@ app.get('/', (_req: Request, res: Response) => {
     res.json({ status: 'ok', data: { message: 'Freelivery API Server' } });
 });
 
-// Address routes
-app.use('/api', authRoutes);
-app.use('/api', requireAuth);
-app.use('/api/addresses', addressRoutes);
+// ========== PUBLIC API ==========
+app.use('/api/auth', authRoutes);
+
+// ========== AUTHENTICATED (any logged-in user) ==========
+app.use('/api/addresses', requireAuth, addressRoutes);
 
 // 404 + error handling (must be last)
 app.use(notFoundHandler);

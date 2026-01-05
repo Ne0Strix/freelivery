@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { UnauthorizedError } from '../commons/errors.js';
+import { ForbiddenError, UnauthorizedError } from '../commons/errors.js';
 
 const getBearerToken = (authHeader: string | undefined): string | undefined => {
     if (!authHeader) return undefined;
@@ -9,9 +9,6 @@ const getBearerToken = (authHeader: string | undefined): string | undefined => {
     return token;
 };
 
-// Simple token auth for now:
-// - If `API_TOKEN` is unset, auth is effectively disabled (dev-friendly)
-// - If set, requires `Authorization: Bearer <API_TOKEN>`
 export const requireAuth = (
     req: Request,
     _res: Response,
@@ -25,9 +22,23 @@ export const requireAuth = (
     }
 
     try {
-        jwt.verify(token, secret);
+        const decoded = jwt.verify(token, secret);
+        (req as any).user = decoded;
         return next();
     } catch {
         throw new UnauthorizedError('Invalid or expired token');
     }
+};
+
+export const requireRole = (allowedRoles: string[]) => {
+    return (req: Request, _res: Response, next: NextFunction) => {
+        const user = (req as any).user;
+        const userRoles: string[] = user?.roles || [];
+
+        if (!allowedRoles.some((role) => userRoles.includes(role))) {
+            throw new ForbiddenError('Insufficient permissions');
+        }
+
+        return next();
+    };
 };
