@@ -1,8 +1,6 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from '../shared/login/login.component';
 import { authGuard } from '../core/guards/auth.guard';
-import { roleGuard } from '../core/guards/role.guard';
-import { canLoadGuard } from '../core/guards/can-load.guard';
+import { LoginComponent } from '../shared/login/login.component';
 
 export const routes: Routes = [
     {
@@ -13,16 +11,14 @@ export const routes: Routes = [
     {
         path: 'customer',
         loadChildren: () => import('../feature/customer/customer.routes'),
-        canMatch: [canLoadGuard],
-        canActivate: [authGuard, roleGuard],
+        canActivate: [authGuard],
         data: { roles: ['customer'] },
         title: 'Customer Home',
     },
     {
         path: 'restaurant',
         loadChildren: () => import('../feature/restaurant/restaurant.routes'),
-        canMatch: [canLoadGuard],
-        canActivate: [authGuard, roleGuard],
+        canActivate: [authGuard],
         data: { roles: ['restaurant_owner'] },
         title: 'Restaurant Home',
     },
@@ -30,8 +26,7 @@ export const routes: Routes = [
         path: 'site-manager',
         loadChildren: () =>
             import('../feature/site-manager/site-manager.routes'),
-        canMatch: [canLoadGuard],
-        canActivate: [authGuard, roleGuard],
+        canActivate: [authGuard],
         data: { roles: ['admin'] },
         title: 'Site Manager Home',
     },

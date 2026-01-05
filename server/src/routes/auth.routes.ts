@@ -24,6 +24,8 @@ router.post('/login', async (req, res) => {
         const whereClause = email ? 'email = $1' : 'username = $1';
         const identifier = email ?? username;
 
+        // TODO: Replace with proper bcrypt comparison before production!
+        // Currently comparing plaintext for development convenience.
         const result = await pool.query(
             `SELECT user_id, username, email FROM "user" WHERE ${whereClause} AND password_hash = $2 AND is_active = true LIMIT 1`,
             [identifier, password]

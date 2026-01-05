@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, signal, computed } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
+import { jwtDecode } from 'jwt-decode';
 import { catchError, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { jwtDecode } from 'jwt-decode';
 
 interface JwtPayload {
     sub: number;
@@ -79,6 +79,13 @@ export class AuthenticationService {
     private decodeAndSetUser(token: string): void {
         try {
             const decoded = jwtDecode<JwtPayload>(token);
+
+            // Check if token is expired
+            if (decoded.exp && decoded.exp * 1000 < Date.now()) {
+                this.logout();
+                return;
+            }
+
             this._isLoggedIn.set(true);
             this._userRoles.set(decoded.roles || []);
             this._userId.set(decoded.sub);

@@ -5,6 +5,7 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../../core/services/authentication.service';
 // source https://blog.angular-university.io/angular-jwt-authentication/
@@ -21,7 +22,8 @@ export class LoginComponent {
     constructor(
         private fb: FormBuilder,
         private authenticationService: AuthenticationService,
-        private router: Router
+        private router: Router,
+        private snackbar: MatSnackBar
     ) {
         this.form = this.fb.group({
             email: ['', Validators.required],
@@ -38,9 +40,28 @@ export class LoginComponent {
                 .subscribe((ok) => {
                     if (ok) {
                         console.log('User is logged in');
-                        this.router.navigateByUrl('/');
+                        // Navigate based on user's primary role
+                        const roles = this.authenticationService.roles();
+                        if (roles.includes('admin')) {
+                            this.router.navigateByUrl('/site-manager');
+                        } else if (roles.includes('restaurant_owner')) {
+                            this.router.navigateByUrl('/restaurant');
+                        } else if (roles.includes('customer')) {
+                            this.router.navigateByUrl('/customer');
+                        } else {
+                            // Fallback - stay on login or show error
+                            this.snackbar.open(
+                                'User has no recognized role',
+                                'Close',
+                                { duration: 5000 }
+                            );
+                        }
                     } else {
-                        console.warn('Login failed');
+                        this.snackbar.open(
+                            'Invalid email or password',
+                            'Close',
+                            { duration: 5000 }
+                        );
                     }
                 });
         }
