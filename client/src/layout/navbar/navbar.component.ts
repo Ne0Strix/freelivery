@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthenticationService } from '../../core/services/authentication.service';
 
 @Component({
     selector: 'app-navbar',
@@ -8,4 +9,14 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     styleUrl: './navbar.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NavbarComponent {}
+export class NavbarComponent {
+    private authService = inject(AuthenticationService);
+    private router = inject(Router);
+
+    isLoggedIn = this.authService.isLoggedIn;
+
+    signOut(): void {
+        this.authService.logout();
+        this.router.navigate(['/']);
+    }
+}

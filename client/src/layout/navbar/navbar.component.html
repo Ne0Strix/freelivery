@@ -33,13 +33,23 @@
                 </div>
             </div>
             <div class="hidden sm:ml-6 sm:flex sm:items-center">
-                <button
-                    type="button"
-                    class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-                    routerLink="/login"
-                >
-                    Sign In
-                </button>
+                @if (!isLoggedIn()) {
+                    <button
+                        type="button"
+                        class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+                        routerLink="/login"
+                    >
+                        Sign In
+                    </button>
+                } @else {
+                    <button
+                        type="button"
+                        class="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
+                        (click)="signOut()"
+                    >
+                        Sign Out
+                    </button>
+                }
             </div>
         </div>
     </div>
