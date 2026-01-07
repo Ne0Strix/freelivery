@@ -38,7 +38,7 @@
 
 Backend routes are mirrored by their corresponding services:
 
-| Backend Route   | Frontend Service       |
-| :-------------- | :--------------------- |
-| `/customer/…`   | `CustomerService.ts`   |
-| `/restaurant/…` | `RestaurantService.ts` |
+| Backend Route   | Frontend Service        |
+| :-------------- | :---------------------- |
+| `/customer/…`   | `customer.service.ts`   |
+| `/restaurant/…` | `restaurant.service.ts` |

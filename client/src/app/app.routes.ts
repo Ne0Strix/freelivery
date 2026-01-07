@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '../core/guards/auth.guard';
-import { LoginComponent } from '../shared/login/login.component';
+import { authGuard } from '../commons/guards/auth.guard';
+import { LoginComponent } from '../layout/login/login.component';
 
 export const routes: Routes = [
     {
@@ -10,14 +10,15 @@ export const routes: Routes = [
     },
     {
         path: 'customer',
-        loadChildren: () => import('../feature/customer/customer.routes'),
+        loadChildren: () => import('../modules/customer/customer.routes'),
         canActivate: [authGuard],
         data: { roles: ['customer'] },
         title: 'Customer Home',
     },
     {
         path: 'restaurant',
-        loadChildren: () => import('../feature/restaurant/restaurant.routes'),
+        loadChildren: () =>
+            import('../modules/restaurant-owner/restaurant-owner.routes'),
         canActivate: [authGuard],
         data: { roles: ['restaurant_owner'] },
         title: 'Restaurant Home',
@@ -25,7 +26,7 @@ export const routes: Routes = [
     {
         path: 'site-manager',
         loadChildren: () =>
-            import('../feature/site-manager/site-manager.routes'),
+            import('../modules/site-manager/site-manager.routes'),
         canActivate: [authGuard],
         data: { roles: ['admin'] },
         title: 'Site Manager Home',

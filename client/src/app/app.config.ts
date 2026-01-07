@@ -5,8 +5,8 @@ import {
 import { provideRouter } from '@angular/router';
 
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { authenticatorInterceptor } from '../core/interceptors/authenticator.interceptor';
-import { serverErrorInterceptor } from '../core/interceptors/serverError.interceptor';
+import { authenticatorInterceptor } from '../commons/interceptors/authenticator.interceptor';
+import { serverErrorInterceptor } from '../commons/interceptors/serverError.interceptor';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {

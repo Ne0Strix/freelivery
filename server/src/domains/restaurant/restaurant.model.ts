@@ -1,5 +1,5 @@
-import { Address } from '../location/address.service.js';
 import { User } from '../user/user.service.js';
+import { Address } from '../location/address.service.js';
 
 export interface Restaurant {
     restaurantId: number;
