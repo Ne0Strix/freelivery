@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { AuthenticationService } from '../../core/services/authentication.service';
+import { AuthenticationService } from '../../commons/services/authentication.service';
 // source https://blog.angular-university.io/angular-jwt-authentication/
 @Component({
     selector: 'app-login',

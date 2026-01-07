@@ -18,7 +18,6 @@ export abstract class Repository<T> {
             ),
         });
 
-
         this.pool
             .connect()
             .then(() => {

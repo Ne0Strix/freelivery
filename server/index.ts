@@ -1,6 +1,6 @@
 import cors from 'cors';
 import express, { Request, Response } from 'express';
-import { expressErrorHandler } from './src/commons/errors.js';
+import { expressErrorHandler } from './src/domains/commons/errors.js';
 import { requireAuth } from './src/middleware/auth.js';
 import { requestLogger } from './src/middleware/logger.js';
 import { notFoundHandler } from './src/middleware/not-found.js';

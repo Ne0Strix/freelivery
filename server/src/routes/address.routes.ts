@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
-import { ValidationError } from '../commons/errors.js';
-import { AddressRepository } from '../location/address.repository.js';
-import { AddressService } from '../location/address.service.js';
+import { ValidationError } from '../domains/commons/errors.js';
+import { AddressRepository } from '../domains/location/address.repository.js';
+import { AddressService } from '../domains/location/address.service.js';
 import { asyncHandler } from '../middleware/async-handler.js';
 
 const router = express.Router();

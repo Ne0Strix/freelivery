@@ -1,6 +1,9 @@
 import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { ForbiddenError, UnauthorizedError } from '../commons/errors.js';
+import {
+    ForbiddenError,
+    UnauthorizedError,
+} from '../domains/commons/errors.js';
 
 const getBearerToken = (authHeader: string | undefined): string | undefined => {
     if (!authHeader) return undefined;
