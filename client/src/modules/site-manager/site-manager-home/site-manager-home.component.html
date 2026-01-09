@@ -1,1 +1,124 @@
-<p>site-manager-home.component works!</p>
+<div class="dashboard">
+    <h1 class="dashboard-title">Manager Dashboard</h1>
+
+    @if (loading()) {
+        <p class="loading-text">Loading...</p>
+    } @else {
+        <!-- Statistics Section -->
+        @if (statistics(); as stats) {
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <p class="stat-label">Total Orders</p>
+                    <p class="stat-value">{{ stats.totalOrders }}</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Total Revenue</p>
+                    <p class="stat-value">
+                        €{{ stats.totalRevenue.toFixed(2) }}
+                    </p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Total Users</p>
+                    <p class="stat-value">{{ stats.totalUsers }}</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Active Users</p>
+                    <p class="stat-value">{{ stats.activeUsers }}</p>
+                </div>
+            </div>
+        }
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button
+                (click)="setActiveTab('restaurants')"
+                [class.tab-active]="activeTab() === 'restaurants'"
+                class="tab-btn"
+            >
+                Active Restaurants
+            </button>
+            <button
+                (click)="setActiveTab('pending')"
+                [class.tab-active]="activeTab() === 'pending'"
+                class="tab-btn"
+            >
+                Pending Requests ({{ pendingRestaurants().length }})
+            </button>
+        </div>
+
+        <!-- Tab Content -->
+        @if (activeTab() === 'restaurants') {
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Cuisine</th>
+                            <th>Address</th>
+                            <th>Orders</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (
+                            restaurant of activeRestaurants();
+                            track restaurant.restaurantId
+                        ) {
+                            <tr>
+                                <td>{{ restaurant.name }}</td>
+                                <td>{{ restaurant.cuisineType }}</td>
+                                <td>{{ restaurant.address }}</td>
+                                <td>{{ restaurant.orderCount }}</td>
+                                <td>
+                                    €{{ restaurant.totalRevenue.toFixed(2) }}
+                                </td>
+                            </tr>
+                        } @empty {
+                            <tr>
+                                <td colspan="5" class="empty-message">
+                                    No active restaurants
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        @if (activeTab() === 'pending') {
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Cuisine</th>
+                            <th>Owner</th>
+                            <th>Email</th>
+                            <th>Registered</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (
+                            restaurant of pendingRestaurants();
+                            track restaurant.restaurantId
+                        ) {
+                            <tr>
+                                <td>{{ restaurant.name }}</td>
+                                <td>{{ restaurant.cuisineType }}</td>
+                                <td>{{ restaurant.ownerUsername }}</td>
+                                <td>{{ restaurant.ownerEmail }}</td>
+                                <td>{{ restaurant.registeredAt }}</td>
+                            </tr>
+                        } @empty {
+                            <tr>
+                                <td colspan="5" class="empty-message">
+                                    No pending requests
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
+</div>

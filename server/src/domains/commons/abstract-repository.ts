@@ -1,6 +1,10 @@
 import { Pool, type QueryResult, type QueryResultRow } from 'pg';
 import { NotFoundError, toAppError } from './errors.js';
 
+// DB related sources:
+// https://medium.com/@mateogalic112/how-to-build-a-node-js-api-with-postgresql-and-typescript-best-practices-and-tips-84fee3d1c46c
+//
+
 export abstract class Repository<T> {
     protected pool: Pool;
 
