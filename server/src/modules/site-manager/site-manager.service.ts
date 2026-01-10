@@ -29,4 +29,12 @@ export class SiteManagerService {
     async getPendingRestaurants(): Promise<PendingRestaurant[]> {
         return this.restaurantService.getPendingRestaurants();
     }
+
+    async approveRestaurant(restaurantId: number): Promise<void> {
+        return this.restaurantService.approveRestaurant(restaurantId);
+    }
+
+    async rejectRestaurant(restaurantId: number): Promise<void> {
+        return this.restaurantService.rejectRestaurant(restaurantId);
+    }
 }

@@ -95,6 +95,7 @@
                             <th>Owner</th>
                             <th>Email</th>
                             <th>Registered</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -108,10 +109,32 @@
                                 <td>{{ restaurant.ownerUsername }}</td>
                                 <td>{{ restaurant.ownerEmail }}</td>
                                 <td>{{ restaurant.registeredAt }}</td>
+                                <td class="action-buttons">
+                                    <button
+                                        class="btn btn-approve"
+                                        (click)="
+                                            approveRestaurant(
+                                                restaurant.restaurantId
+                                            )
+                                        "
+                                    >
+                                        Approve
+                                    </button>
+                                    <button
+                                        class="btn btn-reject"
+                                        (click)="
+                                            rejectRestaurant(
+                                                restaurant.restaurantId
+                                            )
+                                        "
+                                    >
+                                        Reject
+                                    </button>
+                                </td>
                             </tr>
                         } @empty {
                             <tr>
-                                <td colspan="5" class="empty-message">
+                                <td colspan="6" class="empty-message">
                                     No pending requests
                                 </td>
                             </tr>

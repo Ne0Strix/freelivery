@@ -1,5 +1,5 @@
-import { User } from '../user/user.service.js';
 import { Address } from '../location/address.service.js';
+import { User } from '../user/user.service.js';
 import { RestaurantRepository } from './restaurant.repository.js';
 
 export interface Restaurant {
@@ -80,5 +80,16 @@ export class RestaurantService {
             ownerUsername: row.owner_username,
             registeredAt: new Date(row.created_at),
         }));
+    }
+
+    async approveRestaurant(restaurantId: number): Promise<void> {
+        await this.repository.updateStatus(
+            restaurantId,
+            RestaurantStatus.ACTIVE
+        );
+    }
+
+    async rejectRestaurant(restaurantId: number): Promise<void> {
+        await this.repository.deleteById(restaurantId);
     }
 }

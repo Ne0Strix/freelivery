@@ -51,4 +51,14 @@ export class SiteManagerHomeComponent implements OnInit {
         this.pendingRestaurants.set(pendingRestaurants);
         this.loading.set(false);
     }
+
+    async approveRestaurant(restaurantId: number): Promise<void> {
+        await this.siteManagerService.approveRestaurant(restaurantId);
+        await this.loadData();
+    }
+
+    async rejectRestaurant(restaurantId: number): Promise<void> {
+        await this.siteManagerService.rejectRestaurant(restaurantId);
+        await this.loadData();
+    }
 }
