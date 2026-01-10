@@ -8,13 +8,13 @@ INSERT INTO role (role_id, name, description) VALUES
   (3, 'customer', 'Customer');
 
 -- Users
-INSERT INTO "user" (user_id, username, email, password_hash, salt, is_active) VALUES
-  (1, 'alice', 'alice@example.com', 'passhash1', 'salt1', true),
-  (2, 'bob', 'bob@example.com', 'passhash2', 'salt2', true),
-  (3, 'customer', 'customer@freelivery.com', 'customer', 'salt3', true),
-  (4, 'restaurant-owner', 'restaurant-owner@freelivery.com', 'restaurant-owner', 'salt4', true),
-  (5, 'site-admin', 'site-admin@freelivery.com', 'site-admin', 'salt5', true),
-  (6, 'deus', 'deus@freelivery.com', 'deus', 'salt6', true);
+INSERT INTO "user" (user_id, username, email, password_hash, is_active) VALUES
+  (1, 'alice', 'alice@example.com', '$2b$10$i3q4DqQLIDY6wcxZE4abC.vwZrtK/1pdzsH7foLmDYo0wqVO6bhgy', true), -- passhash1
+  (2, 'bob', 'bob@example.com', '$2b$10$YcOoNCGabZx9mf1QwhhKZeF8clEHhqAuouZ5Lc0J.A0EW78BfTqpS', true), -- passhash2
+  (3, 'customer', 'customer@freelivery.com', '$2b$10$Y5e37pnEbUZXdMUBfoNoL.L8jyTherot/z5ok1dlM6UNb/b9FQOQW', true), -- customer
+  (4, 'restaurant-owner', 'restaurant-owner@freelivery.com', '$2b$10$yorgqfZhchkiM2q.OsTC8eqP27VSDXMFtQRzHle84GIRr2fmUhzOS', true), -- restaurant
+  (5, 'site-admin', 'site-admin@freelivery.com', '$2b$10$Pkwrqcol8IkJMJPdLeZWDOupYDbwnL4WuGfVC.77mZxXm7Zs2OM0W', true), -- site-admin
+  (6, 'deus', 'deus@freelivery.com', 'deus', true); -- deusexmachina
 
 -- User data
 INSERT INTO user_data (user_id, first_name, last_name, salutation, phone_number, date_of_birth) VALUES
@@ -87,5 +87,11 @@ INSERT INTO "order" (
 
 INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
   (1, 1, 1, 'Margherita', 8.50, 2);
+
+-- Reset sequences to continue after test data IDs
+SELECT setval('user_user_id_seq', (SELECT MAX(user_id) FROM "user"));
+SELECT setval('user_data_user_id_seq', (SELECT MAX(user_id) FROM user_data));
+SELECT setval('address_address_id_seq', (SELECT MAX(address_id) FROM address));
+SELECT setval('role_role_id_seq', (SELECT MAX(role_id) FROM role));
 
 -- End of test data

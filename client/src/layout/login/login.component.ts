@@ -6,12 +6,13 @@ import {
     Validators,
 } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { UserRole } from '../../commons/model/role.model';
 import { AuthenticationService } from '../../commons/services/authentication.service';
 // source https://blog.angular-university.io/angular-jwt-authentication/
 @Component({
     selector: 'app-login',
-    imports: [ReactiveFormsModule],
+    imports: [ReactiveFormsModule, RouterLink],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,11 +43,11 @@ export class LoginComponent {
                         console.log('User is logged in');
                         // Navigate based on user's primary role
                         const roles = this.authenticationService.roles();
-                        if (roles.includes('admin')) {
+                        if (roles.includes(UserRole.ADMIN)) {
                             this.router.navigateByUrl('/site-manager');
-                        } else if (roles.includes('restaurant_owner')) {
+                        } else if (roles.includes(UserRole.RESTAURANT_OWNER)) {
                             this.router.navigateByUrl('/restaurant');
-                        } else if (roles.includes('customer')) {
+                        } else if (roles.includes(UserRole.CUSTOMER)) {
                             this.router.navigateByUrl('/customer');
                         } else {
                             // Fallback - stay on login or show error

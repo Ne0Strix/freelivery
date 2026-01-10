@@ -56,6 +56,34 @@ export class AuthenticationService {
             );
     }
 
+    signup(username: string, email: string, password: string, role: string) {
+        return this.http
+            .post<{
+                status: string;
+                data?: { message: string; userId: number };
+                error?: string;
+            }>(`${this.apiBase}/auth/signup`, {
+                username,
+                email,
+                password,
+                role,
+            })
+            .pipe(
+                map((res) => ({
+                    success: res.status === 'ok',
+                    message: res.data?.message,
+                    error: res.error,
+                })),
+                catchError((err) =>
+                    of({
+                        success: false,
+                        message: undefined,
+                        error: err.error?.error || 'Signup failed',
+                    })
+                )
+            );
+    }
+
     getToken(): string | null {
         return localStorage.getItem(this.tokenKey);
     }

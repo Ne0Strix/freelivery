@@ -1,16 +1,12 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
-import { Pool } from 'pg';
+import { UserService } from '../domains/user/user.service.js';
+import { ALL_ROLES } from '../middleware/auth.js';
 
 const router = Router();
+const userService = new UserService();
 
-const pool = new Pool({
-    user: process.env.POSTGRES_USER,
-    host: process.env.POSTGRES_HOST ?? 'db',
-    database: process.env.POSTGRES_DB,
-    password: process.env.POSTGRES_PASSWORD,
-    port: Number(process.env.POSTGRES_PORT ?? process.env.DB_PORT ?? 5432),
-});
+// Source: https://medium.com/@kevinpatrickboylan/using-jwt-authentication-and-bcrypt-net-with-angular-and-net-core-web-api-51aab1153778
 
 router.post('/login', async (req, res) => {
     try {
@@ -21,31 +17,30 @@ router.post('/login', async (req, res) => {
                 .json({ status: 'error', error: 'Missing credentials' });
         }
 
-        const whereClause = email ? 'email = $1' : 'username = $1';
         const identifier = email ?? username;
+        const byEmail = Boolean(email);
 
-        // TODO: Replace with proper bcrypt comparison before production!
-        // Currently comparing plaintext for development convenience.
-        const result = await pool.query(
-            `SELECT user_id, username, email FROM "user" WHERE ${whereClause} AND password_hash = $2 AND is_active = true LIMIT 1`,
-            [identifier, password]
-        );
-
-        const user = result.rows[0];
+        // Find user
+        const user = await userService.findUserForLogin(identifier, byEmail);
         if (!user) {
             return res
                 .status(401)
                 .json({ status: 'error', error: 'Invalid credentials' });
         }
 
-        // Fetch user roles
-        const rolesResult = await pool.query(
-            `SELECT r.name FROM role r
-             INNER JOIN user_role ur ON r.role_id = ur.role_id
-             WHERE ur.user_id = $1`,
-            [user.user_id]
+        // Verify password
+        const isValidPassword = await userService.verifyPassword(
+            password,
+            user.password_hash
         );
-        const roles = rolesResult.rows.map((row) => row.name);
+        if (!isValidPassword) {
+            return res
+                .status(401)
+                .json({ status: 'error', error: 'Invalid credentials' });
+        }
+
+        // Fetch user roles
+        const roles = await userService.getUserRoles(user.user_id);
 
         const secret = process.env.JWT_SECRET || 'dev-secret';
         const token = jwt.sign(
@@ -62,6 +57,53 @@ router.post('/login', async (req, res) => {
         return res.json({ status: 'ok', data: { token } });
     } catch (err) {
         console.error('Login error:', err);
+        return res.status(500).json({ status: 'error', error: 'Server error' });
+    }
+});
+
+router.post('/signup', async (req, res) => {
+    try {
+        const { username, email, password, role } = req.body ?? {};
+
+        // Validate required fields
+        if (!username || !email || !password || !role) {
+            return res.status(400).json({
+                status: 'error',
+                error: 'Missing required fields: username, email, password, role',
+            });
+        }
+
+        // Validate role
+        if (!ALL_ROLES.includes(role)) {
+            return res.status(400).json({
+                status: 'error',
+                error: `Invalid role. Must be one of: ${ALL_ROLES.join(', ')}`,
+            });
+        }
+
+        // Create user via service
+        const { userId } = await userService.createUser(
+            username,
+            email,
+            password,
+            role
+        );
+
+        return res.status(201).json({
+            status: 'ok',
+            data: { message: 'User created successfully', userId },
+        });
+    } catch (err: any) {
+        console.error('Signup error:', err);
+
+        // Handle known errors
+        if (err.code === 'CONFLICT') {
+            return res.status(409).json({
+                status: 'error',
+                error: err.message,
+            });
+        }
+
         return res.status(500).json({ status: 'error', error: 'Server error' });
     }
 });
