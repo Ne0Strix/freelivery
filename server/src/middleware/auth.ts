@@ -5,6 +5,15 @@ import {
     UnauthorizedError,
 } from '../domains/commons/errors.js';
 
+/** Centralized user roles - must match database role.name values */
+export enum UserRole {
+    ADMIN = 'admin',
+    RESTAURANT_OWNER = 'restaurant_owner',
+    CUSTOMER = 'customer',
+}
+
+export const ALL_ROLES = Object.values(UserRole);
+
 const getBearerToken = (authHeader: string | undefined): string | undefined => {
     if (!authHeader) return undefined;
     const [scheme, token] = authHeader.split(' ');

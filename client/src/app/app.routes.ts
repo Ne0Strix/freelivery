@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '../commons/guards/auth.guard';
+import { UserRole } from '../commons/model/role.model';
 import { LoginComponent } from '../layout/login/login.component';
+import { SignupComponent } from '../layout/signup/signup.component';
 
 export const routes: Routes = [
     {
@@ -9,10 +11,15 @@ export const routes: Routes = [
         title: 'Login',
     },
     {
+        path: 'signup',
+        component: SignupComponent,
+        title: 'Sign Up',
+    },
+    {
         path: 'customer',
         loadChildren: () => import('../modules/customer/customer.routes'),
         canActivate: [authGuard],
-        data: { roles: ['customer'] },
+        data: { roles: [UserRole.CUSTOMER] },
         title: 'Customer Home',
     },
     {
@@ -20,7 +27,7 @@ export const routes: Routes = [
         loadChildren: () =>
             import('../modules/restaurant-owner/restaurant-owner.routes'),
         canActivate: [authGuard],
-        data: { roles: ['restaurant_owner'] },
+        data: { roles: [UserRole.RESTAURANT_OWNER] },
         title: 'Restaurant Home',
     },
     {
@@ -28,7 +35,7 @@ export const routes: Routes = [
         loadChildren: () =>
             import('../modules/site-manager/site-manager.routes'),
         canActivate: [authGuard],
-        data: { roles: ['admin'] },
+        data: { roles: [UserRole.ADMIN] },
         title: 'Site Manager Home',
     },
     {
