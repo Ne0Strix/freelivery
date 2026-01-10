@@ -1,13 +1,13 @@
 import cors from 'cors';
 import express, { Request, Response } from 'express';
 import { expressErrorHandler } from './src/domains/commons/errors.js';
+import restaurantRoutes from './src/domains/restaurant/restaurant.routes.js';
 import { requireAuth, requireRole } from './src/middleware/auth.js';
 import { requestLogger } from './src/middleware/logger.js';
 import { notFoundHandler } from './src/middleware/not-found.js';
+import siteManagerRoutes from './src/modules/site-manager/site-manager.routes.js';
 import addressRoutes from './src/routes/address.routes.js';
 import authRoutes from './src/routes/auth.routes.js';
-import restaurantRoutes from './src/domains/restaurant/restaurant.routes.js';
-import siteManagerRoutes from './src/modules/site-manager/site-manager.routes.js';
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 3000;

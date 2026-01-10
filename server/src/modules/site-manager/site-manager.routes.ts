@@ -23,4 +23,30 @@ router.get(
     })
 );
 
+// POST /restaurants/:id/approve - approve a pending restaurant (admin only)
+router.post(
+    '/restaurants/:id/approve',
+    asyncHandler(async (req: Request, res: Response) => {
+        const restaurantId = Number(req.params.id);
+        await service.approveRestaurant(restaurantId);
+        return res.json({
+            status: 'ok',
+            data: { message: 'Restaurant approved' },
+        });
+    })
+);
+
+// DELETE /restaurants/:id - reject (delete) a pending restaurant (admin only)
+router.delete(
+    '/restaurants/:id',
+    asyncHandler(async (req: Request, res: Response) => {
+        const restaurantId = Number(req.params.id);
+        await service.rejectRestaurant(restaurantId);
+        return res.json({
+            status: 'ok',
+            data: { message: 'Restaurant rejected' },
+        });
+    })
+);
+
 export default router;

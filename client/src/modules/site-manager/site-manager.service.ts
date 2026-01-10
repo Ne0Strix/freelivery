@@ -41,4 +41,21 @@ export class SiteManagerService {
         );
         return response.data;
     }
+
+    async approveRestaurant(restaurantId: number): Promise<void> {
+        await firstValueFrom(
+            this.http.post<ApiResponse<void>>(
+                `${this.baseUrl}/site-manager/restaurants/${restaurantId}/approve`,
+                {}
+            )
+        );
+    }
+
+    async rejectRestaurant(restaurantId: number): Promise<void> {
+        await firstValueFrom(
+            this.http.delete<ApiResponse<void>>(
+                `${this.baseUrl}/site-manager/restaurants/${restaurantId}`
+            )
+        );
+    }
 }

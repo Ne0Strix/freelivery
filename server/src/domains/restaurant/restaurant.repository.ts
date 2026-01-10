@@ -89,4 +89,21 @@ export class RestaurantRepository extends Repository<RestaurantRow> {
         const result = await this.query<PendingRestaurantRow>(query);
         return result.rows;
     }
+
+    async updateStatus(
+        restaurantId: number,
+        status: RestaurantStatus
+    ): Promise<RestaurantRow> {
+        const query = `
+            UPDATE ${this.tableName}
+            SET status = $1, updated_at = NOW()
+            WHERE ${this.primaryKey} = $2
+            RETURNING *
+        `;
+        const result = await this.query<RestaurantRow>(query, [
+            status,
+            restaurantId,
+        ]);
+        return result.rows[0];
+    }
 }
