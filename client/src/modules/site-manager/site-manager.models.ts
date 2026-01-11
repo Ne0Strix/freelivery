@@ -5,15 +5,6 @@ export interface DashboardStatistics {
     activeUsers: number;
 }
 
-export interface ActiveRestaurant {
-    restaurantId: number;
-    name: string;
-    cuisineType: string;
-    address: string;
-    orderCount: number;
-    totalRevenue: number;
-}
-
 export interface PendingRestaurant {
     restaurantId: number;
     name: string;
