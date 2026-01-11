@@ -5,12 +5,10 @@ import {
     OnInit,
     signal,
 } from '@angular/core';
+import { ActiveRestaurant } from '../../../commons/model/restaurant.model';
+import { RestaurantService } from '../../../commons/services/restaurant.service';
+import { DashboardStatistics, PendingRestaurant } from '../site-manager.models';
 import { SiteManagerService } from '../site-manager.service';
-import {
-    ActiveRestaurant,
-    DashboardStatistics,
-    PendingRestaurant,
-} from '../site-manager.models';
 
 @Component({
     selector: 'app-site-manager-home',
@@ -21,6 +19,7 @@ import {
 })
 export class SiteManagerHomeComponent implements OnInit {
     private siteManagerService = inject(SiteManagerService);
+    private restaurantService = inject(RestaurantService);
 
     activeTab = signal<'restaurants' | 'pending'>('restaurants');
     statistics = signal<DashboardStatistics | null>(null);
@@ -42,7 +41,7 @@ export class SiteManagerHomeComponent implements OnInit {
         const [statistics, activeRestaurants, pendingRestaurants] =
             await Promise.all([
                 this.siteManagerService.getStatistics(),
-                this.siteManagerService.getActiveRestaurants(),
+                this.restaurantService.getActiveRestaurants(),
                 this.siteManagerService.getPendingRestaurants(),
             ]);
 
