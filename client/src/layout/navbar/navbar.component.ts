@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+} from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthenticationService } from '../../commons/services/authentication.service';
 
@@ -14,6 +19,7 @@ export class NavbarComponent {
     private router = inject(Router);
 
     isLoggedIn = this.authService.isLoggedIn;
+    isAdmin = computed(() => this.authService.hasAnyRole(['admin']));
 
     signOut(): void {
         this.authService.logout();

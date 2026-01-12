@@ -1,9 +1,11 @@
 import cors from 'cors';
 import express, { Request, Response } from 'express';
 import { expressErrorHandler } from './src/domains/commons/errors.js';
-import { requireAuth } from './src/middleware/auth.js';
+import restaurantRoutes from './src/domains/restaurant/restaurant.routes.js';
+import { requireAuth, requireRole } from './src/middleware/auth.js';
 import { requestLogger } from './src/middleware/logger.js';
 import { notFoundHandler } from './src/middleware/not-found.js';
+import siteManagerRoutes from './src/modules/site-manager/site-manager.routes.js';
 import addressRoutes from './src/routes/address.routes.js';
 import authRoutes from './src/routes/auth.routes.js';
 
@@ -44,6 +46,15 @@ app.use('/api/auth', authRoutes);
 
 // ========== AUTHENTICATED (any logged-in user) ==========
 app.use('/api/addresses', requireAuth, addressRoutes);
+app.use('/api/restaurants', requireAuth, restaurantRoutes);
+
+// ========== ADMIN ONLY (site-manager) ==========
+app.use(
+    '/api/site-manager',
+    requireAuth,
+    requireRole(['admin']),
+    siteManagerRoutes
+);
 
 // 404 + error handling (must be last)
 app.use(notFoundHandler);

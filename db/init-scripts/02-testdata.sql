@@ -28,7 +28,10 @@ INSERT INTO user_data (user_id, first_name, last_name, salutation, phone_number,
 -- Addresses
 INSERT INTO address (address_id, label, street_name, house_number, additional_info, city_name, zip_code, country) VALUES
   (1, 'Alice Home', 'Main Street', '1', 'Apt 1', 'Townsville', '12345', 'Country'),
-  (2, 'Luigi Pizzeria', 'Food St', '10', NULL, 'Townsville', '12345', 'Country');
+  (2, 'Luigi Pizzeria', 'Food St', '10', NULL, 'Townsville', '12345', 'Country'),
+  (3, 'Sakura Sushi', 'Tokyo Lane', '42', NULL, 'Townsville', '12345', 'Country'),
+  (4, 'Taco Fiesta', 'Spice Road', '7', 'Corner shop', 'Townsville', '12346', 'Country'),
+  (5, 'Golden Dragon', 'Chinatown Ave', '88', NULL, 'Townsville', '12347', 'Country');
 
 -- Link users to addresses
 INSERT INTO user_address (user_id, address_id, is_default) VALUES
@@ -58,6 +61,18 @@ INSERT INTO restaurant (
   1, 'Luigi Pizzeria', 'ACTIVE', 'Great pizza in town', 'ITALIAN', 'contact@luigi.example', '+10000000010',
   2, 2, 1, 5.00, 10.00
 );
+
+-- Pending restaurants (status = NEW) for site-manager testing
+INSERT INTO restaurant (
+  restaurant_id, name, status, description, cuisine_type, contact_email, contact_phone,
+  address_id, owner_user_id, delivery_zone_id, service_fee_percent, min_order_amount
+) VALUES
+  (2, 'Sakura Sushi', 'NEW', 'Authentic Japanese cuisine', 'JAPANESE', 'contact@sakura.example', '+10000000011',
+   3, 4, 1, 4.50, 15.00),
+  (3, 'Taco Fiesta', 'NEW', 'Mexican street food', 'MEXICAN', 'hola@tacofiesta.example', '+10000000012',
+   4, 4, 1, 3.00, 8.00),
+  (4, 'Golden Dragon', 'NEW', 'Traditional Chinese dishes', 'CHINESE', 'info@goldendragon.example', '+10000000013',
+   5, 2, 1, 5.00, 12.00);
 
 -- Category and dishes
 INSERT INTO category (category_id, restaurant_id, name, description) VALUES

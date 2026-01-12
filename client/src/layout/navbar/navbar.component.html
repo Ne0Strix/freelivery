@@ -23,13 +23,15 @@
                     >
                         Restaurant
                     </a>
-                    <a
-                        routerLink="/site-manager"
-                        routerLinkActive="nav-link-active"
-                        class="nav-link"
-                    >
-                        Site Manager
-                    </a>
+                    @if (isAdmin()) {
+                        <a
+                            routerLink="/site-manager"
+                            routerLinkActive="nav-link-active"
+                            class="nav-link"
+                        >
+                            Manager Dashboard
+                        </a>
+                    }
                 </div>
             </div>
             <div class="hidden sm:ml-6 sm:flex sm:items-center">
