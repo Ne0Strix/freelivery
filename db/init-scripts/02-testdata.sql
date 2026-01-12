@@ -9,12 +9,12 @@ INSERT INTO role (role_id, name, description) VALUES
 
 -- Users
 INSERT INTO "user" (user_id, username, email, password_hash, is_active) VALUES
-  (1, 'alice', 'alice@example.com', '$2b$10$i3q4DqQLIDY6wcxZE4abC.vwZrtK/1pdzsH7foLmDYo0wqVO6bhgy', true), -- passhash1
-  (2, 'bob', 'bob@example.com', '$2b$10$YcOoNCGabZx9mf1QwhhKZeF8clEHhqAuouZ5Lc0J.A0EW78BfTqpS', true), -- passhash2
-  (3, 'customer', 'customer@freelivery.com', '$2b$10$Y5e37pnEbUZXdMUBfoNoL.L8jyTherot/z5ok1dlM6UNb/b9FQOQW', true), -- customer
-  (4, 'restaurant-owner', 'restaurant-owner@freelivery.com', '$2b$10$yorgqfZhchkiM2q.OsTC8eqP27VSDXMFtQRzHle84GIRr2fmUhzOS', true), -- restaurant
-  (5, 'site-admin', 'site-admin@freelivery.com', '$2b$10$Pkwrqcol8IkJMJPdLeZWDOupYDbwnL4WuGfVC.77mZxXm7Zs2OM0W', true), -- site-admin
-  (6, 'deus', 'deus@freelivery.com', 'deus', true); -- deusexmachina
+  (1, 'alice', 'alice@example.com', '$2b$10$I3VQ6pUokxd4B3iFQUVMA.4OK8THfTcqv4/bPglaHnrFKFAEww3mS', true), -- passhash1
+  (2, 'bob', 'bob@example.com', '$2b$10$Cuj5lOhhZpL1JTMimwk7kej6SXL1M0oWaS2agxAs59jSAPA6hth..', true), -- passhash2
+  (3, 'customer', 'customer@freelivery.com', '$2b$10$GoE1e7QmGM9TWWD.MwvEIe6s8bFyO55OZLbjl1X0L8Mx7K7X2PyEu', true), -- customer
+  (4, 'restaurant-owner', 'restaurant-owner@freelivery.com', '$2b$10$VNHTMdJy4N8qxlR/HC..A.55QoHs5pf8GfAFmk2dLoCiBWLKdHE1q', true), -- restaurant
+  (5, 'site-admin', 'site-admin@freelivery.com', '$2b$10$8JQ0cVHjM15tVOiVJVckj.KOnH6iCaMH.Dcdx07npMdOQQtOxDCri', true), -- site-admin
+  (6, 'deus', 'deus@freelivery.com', '$2b$10$c49sMu7J/TQzNB.X69iFQOjGG1rvdynmAXlRGPq8pc0kNsc0avFe2', true); -- deus
 
 -- User data
 INSERT INTO user_data (user_id, first_name, last_name, salutation, phone_number, date_of_birth) VALUES

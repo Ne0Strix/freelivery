@@ -1,1 +1,68 @@
-<p>customer-home.component works!</p>
+<div class="customer-home">
+    <h1 class="page-title">Browse Restaurants</h1>
+
+    @if (loading()) {
+        <p class="loading-text">Loading restaurants...</p>
+    } @else {
+        <div class="filter-section">
+            <div class="search-box">
+                <input
+                    type="text"
+                    placeholder="Search restaurants..."
+                    (input)="onSearchChange($event)"
+                    class="search-input"
+                />
+            </div>
+
+            <div class="filter-box">
+                <label for="cuisine-filter" class="filter-label"
+                    >Cuisine:</label
+                >
+                <select
+                    id="cuisine-filter"
+                    (change)="onCuisineChange($event)"
+                    class="filter-select"
+                >
+                    <option value="all">All cuisines</option>
+                    @for (cuisine of getCuisineTypes(); track cuisine) {
+                        <option [value]="cuisine">{{ cuisine }}</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="restaurant-grid">
+            @for (
+                restaurant of filteredRestaurants();
+                track restaurant.restaurantId
+            ) {
+                <div class="restaurant-card">
+                    <div class="restaurant-header">
+                        <h3 class="restaurant-name">{{ restaurant.name }}</h3>
+                        @if (!restaurant.isOpen) {
+                            <span class="status-closed">Closed</span>
+                        } @else {
+                            <span class="status-open">Open</span>
+                        }
+                    </div>
+
+                    <div class="restaurant-info">
+                        <p class="cuisine-type">{{ restaurant.cuisineType }}</p>
+                        <p class="address">{{ restaurant.address }}</p>
+                    </div>
+
+                    <div class="restaurant-stats">
+                        <span class="stat">⭐ {{ restaurant.rating }}/5 </span>
+                        <span class="stat"
+                            >🕒 {{ restaurant.deliveryTime }}
+                        </span>
+                    </div>
+
+                    <button class="view-menu">View Menu</button>
+                </div>
+            } @empty {
+                <p class="empty-message">No such restaurant found</p>
+            }
+        </div>
+    }
+</div>
