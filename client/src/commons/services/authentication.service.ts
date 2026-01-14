@@ -3,6 +3,10 @@ import { computed, Injectable, signal } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { catchError, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import {
+    CustomerSignup,
+    RestaurantOwnerSignup,
+} from '../model/restaurant.model';
 
 interface JwtPayload {
     sub: number;
@@ -71,18 +75,37 @@ export class AuthenticationService {
             );
     }
 
-    signup(username: string, email: string, password: string, role: string) {
+    signup(
+        username: string,
+        email: string,
+        password: string,
+        role: string,
+        customerSignup?: CustomerSignup,
+        restaurantOwnerSignup?: RestaurantOwnerSignup
+    ) {
+        // Build request body based on role
+        const body: Record<string, unknown> = {
+            username,
+            email,
+            password,
+            role,
+        };
+
+        if (customerSignup) {
+            body['phoneNumber'] = customerSignup.phoneNumber;
+            body['address'] = customerSignup.address;
+        }
+
+        if (restaurantOwnerSignup) {
+            body['restaurant'] = restaurantOwnerSignup.restaurant;
+        }
+
         return this.http
             .post<{
                 status: string;
                 data?: { message: string; userId: number };
                 error?: string;
-            }>(`${this.apiBase}/auth/signup`, {
-                username,
-                email,
-                password,
-                role,
-            })
+            }>(`${this.apiBase}/auth/signup`, body)
             .pipe(
                 map((res) => ({
                     success: res.status === 'ok',

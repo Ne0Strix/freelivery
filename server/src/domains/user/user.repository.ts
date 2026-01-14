@@ -89,6 +89,29 @@ export class UserRepository extends Repository<UserRow> {
         ]);
     }
 
+    /** Update user_data with phone number */
+    async updateUserDataPhone(
+        userId: number,
+        phoneNumber: string
+    ): Promise<void> {
+        await this.query(
+            'UPDATE user_data SET phone_number = $1 WHERE user_id = $2',
+            [phoneNumber, userId]
+        );
+    }
+
+    /** Link user to address */
+    async linkUserAddress(
+        userId: number,
+        addressId: number,
+        isDefault: boolean = true
+    ): Promise<void> {
+        await this.query(
+            'INSERT INTO user_address (user_id, address_id, is_default) VALUES ($1, $2, $3)',
+            [userId, addressId, isDefault]
+        );
+    }
+
     /** Find user by email or username, including inactive users; used to check suspension status */
     async findByEmailOrUsernameIncludingInactive(
         identifier: string,

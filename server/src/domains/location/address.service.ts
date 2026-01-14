@@ -1,4 +1,4 @@
-import { AddressRepository } from './address.repository.js';
+import { AddressRepository, type AddressRow } from './address.repository.js';
 import { DeliveryZone } from './deliveryZone.model.js';
 
 export interface Address {
@@ -15,8 +15,33 @@ export interface Address {
     updatedAt: Date;
 }
 
+/** DTO for creating a new address */
+export interface CreateAddress {
+    label?: string;
+    streetName: string;
+    houseNumber: string;
+    additionalInfo?: string;
+    cityName: string;
+    zipCode: string;
+    country: string;
+}
+
 export class AddressService {
     constructor(private repository: AddressRepository) {}
+
+    /** Create a new address and return its ID */
+    async createAddress(dto: CreateAddress): Promise<number> {
+        const row = await this.repository.create({
+            label: dto.label,
+            street_name: dto.streetName,
+            house_number: dto.houseNumber,
+            additional_info: dto.additionalInfo,
+            city_name: dto.cityName,
+            zip_code: dto.zipCode,
+            country: dto.country,
+        } as Partial<AddressRow>);
+        return row.address_id;
+    }
 
     public getAllForUser(userId: number): Promise<Address[]> {
         return this.repository.getAllForUser(userId).then((rows: any[]) => {
