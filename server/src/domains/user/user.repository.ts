@@ -10,6 +10,15 @@ export interface UserRow {
     updated_at: Date;
 }
 
+export interface UserWithRoles {
+    user_id: number;
+    username: string;
+    email: string;
+    is_active: boolean;
+    created_at: Date;
+    roles: string[];
+}
+
 export class UserRepository extends Repository<UserRow> {
     constructor() {
         super('"user"', 'user_id');
@@ -24,18 +33,6 @@ export class UserRepository extends Repository<UserRow> {
             [email, username]
         );
         return result.rows.length > 0;
-    }
-
-    async findByEmailOrUsername(
-        identifier: string,
-        byEmail: boolean
-    ): Promise<UserRow | null> {
-        const whereClause = byEmail ? 'email = $1' : 'username = $1';
-        const result = await this.query(
-            `SELECT * FROM "user" WHERE ${whereClause} AND is_active = true LIMIT 1`,
-            [identifier]
-        );
-        return (result.rows[0] as UserRow) ?? null;
     }
 
     create(item: UserRow): Promise<UserRow> {
@@ -90,5 +87,40 @@ export class UserRepository extends Repository<UserRow> {
         await this.query('INSERT INTO user_data (user_id) VALUES ($1)', [
             userId,
         ]);
+    }
+
+    /** Find user by email or username, including inactive users; used to check suspension status */
+    async findByEmailOrUsernameIncludingInactive(
+        identifier: string,
+        byEmail: boolean
+    ): Promise<UserRow | null> {
+        const whereClause = byEmail ? 'email = $1' : 'username = $1';
+        const result = await this.query(
+            `SELECT * FROM "user" WHERE ${whereClause} LIMIT 1`,
+            [identifier]
+        );
+        return (result.rows[0] as UserRow) ?? null;
+    }
+
+    /** Get all users with their roles for admin listing */
+    async findAllWithRoles(): Promise<UserWithRoles[]> {
+        const result = await this.query(`
+            SELECT u.user_id, u.username, u.email, u.is_active, u.created_at,
+                   COALESCE(array_agg(r.name) FILTER (WHERE r.name IS NOT NULL), '{}') as roles
+            FROM "user" u
+            LEFT JOIN user_role ur ON u.user_id = ur.user_id
+            LEFT JOIN role r ON ur.role_id = r.role_id
+            GROUP BY u.user_id
+            ORDER BY u.created_at DESC
+        `);
+        return result.rows as UserWithRoles[];
+    }
+
+    /** Update user's active status */
+    async setActiveStatus(userId: number, isActive: boolean): Promise<void> {
+        await this.query(
+            `UPDATE "user" SET is_active = $1, updated_at = CURRENT_TIMESTAMP WHERE user_id = $2`,
+            [isActive, userId]
+        );
     }
 }

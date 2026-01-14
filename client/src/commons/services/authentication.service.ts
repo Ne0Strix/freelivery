@@ -12,6 +12,11 @@ interface JwtPayload {
     exp: number;
 }
 
+interface LoginResult {
+    success: boolean;
+    code?: string;
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -42,6 +47,7 @@ export class AuthenticationService {
             .post<{
                 status: string;
                 data?: { token: string };
+                code?: string;
             }>(`${this.apiBase}/auth/login`, { email, password })
             .pipe(
                 tap((res) => {
@@ -51,8 +57,17 @@ export class AuthenticationService {
                         this.decodeAndSetUser(token);
                     }
                 }),
-                map((res) => Boolean(res?.data?.token)),
-                catchError(() => of(false))
+                map(
+                    (res): LoginResult => ({
+                        success: Boolean(res?.data?.token),
+                    })
+                ),
+                catchError((err) =>
+                    of({
+                        success: false,
+                        code: err.error?.code,
+                    } as LoginResult)
+                )
             );
     }
 

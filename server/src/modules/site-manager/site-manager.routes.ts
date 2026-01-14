@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { ValidationError } from '../../domains/commons/errors.js';
 import { asyncHandler } from '../../middleware/async-handler.js';
 import { SiteManagerService } from './site-manager.service.js';
 
@@ -11,6 +12,38 @@ router.get(
     asyncHandler(async (_req: Request, res: Response) => {
         const statistics = await service.getDashboardStatistics();
         return res.json({ status: 'ok', data: statistics });
+    })
+);
+
+// GET /users - returns all users with roles
+router.get(
+    '/users',
+    asyncHandler(async (_req: Request, res: Response) => {
+        const users = await service.getAllUsers();
+        return res.json({ status: 'ok', data: users });
+    })
+);
+
+// PATCH /users/:id - partial user update
+router.patch(
+    '/users/:id',
+    asyncHandler(async (req: Request, res: Response) => {
+        const userId = Number(req.params.id);
+        const adminUserId = (req as any).user?.sub;
+        const { isActive } = req.body;
+
+        // Handle isActive update (suspension)
+        if (isActive !== undefined) {
+            if (typeof isActive !== 'boolean') {
+                throw new ValidationError('isActive must be a boolean');
+            }
+            await service.setUserActiveStatus(userId, isActive, adminUserId);
+        }
+
+        return res.json({
+            status: 'ok',
+            data: { message: 'User updated' },
+        });
     })
 );
 

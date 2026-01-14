@@ -13,3 +13,12 @@ export interface PendingRestaurant {
     ownerUsername: string;
     registeredAt: Date;
 }
+
+export interface UserListItem {
+    user_id: number;
+    username: string;
+    email: string;
+    is_active: boolean;
+    roles: string[];
+    created_at: string;
+}
