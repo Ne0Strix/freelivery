@@ -4,6 +4,7 @@
     align-items: center;
     justify-content: center;
     background-color: #f3f4f6;
+    padding: 2rem 1rem;
 }
 
 .signup-card {
@@ -12,7 +13,7 @@
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
     padding: 2rem;
     width: 100%;
-    max-width: 28rem;
+    max-width: 32rem;
 }
 
 .signup-form {
@@ -33,6 +34,14 @@ legend {
     margin-bottom: 1rem;
 }
 
+.role-fields legend {
+    font-size: 1.125rem;
+    color: #374151;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+    width: 100%;
+}
+
 .form-group {
     display: flex;
     flex-direction: column;
@@ -51,19 +60,74 @@ label {
 }
 
 input,
-select {
+select,
+textarea {
     width: 100%;
     border-radius: 0.375rem;
     border: 1px solid #d1d5db;
     padding: 0.5rem 0.75rem;
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    font-family: inherit;
+    font-size: inherit;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 4rem;
 }
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
     outline: none;
     border-color: #6366f1;
     box-shadow: 0 0 0 2px rgb(99 102 241 / 0.3);
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.form-row .form-group {
+    margin-top: 0;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.flex-2 {
+    flex: 2;
+}
+
+.flex-3 {
+    flex: 3;
+}
+
+.form-section-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.info-notice {
+    background-color: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 0.375rem;
+    padding: 0.75rem 1rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: #92400e;
+}
+
+.info-notice strong {
+    color: #78350f;
 }
 
 .btn-primary {

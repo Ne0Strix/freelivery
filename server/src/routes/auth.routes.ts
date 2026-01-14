@@ -75,7 +75,15 @@ router.post('/login', async (req, res) => {
 
 router.post('/signup', async (req, res) => {
     try {
-        const { username, email, password, role } = req.body ?? {};
+        const {
+            username,
+            email,
+            password,
+            role,
+            phoneNumber,
+            address,
+            restaurant,
+        } = req.body ?? {};
 
         // Validate required fields
         if (!username || !email || !password || !role) {
@@ -93,12 +101,63 @@ router.post('/signup', async (req, res) => {
             });
         }
 
+        // Build customer data if present
+        let customerData;
+        if (role === 'customer' && (phoneNumber || address)) {
+            customerData = {
+                phoneNumber,
+                address: address
+                    ? {
+                          streetName: address.streetName,
+                          houseNumber: address.houseNumber,
+                          additionalInfo: address.additionalInfo,
+                          cityName: address.cityName,
+                          zipCode: address.zipCode,
+                          country: address.country,
+                      }
+                    : undefined,
+            };
+        }
+
+        // Build restaurant data if present
+        let restaurantData;
+        if (role === 'restaurant_owner' && restaurant) {
+            if (
+                !restaurant.name ||
+                !restaurant.contactEmail ||
+                !restaurant.contactPhone ||
+                !restaurant.address
+            ) {
+                return res.status(400).json({
+                    status: 'error',
+                    error: 'Restaurant registration requires name, contact email, contact phone, and address',
+                });
+            }
+            restaurantData = {
+                name: restaurant.name,
+                description: restaurant.description,
+                cuisineType: restaurant.cuisineType || 'ITALIAN',
+                contactEmail: restaurant.contactEmail,
+                contactPhone: restaurant.contactPhone,
+                address: {
+                    streetName: restaurant.address.streetName,
+                    houseNumber: restaurant.address.houseNumber,
+                    additionalInfo: restaurant.address.additionalInfo,
+                    cityName: restaurant.address.cityName,
+                    zipCode: restaurant.address.zipCode,
+                    country: restaurant.address.country,
+                },
+            };
+        }
+
         // Create user via service
         const { userId } = await userService.createUser(
             username,
             email,
             password,
-            role
+            role,
+            customerData,
+            restaurantData
         );
 
         return res.status(201).json({

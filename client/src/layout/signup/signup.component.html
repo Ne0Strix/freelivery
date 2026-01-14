@@ -45,6 +45,213 @@
                 </div>
             </fieldset>
 
+            <!-- Customer-specific fields -->
+            @if (selectedRole === UserRole.CUSTOMER) {
+                <fieldset class="role-fields">
+                    <legend>Your Details</legend>
+
+                    <div class="form-group">
+                        <label for="phoneNumber">Phone Number:</label>
+                        <input
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            formControlName="phoneNumber"
+                            type="tel"
+                            placeholder="+43 XXX XXX XXXX"
+                        />
+                    </div>
+
+                    <div class="form-section-title">Delivery Address</div>
+
+                    <div class="form-row">
+                        <div class="form-group flex-3">
+                            <label for="streetName">Street:</label>
+                            <input
+                                id="streetName"
+                                name="streetName"
+                                formControlName="streetName"
+                            />
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="houseNumber">Number:</label>
+                            <input
+                                id="houseNumber"
+                                name="houseNumber"
+                                formControlName="houseNumber"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="additionalInfo"
+                            >Additional Info (Optional):</label
+                        >
+                        <input
+                            id="additionalInfo"
+                            name="additionalInfo"
+                            formControlName="additionalInfo"
+                            placeholder="Apt, Suite, Floor, etc."
+                        />
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <label for="zipCode">ZIP Code:</label>
+                            <input
+                                id="zipCode"
+                                name="zipCode"
+                                formControlName="zipCode"
+                            />
+                        </div>
+                        <div class="form-group flex-2">
+                            <label for="cityName">City:</label>
+                            <input
+                                id="cityName"
+                                name="cityName"
+                                formControlName="cityName"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country">Country:</label>
+                        <input
+                            id="country"
+                            name="country"
+                            formControlName="country"
+                        />
+                    </div>
+                </fieldset>
+            }
+
+            <!-- Restaurant Owner-specific fields -->
+            @if (selectedRole === UserRole.RESTAURANT_OWNER) {
+                <fieldset class="role-fields">
+                    <legend>Restaurant Details</legend>
+
+                    <div class="form-group">
+                        <label for="restaurantName">Restaurant Name:</label>
+                        <input
+                            id="restaurantName"
+                            name="restaurantName"
+                            formControlName="restaurantName"
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="restaurantDescription"
+                            >Description (Optional):</label
+                        >
+                        <textarea
+                            id="restaurantDescription"
+                            name="restaurantDescription"
+                            formControlName="restaurantDescription"
+                            rows="3"
+                            placeholder="Tell customers about your restaurant..."
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cuisineType">Cuisine Type:</label>
+                        <select id="cuisineType" formControlName="cuisineType">
+                            @for (cuisine of cuisineTypes; track cuisine) {
+                                <option [value]="cuisine">
+                                    {{ cuisine }}
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <label for="contactEmail">Contact Email:</label>
+                            <input
+                                id="contactEmail"
+                                name="contactEmail"
+                                formControlName="contactEmail"
+                                type="email"
+                            />
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="contactPhone">Contact Phone:</label>
+                            <input
+                                id="contactPhone"
+                                name="contactPhone"
+                                formControlName="contactPhone"
+                                type="tel"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="form-section-title">Restaurant Address</div>
+
+                    <div class="form-row">
+                        <div class="form-group flex-3">
+                            <label for="streetName">Street:</label>
+                            <input
+                                id="streetName"
+                                name="streetName"
+                                formControlName="streetName"
+                            />
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="houseNumber">Number:</label>
+                            <input
+                                id="houseNumber"
+                                name="houseNumber"
+                                formControlName="houseNumber"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="additionalInfo"
+                            >Additional Info (Optional):</label
+                        >
+                        <input
+                            id="additionalInfo"
+                            name="additionalInfo"
+                            formControlName="additionalInfo"
+                            placeholder="Building name, entrance, etc."
+                        />
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <label for="zipCode">ZIP Code:</label>
+                            <input
+                                id="zipCode"
+                                name="zipCode"
+                                formControlName="zipCode"
+                            />
+                        </div>
+                        <div class="form-group flex-2">
+                            <label for="cityName">City:</label>
+                            <input
+                                id="cityName"
+                                name="cityName"
+                                formControlName="cityName"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country">Country:</label>
+                        <input
+                            id="country"
+                            name="country"
+                            formControlName="country"
+                        />
+                    </div>
+
+                    <div class="info-notice">
+                        <strong>Note:</strong> Your restaurant registration will
+                        be reviewed by our team. You'll be notified once
+                        approved.
+                    </div>
+                </fieldset>
+            }
+
             <button type="button" (click)="signup()" class="btn-primary">
                 Sign Up
             </button>

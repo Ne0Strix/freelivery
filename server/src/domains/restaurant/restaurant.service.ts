@@ -1,6 +1,9 @@
 import { Address } from '../location/address.service.js';
 import { User } from '../user/user.service.js';
-import { RestaurantRepository } from './restaurant.repository.js';
+import {
+    RestaurantRepository,
+    type RestaurantRow,
+} from './restaurant.repository.js';
 
 export interface Restaurant {
     restaurantId: number;
@@ -33,6 +36,18 @@ export interface PendingRestaurant {
     registeredAt: Date;
 }
 
+/** DTO for creating a new restaurant */
+export interface CreateRestaurant {
+    name: string;
+    description?: string;
+    cuisineType: CuisineType;
+    contactEmail: string;
+    contactPhone: string;
+    addressId: number;
+    ownerUserId: number;
+    deliveryZoneId: number;
+}
+
 export enum RestaurantStatus {
     NEW = 'NEW',
     ACTIVE = 'ACTIVE',
@@ -55,6 +70,40 @@ export enum CuisineType {
 
 export class RestaurantService {
     constructor(private repository: RestaurantRepository) {}
+
+    /** Create a new restaurant with NEW status (pending approval) */
+    async createRestaurant(dto: CreateRestaurant): Promise<number> {
+        const row: Partial<RestaurantRow> = {
+            name: dto.name,
+            description: dto.description || '',
+            cuisine_type: dto.cuisineType,
+            contact_email: dto.contactEmail,
+            contact_phone: dto.contactPhone,
+            address_id: dto.addressId,
+            owner_user_id: dto.ownerUserId,
+            delivery_zone_id: dto.deliveryZoneId,
+        };
+
+        const result = await this.repository.query<{ restaurant_id: number }>(
+            `INSERT INTO restaurant
+             (name, status, description, cuisine_type, contact_email, contact_phone,
+              address_id, owner_user_id, delivery_zone_id, service_fee_percent, min_order_amount,
+              created_at, updated_at)
+             VALUES ($1, 'NEW', $2, $3, $4, $5, $6, $7, $8, 0, 0, NOW(), NOW())
+             RETURNING restaurant_id`,
+            [
+                row.name,
+                row.description,
+                row.cuisine_type,
+                row.contact_email,
+                row.contact_phone,
+                row.address_id,
+                row.owner_user_id,
+                row.delivery_zone_id,
+            ]
+        );
+        return result.rows[0].restaurant_id;
+    }
 
     async getActiveRestaurantsWithStats(): Promise<ActiveRestaurant[]> {
         const rows = await this.repository.getActiveWithStats();

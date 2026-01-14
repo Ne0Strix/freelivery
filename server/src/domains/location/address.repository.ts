@@ -1,6 +1,6 @@
 import { Repository } from '../commons/abstract-repository.js';
 
-interface AddressRow {
+export interface AddressRow {
     address_id: number;
     label: string;
     street_name: string;
@@ -19,7 +19,7 @@ export class AddressRepository extends Repository<AddressRow> {
         super('address', 'address_id');
     }
 
-    create(item: AddressRow): Promise<AddressRow> {
+    create(item: Partial<AddressRow>): Promise<AddressRow> {
         const query = `
             INSERT INTO ${this.tableName}
             (label, street_name, house_number, additional_info, city_name, zip_code, country, delivery_zone_id, created_at, updated_at)
@@ -27,14 +27,14 @@ export class AddressRepository extends Repository<AddressRow> {
             RETURNING *;
         `;
         const values = [
-            item.label,
+            item.label || null,
             item.street_name,
             item.house_number,
-            item.additional_info,
+            item.additional_info || null,
             item.city_name,
             item.zip_code,
             item.country,
-            item.delivery_zone_id,
+            item.delivery_zone_id || null,
         ];
 
         return this.query(query, values).then(
