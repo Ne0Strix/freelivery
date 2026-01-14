@@ -1,6 +1,10 @@
 import bcrypt from 'bcrypt';
-import { ConflictError } from '../commons/errors.js';
-import { UserRepository, type UserRow } from './user.repository.js';
+import { ConflictError, ValidationError } from '../commons/errors.js';
+import {
+    UserRepository,
+    type UserRow,
+    type UserWithRoles,
+} from './user.repository.js';
 
 const SALT_ROUNDS = 10;
 
@@ -11,11 +15,29 @@ export class UserService {
         return this.userRepository.existsByEmailOrUsername(email, username);
     }
 
-    async findUserForLogin(
+    async findUserIncludingInactive(
         identifier: string,
         byEmail: boolean
     ): Promise<UserRow | null> {
-        return this.userRepository.findByEmailOrUsername(identifier, byEmail);
+        return this.userRepository.findByEmailOrUsernameIncludingInactive(
+            identifier,
+            byEmail
+        );
+    }
+
+    async getAllUsersWithRoles(): Promise<UserWithRoles[]> {
+        return this.userRepository.findAllWithRoles();
+    }
+
+    async setActiveStatus(
+        userId: number,
+        isActive: boolean,
+        adminUserId: number
+    ): Promise<void> {
+        if (!isActive && userId === adminUserId) {
+            throw new ValidationError('Cannot suspend your own account');
+        }
+        await this.userRepository.setActiveStatus(userId, isActive);
     }
 
     async verifyPassword(password: string, hash: string): Promise<boolean> {
@@ -67,7 +89,7 @@ export class UserService {
     }
 }
 
-export type { UserRow };
+export type { UserRow, UserWithRoles };
 export interface User {
     userId: number;
     username: string;

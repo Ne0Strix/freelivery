@@ -20,12 +20,24 @@ router.post('/login', async (req, res) => {
         const identifier = email ?? username;
         const byEmail = Boolean(email);
 
-        // Find user
-        const user = await userService.findUserForLogin(identifier, byEmail);
+        // Find user (including inactive to check suspension status)
+        const user = await userService.findUserIncludingInactive(
+            identifier,
+            byEmail
+        );
         if (!user) {
             return res
                 .status(401)
                 .json({ status: 'error', error: 'Invalid credentials' });
+        }
+
+        // Check if user is suspended
+        if (!user.is_active) {
+            return res.status(403).json({
+                status: 'error',
+                error: 'Account suspended',
+                code: 'ACCOUNT_SUSPENDED',
+            });
         }
 
         // Verify password

@@ -44,6 +44,13 @@
             >
                 Pending Requests ({{ pendingRestaurants().length }})
             </button>
+            <button
+                (click)="setActiveTab('users')"
+                [class.tab-active]="activeTab() === 'users'"
+                class="tab-btn"
+            >
+                Users ({{ users().length }})
+            </button>
         </div>
 
         <!-- Tab Content -->
@@ -144,6 +151,108 @@
                             <tr>
                                 <td colspan="6" class="empty-message">
                                     No pending requests
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        @if (activeTab() === 'users') {
+            <div class="filter-container">
+                <input
+                    type="text"
+                    class="filter-input"
+                    placeholder="Filter by username or email..."
+                    [ngModel]="userFilter()"
+                    (ngModelChange)="onUserFilterChange($event)"
+                />
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <colgroup>
+                        <col style="width: 15%" />
+                        <col style="width: 25%" />
+                        <col style="width: 20%" />
+                        <col style="width: 10%" />
+                        <col style="width: 15%" />
+                        <col style="width: 15%" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Roles</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (user of filteredUsers(); track user.user_id) {
+                            <tr [class.suspended-row]="!user.is_active">
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    <mat-chip-set>
+                                        @for (role of user.roles; track role) {
+                                            <mat-chip
+                                                [class.role-admin]="
+                                                    role === 'admin'
+                                                "
+                                                [class.role-owner]="
+                                                    role === 'restaurant_owner'
+                                                "
+                                                [class.role-customer]="
+                                                    role === 'customer'
+                                                "
+                                            >
+                                                {{ role | roleLabel }}
+                                            </mat-chip>
+                                        }
+                                    </mat-chip-set>
+                                </td>
+                                <td>
+                                    <span
+                                        class="status-badge"
+                                        [class.status-active]="user.is_active"
+                                        [class.status-suspended]="
+                                            !user.is_active
+                                        "
+                                    >
+                                        {{
+                                            user.is_active
+                                                ? 'Active'
+                                                : 'Suspended'
+                                        }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {{ user.created_at | date: 'short' }}
+                                </td>
+                                <td>
+                                    <button
+                                        class="btn"
+                                        [class.btn-suspend]="user.is_active"
+                                        [class.btn-unsuspend]="!user.is_active"
+                                        [disabled]="
+                                            user.user_id === currentUserId()
+                                        "
+                                        (click)="toggleUserStatus(user)"
+                                    >
+                                        {{
+                                            user.is_active
+                                                ? 'Suspend'
+                                                : 'Unsuspend'
+                                        }}
+                                    </button>
+                                </td>
+                            </tr>
+                        } @empty {
+                            <tr>
+                                <td colspan="6" class="empty-message">
+                                    No users found
                                 </td>
                             </tr>
                         }

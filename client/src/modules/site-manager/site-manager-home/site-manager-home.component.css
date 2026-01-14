@@ -148,3 +148,90 @@
 .btn-reject:hover {
     background-color: #dc2626;
 }
+
+/* User Management Styles */
+.filter-container {
+    margin-bottom: 1rem;
+}
+
+.filter-input {
+    width: 100%;
+    max-width: 24rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+.suspended-row {
+    background-color: #fef2f2;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-active {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status-suspended {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.btn-suspend {
+    background-color: #f59e0b;
+    color: white;
+}
+
+.btn-suspend:hover {
+    background-color: #d97706;
+}
+
+.btn-unsuspend {
+    background-color: #10b981;
+    color: white;
+}
+
+.btn-unsuspend:hover {
+    background-color: #059669;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Role Chips */
+mat-chip-set {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.role-admin {
+    --mdc-chip-elevated-container-color: #fef3c7;
+    --mdc-chip-label-text-color: #92400e;
+}
+
+.role-owner {
+    --mdc-chip-elevated-container-color: #dbeafe;
+    --mdc-chip-label-text-color: #1e40af;
+}
+
+.role-customer {
+    --mdc-chip-elevated-container-color: #e0e7ff;
+    --mdc-chip-label-text-color: #3730a3;
+}

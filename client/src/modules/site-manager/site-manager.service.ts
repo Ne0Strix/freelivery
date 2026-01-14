@@ -2,7 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ApiResponse } from '../../commons/model/api.model';
-import { DashboardStatistics, PendingRestaurant } from './site-manager.models';
+import {
+    DashboardStatistics,
+    PendingRestaurant,
+    UserListItem,
+} from './site-manager.models';
 
 @Injectable({
     providedIn: 'root',
@@ -18,6 +22,27 @@ export class SiteManagerService {
             )
         );
         return response.data;
+    }
+
+    async getUsers(): Promise<UserListItem[]> {
+        const response = await firstValueFrom(
+            this.http.get<ApiResponse<UserListItem[]>>(
+                `${this.baseUrl}/site-manager/users`
+            )
+        );
+        return response.data;
+    }
+
+    async updateUser(
+        userId: number,
+        updates: { isActive?: boolean }
+    ): Promise<void> {
+        await firstValueFrom(
+            this.http.patch<ApiResponse<void>>(
+                `${this.baseUrl}/site-manager/users/${userId}`,
+                updates
+            )
+        );
     }
 
     async getPendingRestaurants(): Promise<PendingRestaurant[]> {

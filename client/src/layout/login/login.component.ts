@@ -38,8 +38,8 @@ export class LoginComponent {
         if (val.email && val.password) {
             this.authenticationService
                 .login(val.email, val.password)
-                .subscribe((ok) => {
-                    if (ok) {
+                .subscribe((result) => {
+                    if (result.success) {
                         console.log('User is logged in');
                         // Navigate based on user's primary role
                         const roles = this.authenticationService.roles();
@@ -57,6 +57,12 @@ export class LoginComponent {
                                 { duration: 5000 }
                             );
                         }
+                    } else if (result.code === 'ACCOUNT_SUSPENDED') {
+                        this.snackbar.open(
+                            'Your account has been suspended. Please contact support.',
+                            'Close',
+                            { duration: 8000 }
+                        );
                     } else {
                         this.snackbar.open(
                             'Invalid email or password',
