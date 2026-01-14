@@ -7,12 +7,13 @@ import {
 } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
-import { ROLE_OPTIONS, UserRole } from '../../commons/model/role.model';
+import { UserRole } from '../../commons/model/role.model';
+import { RoleLabelPipe } from '../../commons/pipes/role-label.pipe';
 import { AuthenticationService } from '../../commons/services/authentication.service';
 
 @Component({
     selector: 'app-signup',
-    imports: [ReactiveFormsModule, RouterLink],
+    imports: [ReactiveFormsModule, RouterLink, RoleLabelPipe],
     templateUrl: './signup.component.html',
     styleUrl: './signup.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,7 +21,7 @@ import { AuthenticationService } from '../../commons/services/authentication.ser
 export class SignupComponent {
     form: FormGroup;
 
-    readonly roles = ROLE_OPTIONS;
+    readonly availableRoles = Object.values(UserRole);
 
     constructor(
         private fb: FormBuilder,
