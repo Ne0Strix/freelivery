@@ -38,6 +38,7 @@ services:
         volumes:
             - ./server:/usr/src/app
             - server_node_modules:/usr/src/app/node_modules
+            - uploads_data:/usr/src/app/uploads
         depends_on:
             db:
                 condition: service_healthy
@@ -75,3 +76,4 @@ volumes:
     freelivery:
     server_node_modules:
     client_node_modules:
+    uploads_data:

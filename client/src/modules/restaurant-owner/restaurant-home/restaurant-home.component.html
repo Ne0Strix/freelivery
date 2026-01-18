@@ -1,1 +1,66 @@
-<p>restaurant-home.component works!</p>
+<div class="restaurant-dashboard">
+    <header class="dashboard-header">
+        <h1>Restaurant Dashboard</h1>
+        <p>Manage your restaurant from here.</p>
+    </header>
+
+    <div class="dashboard-cards">
+        <mat-card>
+            <mat-card-header>
+                <div class="card-icon">
+                    <i class="fa-solid fa-utensils"></i>
+                </div>
+                <mat-card-title>Menu Management</mat-card-title>
+                <mat-card-subtitle
+                    >Manage categories and dishes</mat-card-subtitle
+                >
+            </mat-card-header>
+            <mat-card-content>
+                <p>
+                    Create and organize your menu categories, add dishes with
+                    photos and prices, and control availability.
+                </p>
+            </mat-card-content>
+            <mat-card-actions>
+                <a mat-flat-button color="primary" routerLink="menu">
+                    <i class="fa-solid fa-arrow-right"></i>
+                    Manage Menu
+                </a>
+            </mat-card-actions>
+        </mat-card>
+
+        <mat-card>
+            <mat-card-header>
+                <div class="card-icon">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                </div>
+                <mat-card-title>Orders</mat-card-title>
+                <mat-card-subtitle>Live order handling</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <p>
+                    View and manage incoming orders, update order status, and
+                    track deliveries.
+                </p>
+            </mat-card-content>
+        </mat-card>
+
+        <mat-card>
+            <mat-card-header>
+                <div class="card-icon">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <mat-card-title>Analytics</mat-card-title>
+                <mat-card-subtitle
+                    >Analytical data about your restaurant</mat-card-subtitle
+                >
+            </mat-card-header>
+            <mat-card-content>
+                <p>
+                    Track sales, popular dishes, and customer trends for your
+                    restaurant.
+                </p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

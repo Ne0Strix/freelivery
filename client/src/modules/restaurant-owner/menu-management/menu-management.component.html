@@ -1,0 +1,125 @@
+<div class="menu-management">
+    <header class="page-header">
+        <h1>Menu Management</h1>
+        <div class="header-actions">
+            <button mat-stroked-button (click)="openCategoryDialog()">
+                <i class="fa-solid fa-folder-plus"></i>
+                New Category
+            </button>
+            <button mat-flat-button color="primary" (click)="openDishDialog()">
+                <i class="fa-solid fa-plus"></i>
+                New Dish
+            </button>
+        </div>
+    </header>
+
+    @if (loading()) {
+        <div class="loading">
+            <p>Loading menu...</p>
+        </div>
+    } @else if (categories().length === 0) {
+        <div class="empty-state">
+            <i class="fa-solid fa-utensils empty-icon"></i>
+            <h2>No Categories Yet</h2>
+            <p>Start by creating your first menu category.</p>
+            <button
+                mat-flat-button
+                color="primary"
+                (click)="openCategoryDialog()"
+            >
+                <i class="fa-solid fa-plus"></i>
+                Create Category
+            </button>
+        </div>
+    } @else {
+        <mat-accordion multi>
+            @for (category of categories(); track category.categoryId) {
+                <mat-expansion-panel expanded>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            {{ category.name }}
+                            <span class="dish-count">
+                                ({{
+                                    dishesByCategory().get(category.categoryId)
+                                        ?.length || 0
+                                }}
+                                dishes)
+                            </span>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    @if (category.description) {
+                        <p class="category-description">
+                            {{ category.description }}
+                        </p>
+                    }
+
+                    <div class="category-actions">
+                        <button
+                            mat-stroked-button
+                            (click)="openCategoryDialog(category)"
+                        >
+                            <i class="fa-solid fa-pen"></i>
+                            Edit Category
+                        </button>
+                        <button
+                            mat-stroked-button
+                            color="warn"
+                            (click)="deleteCategory(category)"
+                        >
+                            <i class="fa-solid fa-trash"></i>
+                            Delete Category
+                        </button>
+                        <button
+                            mat-flat-button
+                            color="primary"
+                            (click)="openDishDialog(null, category.categoryId)"
+                        >
+                            <i class="fa-solid fa-plus"></i>
+                            Add Dish
+                        </button>
+                    </div>
+
+                    <div class="dishes-grid">
+                        @for (
+                            dish of dishesByCategory().get(category.categoryId);
+                            track dish.dishId
+                        ) {
+                            <div class="dish-item">
+                                <app-dish-card [dish]="dish" />
+                                <div class="dish-actions">
+                                    <mat-slide-toggle
+                                        [checked]="dish.isAvailable"
+                                        (change)="toggleAvailability(dish)"
+                                        labelPosition="before"
+                                    >
+                                        Available
+                                    </mat-slide-toggle>
+                                    <button
+                                        mat-icon-button
+                                        (click)="openDishDialog(dish)"
+                                        title="Edit dish"
+                                    >
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button
+                                        mat-icon-button
+                                        color="warn"
+                                        (click)="deleteDish(dish)"
+                                        title="Delete dish"
+                                    >
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        } @empty {
+                            <p class="no-dishes">
+                                No dishes in this category yet.
+                            </p>
+                        }
+                    </div>
+                </mat-expansion-panel>
+            }
+        </mat-accordion>
+    }
+</div>

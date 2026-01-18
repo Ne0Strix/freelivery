@@ -3,5 +3,10 @@
         "target": "http://node-backend-dev:3000",
         "secure": false,
         "changeOrigin": true
+    },
+    "/uploads": {
+        "target": "http://node-backend-dev:3000",
+        "secure": false,
+        "changeOrigin": true
     }
 }
