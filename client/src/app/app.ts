@@ -1,6 +1,6 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from '../layout/navbar/navbar.component';
 
 @Component({

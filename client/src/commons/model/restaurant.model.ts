@@ -1,3 +1,5 @@
+import { CreateAddress } from '../services/address.service';
+
 export enum CuisineType {
     ITALIAN = 'ITALIAN',
     CHINESE = 'CHINESE',
@@ -29,19 +31,6 @@ export interface CreateRestaurant {
     contactEmail: string;
     contactPhone: string;
     address: CreateAddress;
-}
-
-/** DTO for creating a new address */
-export interface CreateAddress {
-    label?: string;
-    streetName: string;
-    houseNumber: string;
-    additionalInfo?: string;
-    cityName: string;
-    zipCode: string;
-    country: string;
-    gridX?: number;
-    gridY?: number;
 }
 
 /** DTO for customer signup data */

@@ -15,12 +15,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { OwnerRestaurant } from '../../commons/model/restaurant.model';
 import { UserRole } from '../../commons/model/role.model';
 import { UserProfile } from '../../commons/model/user.model';
+import { Address, CreateAddress } from '../../commons/services/address.service';
 import { AuthenticationService } from '../../commons/services/authentication.service';
+import { AddressFormComponent } from '../../layout/address-form/address-form.component';
 import { ProfileService } from './profile.service';
 
 @Component({
     selector: 'app-profile',
-    imports: [ReactiveFormsModule],
+    imports: [ReactiveFormsModule, AddressFormComponent],
     templateUrl: './profile.component.html',
     styleUrl: './profile.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,11 +37,18 @@ export class ProfileComponent implements OnInit {
     restaurant = signal<OwnerRestaurant | null>(null);
     loading = signal(true);
 
+    // Address state
+    addresses = signal<Address[]>([]);
+    restaurantAddress = signal<Address | null>(null);
+    editingAddressId = signal<number | null>(null);
+    addingNewAddress = signal(false);
+
     profileForm!: FormGroup;
     passwordForm!: FormGroup;
     restaurantForm!: FormGroup;
 
     isRestaurantOwner = this.authService.hasRole(UserRole.RESTAURANT_OWNER);
+    isCustomer = this.authService.hasRole(UserRole.CUSTOMER);
 
     ngOnInit() {
         this.initForms();
@@ -104,6 +113,20 @@ export class ProfileComponent implements OnInit {
                         maxDeliveryDistance: restaurant.maxDeliveryDistance,
                     });
                 }
+
+                // Load restaurant address
+                const restaurantAddress =
+                    await this.profileService.addresses.getRestaurantAddress();
+                this.restaurantAddress.set(restaurantAddress);
+            }
+
+            // Load customer addresses
+            if (this.isCustomer) {
+                const addresses =
+                    await this.profileService.addresses.getUserAddresses(
+                        profile.userId
+                    );
+                this.addresses.set(addresses);
             }
         } catch {
             // Error handled by interceptor
@@ -177,6 +200,121 @@ export class ProfileComponent implements OnInit {
             this.snackbar.open('Restaurant updated successfully', 'Close', {
                 duration: 3000,
             });
+        } catch {
+            // Error handled by interceptor
+        }
+    }
+
+    // ========== Address Management (Customer) ==========
+
+    startAddingAddress() {
+        this.addingNewAddress.set(true);
+        this.editingAddressId.set(null);
+    }
+
+    startEditingAddress(addressId: number) {
+        this.editingAddressId.set(addressId);
+        this.addingNewAddress.set(false);
+    }
+
+    cancelAddressForm() {
+        this.addingNewAddress.set(false);
+        this.editingAddressId.set(null);
+    }
+
+    async saveNewAddress(data: CreateAddress) {
+        try {
+            await this.profileService.addresses.createAddress(data);
+            this.snackbar.open('Address added successfully', 'Close', {
+                duration: 3000,
+            });
+            this.addingNewAddress.set(false);
+            // Reload addresses
+            const profile = this.profile();
+            if (profile) {
+                const addresses =
+                    await this.profileService.addresses.getUserAddresses(
+                        profile.userId
+                    );
+                this.addresses.set(addresses);
+            }
+        } catch {
+            // Error handled by interceptor
+        }
+    }
+
+    async saveEditedAddress(addressId: number, data: CreateAddress) {
+        try {
+            await this.profileService.addresses.updateAddress(addressId, data);
+            this.snackbar.open('Address updated successfully', 'Close', {
+                duration: 3000,
+            });
+            this.editingAddressId.set(null);
+            // Reload addresses
+            const profile = this.profile();
+            if (profile) {
+                const addresses =
+                    await this.profileService.addresses.getUserAddresses(
+                        profile.userId
+                    );
+                this.addresses.set(addresses);
+            }
+        } catch {
+            // Error handled by interceptor
+        }
+    }
+
+    async deleteAddress(addressId: number) {
+        if (!confirm('Are you sure you want to delete this address?')) {
+            return;
+        }
+
+        try {
+            await this.profileService.addresses.deleteAddress(addressId);
+            this.snackbar.open('Address deleted successfully', 'Close', {
+                duration: 3000,
+            });
+            // Reload addresses
+            const profile = this.profile();
+            if (profile) {
+                const addresses =
+                    await this.profileService.addresses.getUserAddresses(
+                        profile.userId
+                    );
+                this.addresses.set(addresses);
+            }
+        } catch {
+            // Error handled by interceptor
+        }
+    }
+
+    getAddressById(addressId: number): Address | null {
+        return this.addresses().find((a) => a.addressId === addressId) ?? null;
+    }
+
+    // ========== Restaurant Address (Owner) ==========
+
+    startEditingRestaurantAddress() {
+        this.editingAddressId.set(-1); // Use -1 to indicate restaurant address editing
+    }
+
+    cancelRestaurantAddressForm() {
+        this.editingAddressId.set(null);
+    }
+
+    async saveRestaurantAddress(data: CreateAddress) {
+        try {
+            await this.profileService.addresses.updateRestaurantAddress(data);
+            this.snackbar.open(
+                'Restaurant address updated successfully',
+                'Close',
+                { duration: 3000 }
+            );
+            this.editingAddressId.set(null);
+            // Reload restaurant address
+            const restaurantAddress =
+                await this.profileService.addresses.getRestaurantAddress();
+            this.restaurantAddress.set(restaurantAddress);
         } catch {
             // Error handled by interceptor
         }
