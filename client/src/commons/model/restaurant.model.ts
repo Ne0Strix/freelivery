@@ -64,3 +64,24 @@ export interface UpdateRestaurant {
 export interface RestaurantOwnerSignup {
     restaurant: CreateRestaurant;
 }
+
+/** DTOs related to the menu */
+
+export interface Category {
+    categoryId: number;
+    restaurantId: number;
+    name: string;
+    description: string | null;
+}
+
+export interface Dish {
+    dishId: number;
+    restaurantId: number;
+    categoryId: number;
+    categoryName: string;
+    name: string;
+    description: string | null;
+    price: number;
+    imageUrl: string | null;
+    isAvailable: boolean;
+}

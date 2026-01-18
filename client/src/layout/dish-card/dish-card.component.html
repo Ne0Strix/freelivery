@@ -1,0 +1,15 @@
+<div class="dish-card" [class.unavailable]="!dish.isAvailable">
+    <div class="dish-image">
+        <img [src]="dish.imageUrl || placeholderImage" [alt]="dish.name" />
+        @if (!dish.isAvailable) {
+            <div class="unavailable-overlay">Unavailable</div>
+        }
+    </div>
+    <div class="dish-info">
+        <h4 class="dish-name">{{ dish.name }}</h4>
+        @if (dish.description) {
+            <p class="dish-description">{{ dish.description }}</p>
+        }
+        <p class="dish-price">{{ dish.price | currency: 'EUR' }}</p>
+    </div>
+</div>

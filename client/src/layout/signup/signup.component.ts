@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
     FormBuilder,
     FormGroup,
@@ -25,18 +25,18 @@ import { AuthenticationService } from '../../commons/services/authentication.ser
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignupComponent {
+    private fb = inject(FormBuilder);
+    private authenticationService = inject(AuthenticationService);
+    private router = inject(Router);
+    private snackbar = inject(MatSnackBar);
+
     form: FormGroup;
 
     readonly availableRoles = [UserRole.CUSTOMER, UserRole.RESTAURANT_OWNER];
     readonly cuisineTypes = Object.values(CuisineType);
     readonly UserRole = UserRole;
 
-    constructor(
-        private fb: FormBuilder,
-        private authenticationService: AuthenticationService,
-        private router: Router,
-        private snackbar: MatSnackBar
-    ) {
+    constructor() {
         this.form = this.fb.group({
             // Basic user fields
             username: ['', [Validators.required, Validators.minLength(3)]],
