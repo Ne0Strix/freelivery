@@ -37,6 +37,8 @@ CREATE TABLE IF NOT EXISTS address (
     city_name VARCHAR(255) NOT NULL,
     zip_code VARCHAR(10) NOT NULL,
     country VARCHAR(255) NOT NULL,
+    grid_x INT CHECK (grid_x BETWEEN -10 AND 10),
+    grid_y INT CHECK (grid_y BETWEEN -10 AND 10),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -123,6 +125,7 @@ CREATE TABLE IF NOT EXISTS restaurant (
     delivery_zone_id INT NOT NULL,
     service_fee_percent DECIMAL(5,2) DEFAULT 0,
     min_order_amount DECIMAL(10,2) DEFAULT 0,
+    max_delivery_distance INT DEFAULT 5 CHECK (max_delivery_distance > 0),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (address_id) REFERENCES address(address_id) ON DELETE RESTRICT,

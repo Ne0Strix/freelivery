@@ -40,6 +40,8 @@ export interface CreateAddress {
     cityName: string;
     zipCode: string;
     country: string;
+    gridX?: number;
+    gridY?: number;
 }
 
 /** DTO for customer signup data */
@@ -57,6 +59,7 @@ export interface OwnerRestaurant {
     contactEmail: string;
     contactPhone: string;
     status: string;
+    maxDeliveryDistance: number;
 }
 
 /** DTO for updating restaurant details */
@@ -65,6 +68,7 @@ export interface UpdateRestaurant {
     description?: string;
     contactEmail?: string;
     contactPhone?: string;
+    maxDeliveryDistance?: number;
 }
 
 /** DTO for restaurant owner signup data */

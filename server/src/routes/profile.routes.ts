@@ -106,11 +106,26 @@ router.put(
             });
         }
 
+        // Validate maxDeliveryDistance if provided (1-20, max Manhattan distance on 21x21 grid)
+        const maxDeliveryDistance = req.body.maxDeliveryDistance;
+        if (maxDeliveryDistance !== undefined) {
+            const num = Number(maxDeliveryDistance);
+            if (!Number.isInteger(num) || num < 1 || num > 20) {
+                return res.status(400).json({
+                    status: 'error',
+                    error: 'maxDeliveryDistance must be an integer between 1 and 20',
+                });
+            }
+        }
+
         const data: UpdateRestaurantData = {
             name: req.body.name,
             description: req.body.description,
             contactEmail: req.body.contactEmail,
             contactPhone: req.body.contactPhone,
+            maxDeliveryDistance: maxDeliveryDistance
+                ? Number(maxDeliveryDistance)
+                : undefined,
         };
 
         await restaurantService.updateRestaurantDetails(

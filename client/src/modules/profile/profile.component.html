@@ -154,6 +154,23 @@
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label for="maxDeliveryDistance"
+                            >Max Delivery Distance (grid steps) *</label
+                        >
+                        <input
+                            id="maxDeliveryDistance"
+                            type="number"
+                            formControlName="maxDeliveryDistance"
+                            min="1"
+                            max="20"
+                        />
+                        <p class="form-hint">
+                            Maximum Manhattan distance (1-20) you can deliver
+                            to. Each step = 5 min delivery time.
+                        </p>
+                    </div>
+
                     <button type="submit" class="btn-primary">
                         Save Restaurant
                     </button>

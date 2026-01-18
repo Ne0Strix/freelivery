@@ -66,6 +66,12 @@
     resize: vertical;
 }
 
+.form-hint {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+}
+
 .btn-primary {
     background: #007bff;
     color: white;

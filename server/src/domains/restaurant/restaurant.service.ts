@@ -1,9 +1,9 @@
-import { Address } from '../location/address.service.js';
-import { User } from '../user/user.service.js';
 import {
-    RestaurantRepository,
-    type RestaurantRow,
-} from './restaurant.repository.js';
+    calculateDeliveryMinutes,
+    calculateManhattanDistance,
+    GridCoordinates,
+} from '../location/address.service.js';
+import { RestaurantRepository } from './restaurant.repository.js';
 
 export interface Restaurant {
     restaurantId: number;
@@ -12,8 +12,6 @@ export interface Restaurant {
     cuisineType: CuisineType;
     contactEmail: string;
     contactPhone: string;
-    address: Address;
-    user: User;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -25,6 +23,17 @@ export interface ActiveRestaurant {
     address: string;
     orderCount: number;
     totalRevenue: number;
+}
+
+/** Restaurant with delivery info for customer view */
+export interface RestaurantWithDelivery {
+    restaurantId: number;
+    name: string;
+    cuisineType: string;
+    address: string;
+    maxDeliveryDistance: number;
+    estimatedDeliveryMinutes: number | null;
+    canDeliver: boolean;
 }
 
 export interface PendingRestaurant {
@@ -73,7 +82,7 @@ export class RestaurantService {
 
     /** Create a new restaurant with NEW status (pending approval) */
     async createRestaurant(dto: CreateRestaurant): Promise<number> {
-        const row: Partial<RestaurantRow> = {
+        const row = await this.repository.create({
             name: dto.name,
             description: dto.description || '',
             cuisine_type: dto.cuisineType,
@@ -82,27 +91,8 @@ export class RestaurantService {
             address_id: dto.addressId,
             owner_user_id: dto.ownerUserId,
             delivery_zone_id: dto.deliveryZoneId,
-        };
-
-        const result = await this.repository.query<{ restaurant_id: number }>(
-            `INSERT INTO restaurant
-             (name, status, description, cuisine_type, contact_email, contact_phone,
-              address_id, owner_user_id, delivery_zone_id, service_fee_percent, min_order_amount,
-              created_at, updated_at)
-             VALUES ($1, 'NEW', $2, $3, $4, $5, $6, $7, $8, 0, 0, NOW(), NOW())
-             RETURNING restaurant_id`,
-            [
-                row.name,
-                row.description,
-                row.cuisine_type,
-                row.contact_email,
-                row.contact_phone,
-                row.address_id,
-                row.owner_user_id,
-                row.delivery_zone_id,
-            ]
-        );
-        return result.rows[0].restaurant_id;
+        });
+        return row.restaurant_id;
     }
 
     async getActiveRestaurantsWithStats(): Promise<ActiveRestaurant[]> {
@@ -116,6 +106,49 @@ export class RestaurantService {
             orderCount: Number(row.order_count),
             totalRevenue: Number(row.total_revenue),
         }));
+    }
+
+    /**
+     * Get active restaurants with delivery time calculation for a customer location.
+     * If customerLocation is provided, calculates delivery time and filters by delivery range.
+     * If not provided, returns all active restaurants without delivery filtering.
+     */
+    async getActiveRestaurantsForCustomer(
+        customerLocation?: GridCoordinates
+    ): Promise<RestaurantWithDelivery[]> {
+        const rows = await this.repository.getActiveWithStats();
+
+        return rows.map((row) => {
+            const restaurantLocation: GridCoordinates | null =
+                row.grid_x !== null && row.grid_y !== null
+                    ? { gridX: row.grid_x, gridY: row.grid_y }
+                    : null;
+
+            let estimatedDeliveryMinutes: number | null = null;
+            let canDeliver = true;
+
+            if (customerLocation && restaurantLocation) {
+                const distance = calculateManhattanDistance(
+                    restaurantLocation,
+                    customerLocation
+                );
+                estimatedDeliveryMinutes = calculateDeliveryMinutes(
+                    restaurantLocation,
+                    customerLocation
+                );
+                canDeliver = distance <= row.max_delivery_distance;
+            }
+
+            return {
+                restaurantId: row.restaurant_id,
+                name: row.name,
+                cuisineType: row.cuisine_type,
+                address: `${row.street_name} ${row.house_number}, ${row.zip_code} ${row.city_name}`,
+                maxDeliveryDistance: row.max_delivery_distance,
+                estimatedDeliveryMinutes,
+                canDeliver,
+            };
+        });
     }
 
     async getPendingRestaurants(): Promise<PendingRestaurant[]> {
@@ -157,6 +190,7 @@ export class RestaurantService {
             contactEmail: row.contact_email,
             contactPhone: row.contact_phone,
             status: row.status,
+            maxDeliveryDistance: row.max_delivery_distance,
         };
     }
 
@@ -179,6 +213,7 @@ export class RestaurantService {
             description: data.description,
             contactEmail: data.contactEmail,
             contactPhone: data.contactPhone,
+            maxDeliveryDistance: data.maxDeliveryDistance,
         });
     }
 }
@@ -192,6 +227,7 @@ export interface OwnerRestaurant {
     contactEmail: string;
     contactPhone: string;
     status: RestaurantStatus;
+    maxDeliveryDistance: number;
 }
 
 /** DTO for updating restaurant details */
@@ -200,4 +236,5 @@ export interface UpdateRestaurantData {
     description?: string;
     contactEmail?: string;
     contactPhone?: string;
+    maxDeliveryDistance?: number;
 }
