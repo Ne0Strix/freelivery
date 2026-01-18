@@ -11,10 +11,12 @@ import {
     UpdateProfile,
     UserProfile,
 } from '../../commons/model/user.model';
+import { AddressService } from '../../commons/services/address.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
     private http = inject(HttpClient);
+    private addressService = inject(AddressService);
     private baseUrl = 'http://localhost:3000/api/profile';
 
     async getProfile(): Promise<UserProfile> {
@@ -59,5 +61,11 @@ export class ProfileService {
                 data
             )
         );
+    }
+
+    // ========== Address Methods (delegated to AddressService) ==========
+
+    get addresses() {
+        return this.addressService;
     }
 }

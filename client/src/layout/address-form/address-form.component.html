@@ -1,0 +1,88 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="address-form">
+    @if (showLabel) {
+        <div class="form-group">
+            <label for="label">Label</label>
+            <input
+                id="label"
+                type="text"
+                formControlName="label"
+                placeholder="e.g., Home, Work, etc."
+            />
+        </div>
+    }
+
+    <div class="form-row">
+        <div class="form-group flex-3">
+            <label for="streetName">Street *</label>
+            <input id="streetName" type="text" formControlName="streetName" />
+        </div>
+        <div class="form-group flex-1">
+            <label for="houseNumber">Number *</label>
+            <input id="houseNumber" type="text" formControlName="houseNumber" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="additionalInfo">Additional Info</label>
+        <input
+            id="additionalInfo"
+            type="text"
+            formControlName="additionalInfo"
+            placeholder="Apt, Suite, Floor, etc."
+        />
+    </div>
+
+    <div class="form-row">
+        <div class="form-group flex-1">
+            <label for="zipCode">ZIP Code *</label>
+            <input id="zipCode" type="text" formControlName="zipCode" />
+        </div>
+        <div class="form-group flex-2">
+            <label for="cityName">City *</label>
+            <input id="cityName" type="text" formControlName="cityName" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="country">Country *</label>
+        <input id="country" type="text" formControlName="country" />
+    </div>
+
+    <div class="form-section-title">Grid Location</div>
+    <p class="form-hint">
+        Your location on the delivery grid ({{ GRID_MIN }} to {{ GRID_MAX }}).
+        Used for delivery time calculation.
+    </p>
+
+    <div class="form-row">
+        <div class="form-group flex-1">
+            <label for="gridX">Grid X *</label>
+            <input
+                id="gridX"
+                type="number"
+                formControlName="gridX"
+                [min]="GRID_MIN"
+                [max]="GRID_MAX"
+            />
+        </div>
+        <div class="form-group flex-1">
+            <label for="gridY">Grid Y *</label>
+            <input
+                id="gridY"
+                type="number"
+                formControlName="gridY"
+                [min]="GRID_MIN"
+                [max]="GRID_MAX"
+            />
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="onCancel()">
+            Cancel
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="form.invalid">
+            {{ isEdit ? 'Save Changes' : 'Add Address' }}
+        </button>
+    </div>
+</form>

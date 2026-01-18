@@ -71,6 +71,99 @@
             </form>
         </section>
 
+        <!-- Customer Addresses -->
+        @if (isCustomer) {
+            <section class="profile-section">
+                <div class="section-header">
+                    <h2>Delivery Addresses</h2>
+                    @if (!addingNewAddress() && editingAddressId() === null) {
+                        <button
+                            type="button"
+                            class="btn-secondary"
+                            (click)="startAddingAddress()"
+                        >
+                            + Add Address
+                        </button>
+                    }
+                </div>
+
+                @if (addingNewAddress()) {
+                    <div class="address-form-container">
+                        <h3>Add New Address</h3>
+                        <app-address-form
+                            [address]="null"
+                            [showLabel]="true"
+                            (save)="saveNewAddress($event)"
+                            (cancel)="cancelAddressForm()"
+                        />
+                    </div>
+                }
+
+                @if (addresses().length === 0 && !addingNewAddress()) {
+                    <p class="no-addresses">
+                        No addresses yet. Add your first delivery address.
+                    </p>
+                }
+
+                @for (address of addresses(); track address.addressId) {
+                    <div class="address-card">
+                        @if (editingAddressId() === address.addressId) {
+                            <app-address-form
+                                [address]="address"
+                                [showLabel]="true"
+                                (save)="
+                                    saveEditedAddress(address.addressId, $event)
+                                "
+                                (cancel)="cancelAddressForm()"
+                            />
+                        } @else {
+                            <div class="address-content">
+                                @if (address.label) {
+                                    <strong class="address-label">{{
+                                        address.label
+                                    }}</strong>
+                                }
+                                <p class="address-line">
+                                    {{ address.streetName }}
+                                    {{ address.houseNumber }}
+                                    @if (address.additionalInfo) {
+                                        , {{ address.additionalInfo }}
+                                    }
+                                </p>
+                                <p class="address-line">
+                                    {{ address.zipCode }}
+                                    {{ address.cityName }},
+                                    {{ address.country }}
+                                </p>
+                                <p class="address-grid">
+                                    Grid: ({{ address.gridX }},
+                                    {{ address.gridY }})
+                                </p>
+                            </div>
+                            <div class="address-actions">
+                                <button
+                                    type="button"
+                                    class="btn-text"
+                                    (click)="
+                                        startEditingAddress(address.addressId)
+                                    "
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    type="button"
+                                    class="btn-text btn-danger"
+                                    (click)="deleteAddress(address.addressId)"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        }
+                    </div>
+                }
+            </section>
+        }
+
         <!-- Change Password -->
         <section class="profile-section">
             <h2>Change Password</h2>
@@ -175,6 +268,49 @@
                         Save Restaurant
                     </button>
                 </form>
+            </section>
+
+            <!-- Restaurant Address -->
+            <section class="profile-section">
+                <div class="section-header">
+                    <h2>Restaurant Address</h2>
+                    @if (editingAddressId() !== -1 && restaurantAddress()) {
+                        <button
+                            type="button"
+                            class="btn-secondary"
+                            (click)="startEditingRestaurantAddress()"
+                        >
+                            Edit Address
+                        </button>
+                    }
+                </div>
+
+                @if (editingAddressId() === -1) {
+                    <app-address-form
+                        [address]="restaurantAddress()"
+                        [showLabel]="false"
+                        (save)="saveRestaurantAddress($event)"
+                        (cancel)="cancelRestaurantAddressForm()"
+                    />
+                } @else if (restaurantAddress(); as address) {
+                    <div class="address-content">
+                        <p class="address-line">
+                            {{ address.streetName }} {{ address.houseNumber }}
+                            @if (address.additionalInfo) {
+                                , {{ address.additionalInfo }}
+                            }
+                        </p>
+                        <p class="address-line">
+                            {{ address.zipCode }} {{ address.cityName }},
+                            {{ address.country }}
+                        </p>
+                        <p class="address-grid">
+                            Grid: ({{ address.gridX }}, {{ address.gridY }})
+                        </p>
+                    </div>
+                } @else {
+                    <p class="no-addresses">No restaurant address found.</p>
+                }
             </section>
         }
     }

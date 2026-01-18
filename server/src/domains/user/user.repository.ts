@@ -219,4 +219,21 @@ export class UserRepository extends Repository<UserRow> {
         );
         return result.rows.length > 0;
     }
+
+    /** Check if user owns an address */
+    async userOwnsAddress(userId: number, addressId: number): Promise<boolean> {
+        const result = await this.query(
+            'SELECT 1 FROM user_address WHERE user_id = $1 AND address_id = $2 LIMIT 1',
+            [userId, addressId]
+        );
+        return result.rows.length > 0;
+    }
+
+    /** Unlink address from user */
+    async unlinkUserAddress(userId: number, addressId: number): Promise<void> {
+        await this.query(
+            'DELETE FROM user_address WHERE user_id = $1 AND address_id = $2',
+            [userId, addressId]
+        );
+    }
 }

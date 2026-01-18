@@ -26,17 +26,3 @@ export interface ChangePassword {
     currentPassword: string;
     newPassword: string;
 }
-
-/** Address with grid coordinates (shared by users and restaurants) */
-export interface Address {
-    addressId: number;
-    label: string;
-    streetName: string;
-    houseNumber: string;
-    additionalInfo: string;
-    cityName: string;
-    zipCode: string;
-    country: string;
-    gridX: number | null;
-    gridY: number | null;
-}

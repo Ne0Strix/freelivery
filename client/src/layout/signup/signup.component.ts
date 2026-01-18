@@ -8,13 +8,13 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
 import {
-    CreateAddress,
     CuisineType,
     CustomerSignup,
     RestaurantOwnerSignup,
 } from '../../commons/model/restaurant.model';
 import { UserRole } from '../../commons/model/role.model';
 import { RoleLabelPipe } from '../../commons/pipes/role-label.pipe';
+import { CreateAddress } from '../../commons/services/address.service';
 import { AuthenticationService } from '../../commons/services/authentication.service';
 
 @Component({
