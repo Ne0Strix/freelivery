@@ -10,6 +10,15 @@ export interface UserRow {
     updated_at: Date;
 }
 
+export interface UserDataRow {
+    user_id: number;
+    first_name: string | null;
+    last_name: string | null;
+    salutation: string | null;
+    phone_number: string | null;
+    date_of_birth: Date | null;
+}
+
 export interface UserWithRoles {
     user_id: number;
     username: string;
@@ -145,5 +154,69 @@ export class UserRepository extends Repository<UserRow> {
             `UPDATE "user" SET is_active = $1, updated_at = CURRENT_TIMESTAMP WHERE user_id = $2`,
             [isActive, userId]
         );
+    }
+
+    /** Get user_data for a user */
+    async getUserData(userId: number): Promise<UserDataRow | null> {
+        const result = await this.query<UserDataRow>(
+            'SELECT * FROM user_data WHERE user_id = $1',
+            [userId]
+        );
+        return result.rows[0] ?? null;
+    }
+
+    /** Update user_data fields */
+    async updateUserData(
+        userId: number,
+        data: Partial<Omit<UserDataRow, 'user_id'>>
+    ): Promise<void> {
+        await this.query(
+            `UPDATE user_data 
+             SET first_name = COALESCE($1, first_name),
+                 last_name = COALESCE($2, last_name),
+                 salutation = COALESCE($3, salutation),
+                 phone_number = COALESCE($4, phone_number),
+                 date_of_birth = COALESCE($5, date_of_birth)
+             WHERE user_id = $6`,
+            [
+                data.first_name,
+                data.last_name,
+                data.salutation,
+                data.phone_number,
+                data.date_of_birth,
+                userId,
+            ]
+        );
+    }
+
+    /** Update user email */
+    async updateEmail(userId: number, email: string): Promise<void> {
+        await this.query(
+            `UPDATE "user" SET email = $1, updated_at = CURRENT_TIMESTAMP WHERE user_id = $2`,
+            [email, userId]
+        );
+    }
+
+    /** Update user password hash */
+    async updatePasswordHash(
+        userId: number,
+        passwordHash: string
+    ): Promise<void> {
+        await this.query(
+            `UPDATE "user" SET password_hash = $1, updated_at = CURRENT_TIMESTAMP WHERE user_id = $2`,
+            [passwordHash, userId]
+        );
+    }
+
+    /** Check if email is taken by another user */
+    async isEmailTakenByOther(
+        email: string,
+        excludeUserId: number
+    ): Promise<boolean> {
+        const result = await this.query(
+            'SELECT user_id FROM "user" WHERE email = $1 AND user_id != $2 LIMIT 1',
+            [email, excludeUserId]
+        );
+        return result.rows.length > 0;
     }
 }

@@ -48,6 +48,25 @@ export interface CustomerSignup {
     address: CreateAddress;
 }
 
+/** Owner's restaurant DTO */
+export interface OwnerRestaurant {
+    restaurantId: number;
+    name: string;
+    description: string;
+    cuisineType: CuisineType;
+    contactEmail: string;
+    contactPhone: string;
+    status: string;
+}
+
+/** DTO for updating restaurant details */
+export interface UpdateRestaurant {
+    name?: string;
+    description?: string;
+    contactEmail?: string;
+    contactPhone?: string;
+}
+
 /** DTO for restaurant owner signup data */
 export interface RestaurantOwnerSignup {
     restaurant: CreateRestaurant;

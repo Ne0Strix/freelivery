@@ -9,6 +9,7 @@ import customerRoutes from './src/modules/customer/customer.routes.js';
 import siteManagerRoutes from './src/modules/site-manager/site-manager.routes.js';
 import addressRoutes from './src/routes/address.routes.js';
 import authRoutes from './src/routes/auth.routes.js';
+import profileRoutes from './src/routes/profile.routes.js';
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 3000;
@@ -48,6 +49,7 @@ app.use('/api/auth', authRoutes);
 // ========== AUTHENTICATED (any logged-in user) ==========
 app.use('/api/addresses', requireAuth, addressRoutes);
 app.use('/api/restaurants', requireAuth, restaurantRoutes);
+app.use('/api/profile', requireAuth, profileRoutes);
 app.use(
     '/api/customer',
     requireAuth,

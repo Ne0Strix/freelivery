@@ -141,4 +141,63 @@ export class RestaurantService {
     async rejectRestaurant(restaurantId: number): Promise<void> {
         await this.repository.deleteById(restaurantId);
     }
+
+    /** Get restaurant by owner user ID */
+    async getRestaurantByOwner(
+        ownerUserId: number
+    ): Promise<OwnerRestaurant | null> {
+        const row = await this.repository.findByOwnerId(ownerUserId);
+        if (!row) return null;
+
+        return {
+            restaurantId: row.restaurant_id,
+            name: row.name,
+            description: row.description,
+            cuisineType: row.cuisine_type as CuisineType,
+            contactEmail: row.contact_email,
+            contactPhone: row.contact_phone,
+            status: row.status,
+        };
+    }
+
+    /** Update restaurant details (for owner) */
+    async updateRestaurantDetails(
+        restaurantId: number,
+        ownerUserId: number,
+        data: UpdateRestaurantData
+    ): Promise<void> {
+        // Verify ownership
+        const restaurant = await this.repository.getByIdOrThrow(restaurantId, {
+            message: 'Restaurant not found',
+        });
+        if (restaurant.owner_user_id !== ownerUserId) {
+            throw new Error('Not authorized to update this restaurant');
+        }
+
+        await this.repository.updateDetails(restaurantId, {
+            name: data.name,
+            description: data.description,
+            contactEmail: data.contactEmail,
+            contactPhone: data.contactPhone,
+        });
+    }
+}
+
+/** DTO for restaurant owner's view of their restaurant */
+export interface OwnerRestaurant {
+    restaurantId: number;
+    name: string;
+    description: string;
+    cuisineType: CuisineType;
+    contactEmail: string;
+    contactPhone: string;
+    status: RestaurantStatus;
+}
+
+/** DTO for updating restaurant details */
+export interface UpdateRestaurantData {
+    name?: string;
+    description?: string;
+    contactEmail?: string;
+    contactPhone?: string;
 }
