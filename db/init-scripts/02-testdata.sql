@@ -25,13 +25,13 @@ INSERT INTO user_data (user_id, first_name, last_name, salutation, phone_number,
   (5, 'Site', 'Admin', 'Mr', '+10000000005', '1992-11-10'),
   (6, 'Deus', 'ExMachina', 'Mx', '+10000000006', '2000-01-01');
 
--- Addresses
-INSERT INTO address (address_id, label, street_name, house_number, additional_info, city_name, zip_code, country) VALUES
-  (1, 'Alice Home', 'Villacher Straße', '1', 'Top 1', 'Klagenfurt', '9020', 'Austria'),
-  (2, 'Luigi Pizzeria', 'Haupstraße', '10', NULL, 'Villach', '9500', 'Austria'),
-  (3, 'Sakura Sushi', 'Erlenweg', '42', NULL, 'Villach', '9500', 'Austria'),
-  (4, 'Taco Fiesta', 'Rosegger Gasse', '7', NULL, 'St. Veit / Glan', '9300', 'Austria'),
-  (5, 'Golden Dragon', 'Völkermarkter Straße', '72', NULL, 'Klagenfurt', '9020', 'Austria');
+-- Addresses (with grid coordinates: x,y from -10 to +10)
+INSERT INTO address (address_id, label, street_name, house_number, additional_info, city_name, zip_code, country, grid_x, grid_y) VALUES
+  (1, 'Alice Home', 'Villacher Straße', '1', 'Top 1', 'Klagenfurt', '9020', 'Austria', 0, 0),
+  (2, 'Luigi Pizzeria', 'Haupstraße', '10', NULL, 'Villach', '9500', 'Austria', 2, 3),
+  (3, 'Sakura Sushi', 'Erlenweg', '42', NULL, 'Villach', '9500', 'Austria', -1, 5),
+  (4, 'Taco Fiesta', 'Rosegger Gasse', '7', NULL, 'St. Veit / Glan', '9300', 'Austria', 7, -2),
+  (5, 'Golden Dragon', 'Völkermarkter Straße', '72', NULL, 'Klagenfurt', '9020', 'Austria', -3, -4);
 
 -- Link users to addresses
 INSERT INTO user_address (user_id, address_id, is_default) VALUES
@@ -53,26 +53,26 @@ INSERT INTO user_role (user_id, role_id) VALUES
 INSERT INTO delivery_zone (delivery_zone_id, code, name, description) VALUES
   (1, 'Z001', 'Central', 'Central delivery zone');
 
--- Restaurant (owned by Bob)
+-- Restaurant (owned by Bob) - max_delivery_distance determines how far they deliver
 INSERT INTO restaurant (
   restaurant_id, name, status, description, cuisine_type, contact_email, contact_phone,
-  address_id, owner_user_id, delivery_zone_id, service_fee_percent, min_order_amount
+  address_id, owner_user_id, delivery_zone_id, service_fee_percent, min_order_amount, max_delivery_distance
 ) VALUES (
   1, 'Luigi Pizzeria', 'ACTIVE', 'Beste Pizza in Villach', 'ITALIAN', 'contact@luigi.example', '+10000000010',
-  2, 2, 1, 5.00, 10.00
+  2, 2, 1, 5.00, 10.00, 8
 );
 
 -- Pending restaurants (status = NEW) for site-manager testing
 INSERT INTO restaurant (
   restaurant_id, name, status, description, cuisine_type, contact_email, contact_phone,
-  address_id, owner_user_id, delivery_zone_id, service_fee_percent, min_order_amount
+  address_id, owner_user_id, delivery_zone_id, service_fee_percent, min_order_amount, max_delivery_distance
 ) VALUES
   (2, 'Sakura Sushi', 'NEW', 'Generische Sushi', 'JAPANESE', 'contact@sakura.example', '+10000000011',
-   3, 4, 1, 4.50, 15.00),
+   3, 4, 1, 4.50, 15.00, 10),
   (3, 'Taco Fiesta', 'NEW', 'Mediocre Taco', 'MEXICAN', 'hola@tacofiesta.example', '+10000000012',
-   4, 4, 1, 3.00, 8.00),
+   4, 4, 1, 3.00, 8.00, 6),
   (4, 'Golden Dragon', 'NEW', 'Traditionelle chinesische Gerichte', 'CHINESE', 'info@goldendragon.example', '+10000000013',
-   5, 2, 1, 5.00, 12.00);
+   5, 2, 1, 5.00, 12.00, 7);
 
 -- Category and dishes
 INSERT INTO category (category_id, restaurant_id, name, description) VALUES
@@ -108,5 +108,13 @@ SELECT setval('user_user_id_seq', (SELECT MAX(user_id) FROM "user"));
 SELECT setval('user_data_user_id_seq', (SELECT MAX(user_id) FROM user_data));
 SELECT setval('address_address_id_seq', (SELECT MAX(address_id) FROM address));
 SELECT setval('role_role_id_seq', (SELECT MAX(role_id) FROM role));
+SELECT setval('restaurant_restaurant_id_seq', (SELECT MAX(restaurant_id) FROM restaurant));
+SELECT setval('delivery_zone_delivery_zone_id_seq', (SELECT MAX(delivery_zone_id) FROM delivery_zone));
+SELECT setval('category_category_id_seq', (SELECT MAX(category_id) FROM category));
+SELECT setval('dish_dish_id_seq', (SELECT MAX(dish_id) FROM dish));
+SELECT setval('cart_cart_id_seq', (SELECT MAX(cart_id) FROM cart));
+SELECT setval('cart_item_cart_item_id_seq', (SELECT MAX(cart_item_id) FROM cart_item));
+SELECT setval('order_order_id_seq', (SELECT MAX(order_id) FROM "order"));
+SELECT setval('order_item_order_item_id_seq', (SELECT MAX(order_item_id) FROM order_item));
 
 -- End of test data

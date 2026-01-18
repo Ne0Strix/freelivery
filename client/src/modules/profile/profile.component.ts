@@ -67,6 +67,10 @@ export class ProfileComponent implements OnInit {
             description: [''],
             contactEmail: ['', [Validators.required, Validators.email]],
             contactPhone: ['', Validators.required],
+            maxDeliveryDistance: [
+                5,
+                [Validators.required, Validators.min(1), Validators.max(20)],
+            ],
         });
     }
 
@@ -97,6 +101,7 @@ export class ProfileComponent implements OnInit {
                         description: restaurant.description ?? '',
                         contactEmail: restaurant.contactEmail,
                         contactPhone: restaurant.contactPhone,
+                        maxDeliveryDistance: restaurant.maxDeliveryDistance,
                     });
                 }
             }

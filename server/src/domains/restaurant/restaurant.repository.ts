@@ -14,6 +14,7 @@ export interface RestaurantRow {
     delivery_zone_id: number;
     service_fee_percent: string;
     min_order_amount: string;
+    max_delivery_distance: number;
     created_at: Date;
     updated_at: Date;
 }
@@ -23,6 +24,8 @@ export interface ActiveRestaurantRow extends RestaurantRow {
     house_number: string;
     city_name: string;
     zip_code: string;
+    grid_x: number | null;
+    grid_y: number | null;
     order_count: string;
     total_revenue: string;
 }
@@ -37,8 +40,26 @@ export class RestaurantRepository extends Repository<RestaurantRow> {
         super('restaurant', 'restaurant_id');
     }
 
-    create(_item: RestaurantRow): Promise<RestaurantRow> {
-        throw new Error('Method not implemented.');
+    async create(item: Partial<RestaurantRow>): Promise<RestaurantRow> {
+        const query = `
+            INSERT INTO ${this.tableName}
+            (name, status, description, cuisine_type, contact_email, contact_phone,
+             address_id, owner_user_id, delivery_zone_id, service_fee_percent, min_order_amount,
+             created_at, updated_at)
+            VALUES ($1, 'NEW', $2, $3, $4, $5, $6, $7, $8, 0, 0, NOW(), NOW())
+            RETURNING *
+        `;
+        const result = await this.query<RestaurantRow>(query, [
+            item.name,
+            item.description,
+            item.cuisine_type,
+            item.contact_email,
+            item.contact_phone,
+            item.address_id,
+            item.owner_user_id,
+            item.delivery_zone_id,
+        ]);
+        return result.rows[0];
     }
 
     update(_id: number, _item: Partial<RestaurantRow>): Promise<RestaurantRow> {
@@ -62,6 +83,8 @@ export class RestaurantRepository extends Repository<RestaurantRow> {
                 a.house_number,
                 a.city_name,
                 a.zip_code,
+                a.grid_x,
+                a.grid_y,
                 COUNT(o.order_id) AS order_count,
                 COALESCE(SUM(o.total_amount), 0) AS total_revenue
             FROM restaurant r
@@ -126,6 +149,7 @@ export class RestaurantRepository extends Repository<RestaurantRow> {
             description?: string;
             contactEmail?: string;
             contactPhone?: string;
+            maxDeliveryDistance?: number;
         }
     ): Promise<RestaurantRow> {
         const query = `
@@ -134,8 +158,9 @@ export class RestaurantRepository extends Repository<RestaurantRow> {
                 description = COALESCE($2, description),
                 contact_email = COALESCE($3, contact_email),
                 contact_phone = COALESCE($4, contact_phone),
+                max_delivery_distance = COALESCE($5, max_delivery_distance),
                 updated_at = NOW()
-            WHERE ${this.primaryKey} = $5
+            WHERE ${this.primaryKey} = $6
             RETURNING *
         `;
         const result = await this.query<RestaurantRow>(query, [
@@ -143,6 +168,7 @@ export class RestaurantRepository extends Repository<RestaurantRow> {
             data.description,
             data.contactEmail,
             data.contactPhone,
+            data.maxDeliveryDistance,
             restaurantId,
         ]);
         return result.rows[0];

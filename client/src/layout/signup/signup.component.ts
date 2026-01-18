@@ -54,6 +54,8 @@ export class SignupComponent {
             cityName: [''],
             zipCode: [''],
             country: ['Austria'],
+            gridX: [0, [Validators.min(-10), Validators.max(10)]],
+            gridY: [0, [Validators.min(-10), Validators.max(10)]],
 
             // Restaurant-specific fields
             restaurantName: [''],
@@ -159,6 +161,8 @@ export class SignupComponent {
             cityName: formValue.cityName,
             zipCode: formValue.zipCode,
             country: formValue.country,
+            gridX: formValue.gridX,
+            gridY: formValue.gridY,
         };
 
         // Build role-specific signup data

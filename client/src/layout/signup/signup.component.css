@@ -116,6 +116,12 @@ textarea:focus {
     letter-spacing: 0.05em;
 }
 
+.form-hint {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin: 0.25rem 0 0.5rem 0;
+}
+
 .info-notice {
     background-color: #fef3c7;
     border: 1px solid #f59e0b;
