@@ -39,6 +39,12 @@ export const routes: Routes = [
         title: 'Site Manager Home',
     },
     {
+        path: 'profile',
+        loadChildren: () => import('../modules/profile/profile.routes'),
+        canActivate: [authGuard],
+        title: 'Profile',
+    },
+    {
         path: '',
         redirectTo: '/login',
         pathMatch: 'full',

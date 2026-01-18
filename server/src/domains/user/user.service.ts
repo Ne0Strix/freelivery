@@ -166,27 +166,97 @@ export class UserService {
 
         return { userId: user.user_id };
     }
+
+    /** Get user profile with user_data */
+    async getProfile(userId: number): Promise<UserProfile> {
+        const user = await this.userRepository.getByIdOrThrow(userId, {
+            message: 'User not found',
+        });
+        const userData = await this.userRepository.getUserData(userId);
+        const roles = await this.userRepository.getUserRoles(userId);
+
+        return {
+            userId: user.user_id,
+            username: user.username,
+            email: user.email,
+            roles,
+            firstName: userData?.first_name ?? null,
+            lastName: userData?.last_name ?? null,
+            salutation: userData?.salutation ?? null,
+            phoneNumber: userData?.phone_number ?? null,
+            dateOfBirth: userData?.date_of_birth ?? null,
+        };
+    }
+
+    /** Update user profile */
+    async updateProfile(
+        userId: number,
+        data: UpdateProfileData
+    ): Promise<void> {
+        // Check email uniqueness if changing
+        if (data.email) {
+            const emailTaken = await this.userRepository.isEmailTakenByOther(
+                data.email,
+                userId
+            );
+            if (emailTaken) {
+                throw new ConflictError('Email is already in use');
+            }
+            await this.userRepository.updateEmail(userId, data.email);
+        }
+
+        // Update user_data fields
+        await this.userRepository.updateUserData(userId, {
+            first_name: data.firstName,
+            last_name: data.lastName,
+            salutation: data.salutation,
+            phone_number: data.phoneNumber,
+            date_of_birth: data.dateOfBirth,
+        });
+    }
+
+    /** Change user password */
+    async changePassword(
+        userId: number,
+        currentPassword: string,
+        newPassword: string
+    ): Promise<void> {
+        const user = await this.userRepository.getByIdOrThrow(userId, {
+            message: 'User not found',
+        });
+
+        const isValid = await bcrypt.compare(
+            currentPassword,
+            user.password_hash
+        );
+        if (!isValid) {
+            throw new ValidationError('Current password is incorrect');
+        }
+
+        const newHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+        await this.userRepository.updatePasswordHash(userId, newHash);
+    }
 }
-export interface User {
+
+/** DTO for user profile response */
+export interface UserProfile {
     userId: number;
     username: string;
     email: string;
-    userData: UserData;
-    createdAt: Date;
-    updatedAt: Date;
+    roles: string[];
+    firstName: string | null;
+    lastName: string | null;
+    salutation: string | null;
+    phoneNumber: string | null;
+    dateOfBirth: Date | null;
 }
 
-export interface UserData {
-    userId: number;
-    firstName: string;
-    lastName: string;
-    salutation: string;
-    phoneNumber: string;
-    dateOfBirth: Date;
-}
-
-export interface Role {
-    roleId: number;
-    name: string;
-    description: string;
+/** DTO for updating profile */
+export interface UpdateProfileData {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    salutation?: string;
+    phoneNumber?: string;
+    dateOfBirth?: Date;
 }

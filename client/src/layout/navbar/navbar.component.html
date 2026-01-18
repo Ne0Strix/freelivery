@@ -34,7 +34,7 @@
                     }
                 </div>
             </div>
-            <div class="hidden sm:ml-6 sm:flex sm:items-center">
+            <div class="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-3">
                 @if (!isLoggedIn()) {
                     <button
                         type="button"
@@ -44,6 +44,13 @@
                         Sign In
                     </button>
                 } @else {
+                    <a
+                        routerLink="/profile"
+                        class="flex items-center justify-center w-9 h-9 rounded-full border-2 border-gray-300 text-gray-500 hover:border-indigo-500 hover:text-indigo-600 transition-colors duration-200"
+                        title="Profile"
+                    >
+                        <i class="fa-regular fa-user"></i>
+                    </a>
                     <button
                         type="button"
                         class="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"

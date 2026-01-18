@@ -106,4 +106,45 @@ export class RestaurantRepository extends Repository<RestaurantRow> {
         ]);
         return result.rows[0];
     }
+
+    /** Find restaurant by owner user ID */
+    async findByOwnerId(ownerUserId: number): Promise<RestaurantRow | null> {
+        const query = `
+            SELECT * FROM ${this.tableName}
+            WHERE owner_user_id = $1
+            LIMIT 1
+        `;
+        const result = await this.query<RestaurantRow>(query, [ownerUserId]);
+        return result.rows[0] ?? null;
+    }
+
+    /** Update restaurant contact details */
+    async updateDetails(
+        restaurantId: number,
+        data: {
+            name?: string;
+            description?: string;
+            contactEmail?: string;
+            contactPhone?: string;
+        }
+    ): Promise<RestaurantRow> {
+        const query = `
+            UPDATE ${this.tableName}
+            SET name = COALESCE($1, name),
+                description = COALESCE($2, description),
+                contact_email = COALESCE($3, contact_email),
+                contact_phone = COALESCE($4, contact_phone),
+                updated_at = NOW()
+            WHERE ${this.primaryKey} = $5
+            RETURNING *
+        `;
+        const result = await this.query<RestaurantRow>(query, [
+            data.name,
+            data.description,
+            data.contactEmail,
+            data.contactPhone,
+            restaurantId,
+        ]);
+        return result.rows[0];
+    }
 }
