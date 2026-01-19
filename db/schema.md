@@ -67,16 +67,6 @@ namespace Location {
         datetime: created_at
         datetime: updated_at
     }
-
-    class delivery_zone {
-        number: delivery_zone_id*
-        string: code           %% e.g. "A1", "B2"
-        string: name
-        string: description
-
-        datetime: created_at
-        datetime: updated_at
-    }
 }
 
 %% =====================
@@ -94,7 +84,6 @@ namespace Restaurant {
 
         number: address_id ~FK~
         number: owner_user_id ~FK~
-        number: delivery_zone_id ~FK~
 
         number: service_fee_percent
         number: min_order_amount
@@ -140,7 +129,6 @@ namespace Order {
         number: customer_user_id* ~FK~
         number: restaurant_id* ~FK~
         number: delivery_address_id* ~FK~
-        number: delivery_zone_id* ~FK~
 
         string: status [PENDING, CONFIRMED, PREPARING, OUT_FOR_DELIVERY, DELIVERED, CANCELLED]
 
@@ -199,12 +187,10 @@ User.user "1" -- "*" User.user_address : has
 User.user "1" -- "*" User.user_role : has
 User.user_role "*" -- "1" User.role : maps_to
 
-%% Address / Zones
+%% Address
 User.user_address "*" -- "1" Location.address : refers_to
 Restaurant.restaurant "*" -- "1" Location.address : located_at
-Restaurant.restaurant "*" -- "1" Location.delivery_zone : in
 Order.order "*" -- "1" Location.address : delivered_to
-Order.order "*" -- "1" Location.delivery_zone : uses_zone
 
 %% Restaurant ownership
 Restaurant.restaurant "*" -- "1" User.user : owned_by

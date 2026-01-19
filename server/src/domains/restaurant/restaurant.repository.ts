@@ -11,7 +11,6 @@ export interface RestaurantRow {
     contact_phone: string;
     address_id: number;
     owner_user_id: number;
-    delivery_zone_id: number;
     service_fee_percent: string;
     min_order_amount: string;
     max_delivery_distance: number;
@@ -44,9 +43,9 @@ export class RestaurantRepository extends Repository<RestaurantRow> {
         const query = `
             INSERT INTO ${this.tableName}
             (name, status, description, cuisine_type, contact_email, contact_phone,
-             address_id, owner_user_id, delivery_zone_id, service_fee_percent, min_order_amount,
+             address_id, owner_user_id, service_fee_percent, min_order_amount,
              created_at, updated_at)
-            VALUES ($1, 'NEW', $2, $3, $4, $5, $6, $7, $8, 0, 0, NOW(), NOW())
+            VALUES ($1, 'NEW', $2, $3, $4, $5, $6, $7, 0, 0, NOW(), NOW())
             RETURNING *
         `;
         const result = await this.query<RestaurantRow>(query, [
@@ -57,7 +56,6 @@ export class RestaurantRepository extends Repository<RestaurantRow> {
             item.contact_phone,
             item.address_id,
             item.owner_user_id,
-            item.delivery_zone_id,
         ]);
         return result.rows[0];
     }

@@ -18,8 +18,6 @@ import {
 
 const SALT_ROUNDS = 10;
 
-const DEFAULT_DELIVERY_ZONE_ID = 1;
-
 /** DTO for customer signup data */
 export interface CustomerSignupData {
     phoneNumber?: string;
@@ -160,7 +158,6 @@ export class UserService {
                 contactPhone: restaurantData.contactPhone,
                 addressId: addressId,
                 ownerUserId: user.user_id,
-                deliveryZoneId: DEFAULT_DELIVERY_ZONE_ID,
             });
         }
 
