@@ -54,7 +54,6 @@ export interface CreateRestaurant {
     contactPhone: string;
     addressId: number;
     ownerUserId: number;
-    deliveryZoneId: number;
 }
 
 export enum RestaurantStatus {
@@ -90,7 +89,6 @@ export class RestaurantService {
             contact_phone: dto.contactPhone,
             address_id: dto.addressId,
             owner_user_id: dto.ownerUserId,
-            delivery_zone_id: dto.deliveryZoneId,
         });
         return row.restaurant_id;
     }

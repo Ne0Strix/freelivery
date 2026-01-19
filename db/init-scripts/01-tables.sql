@@ -96,19 +96,6 @@ BEGIN
 END$$;
 
 -- =====================
--- LOCATION / ZONES TABLES
--- =====================
-
-CREATE TABLE IF NOT EXISTS delivery_zone (
-    delivery_zone_id SERIAL PRIMARY KEY,
-    code VARCHAR(10) NOT NULL UNIQUE,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- =====================
 -- RESTAURANT TABLES
 -- =====================
 
@@ -122,15 +109,13 @@ CREATE TABLE IF NOT EXISTS restaurant (
     contact_phone VARCHAR(20),
     address_id INT NOT NULL,
     owner_user_id INT NOT NULL,
-    delivery_zone_id INT NOT NULL,
     service_fee_percent DECIMAL(5,2) DEFAULT 0,
     min_order_amount DECIMAL(10,2) DEFAULT 0,
     max_delivery_distance INT DEFAULT 5 CHECK (max_delivery_distance > 0),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (address_id) REFERENCES address(address_id) ON DELETE RESTRICT,
-    FOREIGN KEY (owner_user_id) REFERENCES "user"(user_id) ON DELETE RESTRICT,
-    FOREIGN KEY (delivery_zone_id) REFERENCES delivery_zone(delivery_zone_id) ON DELETE RESTRICT
+    FOREIGN KEY (owner_user_id) REFERENCES "user"(user_id) ON DELETE RESTRICT
 );
 
 -- =====================
@@ -198,7 +183,6 @@ CREATE TABLE IF NOT EXISTS "order" (
     customer_user_id INT NOT NULL,
     restaurant_id INT NOT NULL,
     delivery_address_id INT NOT NULL,
-    delivery_zone_id INT NOT NULL,
     status order_status DEFAULT 'PENDING',
     subtotal_amount DECIMAL(10,2) NOT NULL,
     service_fee_amount DECIMAL(10,2) DEFAULT 0,
@@ -211,8 +195,7 @@ CREATE TABLE IF NOT EXISTS "order" (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (customer_user_id) REFERENCES "user"(user_id) ON DELETE RESTRICT,
     FOREIGN KEY (restaurant_id) REFERENCES restaurant(restaurant_id) ON DELETE RESTRICT,
-    FOREIGN KEY (delivery_address_id) REFERENCES address(address_id) ON DELETE RESTRICT,
-    FOREIGN KEY (delivery_zone_id) REFERENCES delivery_zone(delivery_zone_id) ON DELETE RESTRICT
+    FOREIGN KEY (delivery_address_id) REFERENCES address(address_id) ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS order_item (
