@@ -9,6 +9,8 @@ import {
     DishRepository,
 } from '../../domains/restaurant/menu.repository.js';
 import { MenuService } from '../../domains/restaurant/menu.service.js';
+import { OpeningHoursRepository } from '../../domains/restaurant/opening-hours.repository.js';
+import { OpeningHoursService } from '../../domains/restaurant/opening-hours.service.js';
 import { RestaurantRepository } from '../../domains/restaurant/restaurant.repository.js';
 import { asyncHandler } from '../../middleware/async-handler.js';
 import { getImageUrl, uploadDishPhoto } from '../../middleware/upload.js';
@@ -25,6 +27,11 @@ const menuService = new MenuService(
 
 const orderService = new OrderService(
     new OrderRepository(),
+    restaurantRepository
+);
+
+const openingHoursService = new OpeningHoursService(
+    new OpeningHoursRepository(),
     restaurantRepository
 );
 
@@ -300,6 +307,116 @@ router.patch(
             status as OrderStatus
         );
         return res.json({ status: 'ok', data: order });
+    })
+);
+
+// =====================
+// Opening Hours Routes
+// =====================
+
+/** GET /opening-hours - Get all opening hours for owner's restaurant */
+router.get(
+    '/opening-hours',
+    asyncHandler(async (req: Request, res: Response) => {
+        const ownerUserId = getOwnerUserId(req);
+        const openingHours =
+            await openingHoursService.getAllForOwner(ownerUserId);
+        return res.json({ status: 'ok', data: openingHours });
+    })
+);
+
+/** POST /opening-hours - Create a new opening hours slot */
+router.post(
+    '/opening-hours',
+    asyncHandler(async (req: Request, res: Response) => {
+        const ownerUserId = getOwnerUserId(req);
+        const { dayOfWeek, openTime, closeTime } = req.body;
+
+        if (dayOfWeek === undefined || dayOfWeek === null) {
+            throw new ValidationError('Day of week is required');
+        }
+        const dayNum = Number(dayOfWeek);
+        if (!Number.isInteger(dayNum) || dayNum < 0 || dayNum > 6) {
+            throw new ValidationError(
+                'Day of week must be an integer between 0 (Monday) and 6 (Sunday)'
+            );
+        }
+
+        if (!openTime || typeof openTime !== 'string') {
+            throw new ValidationError('Open time is required');
+        }
+        if (!closeTime || typeof closeTime !== 'string') {
+            throw new ValidationError('Close time is required');
+        }
+
+        const openingHours = await openingHoursService.create(ownerUserId, {
+            dayOfWeek: dayNum,
+            openTime,
+            closeTime,
+        });
+        return res.status(201).json({ status: 'ok', data: openingHours });
+    })
+);
+
+/** PUT /opening-hours/:id - Update an existing opening hours slot */
+router.put(
+    '/opening-hours/:id',
+    asyncHandler(async (req: Request, res: Response) => {
+        const ownerUserId = getOwnerUserId(req);
+        const openingHoursId = Number(req.params.id);
+        const { dayOfWeek, openTime, closeTime } = req.body;
+
+        if (isNaN(openingHoursId)) {
+            throw new ValidationError('Invalid opening hours ID');
+        }
+
+        const updateData: {
+            dayOfWeek?: number;
+            openTime?: string;
+            closeTime?: string;
+        } = {};
+
+        if (dayOfWeek !== undefined) {
+            const dayNum = Number(dayOfWeek);
+            if (!Number.isInteger(dayNum) || dayNum < 0 || dayNum > 6) {
+                throw new ValidationError(
+                    'Day of week must be an integer between 0 (Monday) and 6 (Sunday)'
+                );
+            }
+            updateData.dayOfWeek = dayNum;
+        }
+        if (openTime !== undefined) {
+            updateData.openTime = openTime;
+        }
+        if (closeTime !== undefined) {
+            updateData.closeTime = closeTime;
+        }
+
+        const openingHours = await openingHoursService.update(
+            ownerUserId,
+            openingHoursId,
+            updateData
+        );
+        return res.json({ status: 'ok', data: openingHours });
+    })
+);
+
+/** DELETE /opening-hours/:id - Delete an opening hours slot */
+router.delete(
+    '/opening-hours/:id',
+    asyncHandler(async (req: Request, res: Response) => {
+        const ownerUserId = getOwnerUserId(req);
+        const openingHoursId = Number(req.params.id);
+
+        if (isNaN(openingHoursId)) {
+            throw new ValidationError('Invalid opening hours ID');
+        }
+
+        await openingHoursService.delete(ownerUserId, openingHoursId);
+        return res.json({
+            status: 'ok',
+            data: { message: 'Opening hours slot deleted' },
+        });
     })
 );
 

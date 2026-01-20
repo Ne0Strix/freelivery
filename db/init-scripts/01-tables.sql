@@ -210,6 +210,22 @@ CREATE TABLE IF NOT EXISTS order_item (
     FOREIGN KEY (dish_id) REFERENCES dish(dish_id) ON DELETE RESTRICT
 );
 
+-- ======================
+-- OPENING HOURS TABLE
+-- ======================
+
+CREATE TABLE IF NOT EXISTS opening_hours (
+    opening_hours_id SERIAL PRIMARY KEY,
+    restaurant_id INT NOT NULL,
+    day_of_week INT NOT NULL CHECK (day_of_week BETWEEN 0 AND 6),
+    open_time TIME NOT NULL,
+    close_time TIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (restaurant_id) REFERENCES restaurant(restaurant_id) ON DELETE CASCADE,
+    CHECK (open_time < close_time)
+);
+
 -- =====================
 -- INDEXES FOR PERFORMANCE (TODO)
 -- =====================
