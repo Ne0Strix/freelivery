@@ -1,6 +1,9 @@
 import type { Request } from 'express';
 import express, { Response } from 'express';
 import { ValidationError } from '../../domains/commons/errors.js';
+import { OrderStatus } from '../../domains/order/order.model.js';
+import { OrderRepository } from '../../domains/order/order.repository.js';
+import { OrderService } from '../../domains/order/order.service.js';
 import {
     CategoryRepository,
     DishRepository,
@@ -12,10 +15,17 @@ import { getImageUrl, uploadDishPhoto } from '../../middleware/upload.js';
 
 const router = express.Router();
 
+const restaurantRepository = new RestaurantRepository();
+
 const menuService = new MenuService(
     new CategoryRepository(),
     new DishRepository(),
-    new RestaurantRepository()
+    restaurantRepository
+);
+
+const orderService = new OrderService(
+    new OrderRepository(),
+    restaurantRepository
 );
 
 // Helper to get owner user id from authenticated request
@@ -244,6 +254,52 @@ router.patch(
             dishId
         );
         return res.json({ status: 'ok', data: dish });
+    })
+);
+
+// =====================
+// Order Routes
+// =====================
+
+/** GET /orders - Get all orders for the owner's restaurant */
+router.get(
+    '/orders',
+    asyncHandler(async (req: Request, res: Response) => {
+        const ownerUserId = getOwnerUserId(req);
+        const orders = await orderService.getOrdersForOwner(ownerUserId);
+        return res.json({ status: 'ok', data: orders });
+    })
+);
+
+/** PATCH /orders/:id/status - Update order status */
+router.patch(
+    '/orders/:id/status',
+    asyncHandler(async (req: Request, res: Response) => {
+        const ownerUserId = getOwnerUserId(req);
+        const orderId = Number(req.params.id);
+        const { status } = req.body;
+
+        if (isNaN(orderId)) {
+            throw new ValidationError('Invalid order ID');
+        }
+
+        if (!status || typeof status !== 'string') {
+            throw new ValidationError('Status is required');
+        }
+
+        // Validate status is a valid OrderStatus enum value
+        if (!Object.values(OrderStatus).includes(status as OrderStatus)) {
+            throw new ValidationError(
+                `Invalid status. Must be one of: ${Object.values(OrderStatus).join(', ')}`
+            );
+        }
+
+        const order = await orderService.updateOrderStatus(
+            ownerUserId,
+            orderId,
+            status as OrderStatus
+        );
+        return res.json({ status: 'ok', data: order });
     })
 );
 

@@ -49,7 +49,7 @@ INSERT INTO user_role (user_id, role_id) VALUES
   (6, 2),
   (6, 3);
 
--- Restaurant (owned by Bob) - Austrian cuisine, active
+-- Restaurant (owned by Bob, user_id=2) - Austrian cuisine, active
 INSERT INTO restaurant (
   restaurant_id, name, status, description, cuisine_type, contact_email, contact_phone,
   address_id, owner_user_id, service_fee_percent, min_order_amount, max_delivery_distance
@@ -58,13 +58,20 @@ INSERT INTO restaurant (
   2, 2, 5.00, 15.00, 8
 );
 
+-- Restaurant (owned by restaurant-owner, user_id=4) - Austrian cuisine, active
+INSERT INTO restaurant (
+  restaurant_id, name, status, description, cuisine_type, contact_email, contact_phone,
+  address_id, owner_user_id, service_fee_percent, min_order_amount, max_delivery_distance
+) VALUES (
+  2, 'Heuriger zum Weinberg', 'ACTIVE', 'Gemütlicher Heuriger mit hausgemachten Spezialitäten', 'AUSTRIAN', 'info@weinberg-heuriger.at', '+43 1 8765432',
+  3, 4, 4.50, 12.00, 10
+);
+
 -- Pending restaurants (status = NEW) for site-manager testing
 INSERT INTO restaurant (
   restaurant_id, name, status, description, cuisine_type, contact_email, contact_phone,
   address_id, owner_user_id, service_fee_percent, min_order_amount, max_delivery_distance
 ) VALUES
-  (2, 'Heuriger zum Weinberg', 'NEW', 'Gemütlicher Heuriger mit hausgemachten Spezialitäten', 'AUSTRIAN', 'info@weinberg-heuriger.at', '+43 1 8765432',
-   3, 4, 4.50, 12.00, 10),
   (3, 'Almhütte Bergstubn', 'NEW', 'Deftige Almküche mit Panoramablick', 'AUSTRIAN', 'servus@bergstubn.at', '+43 6542 54321',
    4, 4, 3.00, 10.00, 6),
   (4, 'Café Sacher', 'NEW', 'Weltberühmt für die Original Sachertorte', 'AUSTRIAN', 'reservierung@sacher.com', '+43 1 51456',
@@ -128,6 +135,46 @@ INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price,
   (28, 1, 5, 'Großer Brauner', 'Verlängerter Kaffee mit Milch', 3.80, NULL, true),
   (29, 1, 5, 'Wiener Melange', 'Klassischer Wiener Kaffee', 4.20, NULL, true);
 
+-- =====================
+-- Categories for Heuriger zum Weinberg (restaurant_id = 2, owned by restaurant-owner)
+-- =====================
+INSERT INTO category (category_id, restaurant_id, name, description) VALUES
+  (6, 2, 'Kalte Platten', 'Traditionelle Heurigenspezialitäten'),
+  (7, 2, 'Warme Speisen', 'Hausgemachte warme Gerichte'),
+  (8, 2, 'Mehlspeisen', 'Süße Köstlichkeiten'),
+  (9, 2, 'Weine', 'Hauseigene Weine vom Weinberg');
+
+-- =====================
+-- Dishes for Heuriger zum Weinberg
+-- =====================
+
+-- Kalte Platten (category_id = 6)
+INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price, image_url, is_available) VALUES
+  (30, 2, 6, 'Brettljause', 'Gemischte Aufschnittplatte mit Käse, Schinken und Aufstrichen', 14.90, NULL, true),
+  (31, 2, 6, 'Liptauer', 'Pikanter Paprikaaufstrich mit Bauernbrot', 6.90, NULL, true),
+  (32, 2, 6, 'Verhackertes', 'Hausgemachter Speckaufstrich', 5.90, NULL, true),
+  (33, 2, 6, 'Käseplatte', 'Auswahl heimischer Käsesorten mit Weintrauben', 12.50, NULL, true);
+
+-- Warme Speisen (category_id = 7)
+INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price, image_url, is_available) VALUES
+  (34, 2, 7, 'Stelze', 'Knusprige Schweinsstelze mit Sauerkraut und Senf', 16.90, NULL, true),
+  (35, 2, 7, 'Blunzn mit Kraut', 'Gebratene Blutwurst mit warmem Sauerkraut', 11.90, NULL, true),
+  (36, 2, 7, 'Geselchtes mit Kraut', 'Geräuchertes Schweinefleisch mit Sauerkraut', 13.50, NULL, true),
+  (37, 2, 7, 'Erdäpfelgulasch', 'Deftiges Kartoffelgulasch mit Würstel', 10.90, NULL, true);
+
+-- Mehlspeisen (category_id = 8)
+INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price, image_url, is_available) VALUES
+  (38, 2, 8, 'Buchteln', 'Warme Buchteln mit Vanillesauce', 7.90, NULL, true),
+  (39, 2, 8, 'Powidltascherl', 'Gefüllte Teigtaschen mit Powidl und Mohn', 8.50, NULL, true),
+  (40, 2, 8, 'Mohnnudeln', 'Kartoffelnudeln mit Mohn und Zucker', 9.90, NULL, true);
+
+-- Weine (category_id = 9)
+INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price, image_url, is_available) VALUES
+  (41, 2, 9, 'Gemischter Satz', 'Hauswein weiß (0.25l)', 4.50, NULL, true),
+  (42, 2, 9, 'Blauer Zweigelt', 'Hauswein rot (0.25l)', 4.90, NULL, true),
+  (43, 2, 9, 'Sturm', 'Frischer Traubenmost (saisonal, 0.25l)', 3.50, NULL, true),
+  (44, 2, 9, 'Spritzer', 'Weißwein gespritzt (0.5l)', 4.20, NULL, true);
+
 -- Cart for Alice
 INSERT INTO cart (cart_id, user_id, restaurant_id) VALUES
   (1, 1, 1);
@@ -135,7 +182,18 @@ INSERT INTO cart (cart_id, user_id, restaurant_id) VALUES
 INSERT INTO cart_item (cart_item_id, cart_id, dish_id, quantity) VALUES
   (1, 1, 1, 2);
 
--- An example order placed by Alice
+-- Add delivery address for customer user (user_id=3)
+INSERT INTO address (address_id, label, street_name, house_number, additional_info, city_name, zip_code, country, grid_x, grid_y) VALUES
+  (6, 'Kunde Zuhause', 'Bahnhofstraße', '15', 'Erdgeschoss', 'Klagenfurt', '9020', 'Österreich', 1, 1);
+
+INSERT INTO user_address (user_id, address_id, is_default) VALUES
+  (3, 6, true);
+
+-- =====================
+-- Orders for Gasthaus Bründlwirt (restaurant_id=1, owned by Bob user_id=2)
+-- =====================
+
+-- Order 1: PENDING - new order just placed by Alice
 INSERT INTO "order" (
   order_id, customer_user_id, restaurant_id, delivery_address_id,
   status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
@@ -147,7 +205,173 @@ INSERT INTO "order" (
 );
 
 INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
-  (1, 1, 1, 'Margherita', 8.50, 2);
+  (1, 1, 1, 'Frittatensuppe', 5.90, 2),
+  (2, 1, 24, 'Almdudler', 3.90, 1);
+
+-- Order 2: PENDING - new order by customer
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, estimated_delivery_time
+) VALUES (
+  2, 3, 1, 6,
+  'PENDING', 36.70, 1.84, 0.00, 38.54,
+  'CASH_ON_DELIVERY', (CURRENT_TIMESTAMP + INTERVAL '45 minutes')
+);
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (3, 2, 5, 'Wiener Schnitzel', 18.90, 1),
+  (4, 2, 14, 'Erdäpfelsalat', 4.90, 1),
+  (5, 2, 19, 'Kaiserschmarrn', 12.90, 1);
+
+-- Order 3: CONFIRMED - accepted, waiting to prepare
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, estimated_delivery_time
+) VALUES (
+  3, 1, 1, 1,
+  'CONFIRMED', 31.20, 1.56, 0.00, 32.76,
+  'CREDIT_CARD', (CURRENT_TIMESTAMP + INTERVAL '40 minutes')
+);
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (6, 3, 6, 'Schweinsbraten', 15.90, 1),
+  (7, 3, 13, 'Semmelknödel', 4.50, 1),
+  (8, 3, 18, 'Apfelstrudel', 6.90, 1),
+  (9, 3, 24, 'Almdudler', 3.90, 1);
+
+-- Order 4: PREPARING - currently being cooked
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, estimated_delivery_time
+) VALUES (
+  4, 3, 1, 6,
+  'PREPARING', 56.20, 2.81, 0.00, 59.01,
+  'PAYPAL', (CURRENT_TIMESTAMP + INTERVAL '25 minutes')
+);
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (10, 4, 7, 'Tafelspitz', 22.50, 1),
+  (11, 4, 9, 'Zwiebelrostbraten', 21.90, 1),
+  (12, 4, 27, 'Grüner Veltliner', 5.90, 2);
+
+-- Order 5: OUT_FOR_DELIVERY - on the way
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, estimated_delivery_time
+) VALUES (
+  5, 1, 1, 1,
+  'OUT_FOR_DELIVERY', 25.60, 1.28, 0.00, 26.88,
+  'CREDIT_CARD', (CURRENT_TIMESTAMP + INTERVAL '10 minutes')
+);
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (13, 5, 8, 'Backhendl', 16.90, 1),
+  (14, 5, 17, 'Gurkensalat', 4.20, 1),
+  (15, 5, 26, 'Ottakringer Helles', 4.50, 1);
+
+-- Order 6: Another PENDING order
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, estimated_delivery_time
+) VALUES (
+  6, 1, 1, 1,
+  'PENDING', 24.00, 1.20, 0.00, 25.20,
+  'CASH_ON_DELIVERY', (CURRENT_TIMESTAMP + INTERVAL '50 minutes')
+);
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (16, 6, 10, 'Käsespätzle', 13.90, 1),
+  (17, 6, 1, 'Frittatensuppe', 5.90, 1),
+  (18, 6, 29, 'Wiener Melange', 4.20, 1);
+
+-- =====================
+-- Orders for Heuriger zum Weinberg (restaurant_id=2, owned by restaurant-owner user_id=4)
+-- =====================
+
+-- Order 7: PENDING - new order
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, estimated_delivery_time
+) VALUES (
+  7, 1, 2, 1,
+  'PENDING', 27.70, 1.25, 0.00, 28.95,
+  'CREDIT_CARD', (CURRENT_TIMESTAMP + INTERVAL '35 minutes')
+);
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (19, 7, 30, 'Brettljause', 14.90, 1),
+  (20, 7, 31, 'Liptauer', 6.90, 1),
+  (21, 7, 44, 'Spritzer', 4.20, 2);
+
+-- Order 8: PENDING - another new order
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, estimated_delivery_time
+) VALUES (
+  8, 3, 2, 6,
+  'PENDING', 33.20, 1.49, 0.00, 34.69,
+  'CASH_ON_DELIVERY', (CURRENT_TIMESTAMP + INTERVAL '40 minutes')
+);
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (22, 8, 34, 'Stelze', 16.90, 1),
+  (23, 8, 38, 'Buchteln', 7.90, 1),
+  (24, 8, 41, 'Gemischter Satz', 4.50, 2);
+
+-- Order 9: CONFIRMED - accepted order
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, estimated_delivery_time
+) VALUES (
+  9, 1, 2, 1,
+  'CONFIRMED', 24.30, 1.09, 0.00, 25.39,
+  'PAYPAL', (CURRENT_TIMESTAMP + INTERVAL '30 minutes')
+);
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (25, 9, 36, 'Geselchtes mit Kraut', 13.50, 1),
+  (26, 9, 39, 'Powidltascherl', 8.50, 1),
+  (27, 9, 43, 'Sturm', 3.50, 1);
+
+-- Order 10: PREPARING - being prepared
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, estimated_delivery_time
+) VALUES (
+  10, 3, 2, 6,
+  'PREPARING', 31.60, 1.42, 0.00, 33.02,
+  'CREDIT_CARD', (CURRENT_TIMESTAMP + INTERVAL '20 minutes')
+);
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (28, 10, 35, 'Blunzn mit Kraut', 11.90, 1),
+  (29, 10, 37, 'Erdäpfelgulasch', 10.90, 1),
+  (30, 10, 42, 'Blauer Zweigelt', 4.90, 2);
+
+-- Order 11: OUT_FOR_DELIVERY
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, estimated_delivery_time
+) VALUES (
+  11, 1, 2, 1,
+  'OUT_FOR_DELIVERY', 19.30, 0.87, 0.00, 20.17,
+  'CASH_ON_DELIVERY', (CURRENT_TIMESTAMP + INTERVAL '5 minutes')
+);
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (31, 11, 33, 'Käseplatte', 12.50, 1),
+  (32, 11, 32, 'Verhackertes', 5.90, 1),
+  (33, 11, 43, 'Sturm', 3.50, 1);
 
 -- Reset sequences to continue after test data IDs
 SELECT setval('user_user_id_seq', (SELECT MAX(user_id) FROM "user"));

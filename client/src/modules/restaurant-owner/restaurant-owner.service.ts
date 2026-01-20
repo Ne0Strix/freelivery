@@ -45,6 +45,45 @@ export interface MyRestaurant {
     status: string;
 }
 
+// =====================
+// Order DTOs
+// =====================
+
+export enum OrderStatus {
+    PENDING = 'PENDING',
+    CONFIRMED = 'CONFIRMED',
+    PREPARING = 'PREPARING',
+    OUT_FOR_DELIVERY = 'OUT_FOR_DELIVERY',
+    DELIVERED = 'DELIVERED',
+    CANCELLED = 'CANCELLED',
+}
+
+export interface RestaurantOrderItem {
+    orderItemId: number;
+    dishId: number;
+    dishName: string;
+    unitPrice: number;
+    quantity: number;
+    lineTotal: number;
+}
+
+export interface RestaurantOrder {
+    orderId: number;
+    status: OrderStatus;
+    customerName: string;
+    customerEmail: string;
+    customerPhone: string | null;
+    deliveryAddress: string;
+    items: RestaurantOrderItem[];
+    subtotalAmount: number;
+    serviceFeeAmount: number;
+    discountAmount: number;
+    totalAmount: number;
+    paymentMethod: string;
+    estimatedDeliveryTime: Date | null;
+    createdAt: Date;
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -139,6 +178,32 @@ export class RestaurantOwnerService {
             this.http.patch<ApiResponse<Dish>>(
                 `${this.baseUrl}/menu/dishes/${dishId}/availability`,
                 {}
+            )
+        );
+        return response.data;
+    }
+
+    // =====================
+    // Order Methods
+    // =====================
+
+    async getOrders(): Promise<RestaurantOrder[]> {
+        const response = await firstValueFrom(
+            this.http.get<ApiResponse<RestaurantOrder[]>>(
+                `${this.baseUrl}/orders`
+            )
+        );
+        return response.data;
+    }
+
+    async updateOrderStatus(
+        orderId: number,
+        status: OrderStatus
+    ): Promise<RestaurantOrder> {
+        const response = await firstValueFrom(
+            this.http.patch<ApiResponse<RestaurantOrder>>(
+                `${this.baseUrl}/orders/${orderId}/status`,
+                { status }
             )
         );
         return response.data;
