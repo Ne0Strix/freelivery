@@ -84,6 +84,30 @@ export interface RestaurantOrder {
     createdAt: Date;
 }
 
+// =====================
+// Opening Hours DTOs
+// =====================
+
+export interface OpeningHours {
+    openingHoursId: number;
+    restaurantId: number;
+    dayOfWeek: number;
+    openTime: string;
+    closeTime: string;
+}
+
+export interface CreateOpeningHours {
+    dayOfWeek: number;
+    openTime: string;
+    closeTime: string;
+}
+
+export interface UpdateOpeningHours {
+    dayOfWeek?: number;
+    openTime?: string;
+    closeTime?: string;
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -207,6 +231,50 @@ export class RestaurantOwnerService {
             )
         );
         return response.data;
+    }
+
+    // =====================
+    // Opening Hours Methods
+    // =====================
+
+    async getOpeningHours(): Promise<OpeningHours[]> {
+        const response = await firstValueFrom(
+            this.http.get<ApiResponse<OpeningHours[]>>(
+                `${this.baseUrl}/opening-hours`
+            )
+        );
+        return response.data;
+    }
+
+    async createOpeningHours(dto: CreateOpeningHours): Promise<OpeningHours> {
+        const response = await firstValueFrom(
+            this.http.post<ApiResponse<OpeningHours>>(
+                `${this.baseUrl}/opening-hours`,
+                dto
+            )
+        );
+        return response.data;
+    }
+
+    async updateOpeningHours(
+        openingHoursId: number,
+        dto: UpdateOpeningHours
+    ): Promise<OpeningHours> {
+        const response = await firstValueFrom(
+            this.http.put<ApiResponse<OpeningHours>>(
+                `${this.baseUrl}/opening-hours/${openingHoursId}`,
+                dto
+            )
+        );
+        return response.data;
+    }
+
+    async deleteOpeningHours(openingHoursId: number): Promise<void> {
+        await firstValueFrom(
+            this.http.delete<ApiResponse<{ message: string }>>(
+                `${this.baseUrl}/opening-hours/${openingHoursId}`
+            )
+        );
     }
 
     // =====================

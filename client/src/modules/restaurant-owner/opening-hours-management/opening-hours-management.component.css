@@ -1,0 +1,95 @@
+.opening-hours-container {
+    padding: 24px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.opening-hours-container h2 {
+    margin: 0 0 8px 0;
+}
+
+.subtitle {
+    color: #666;
+    margin-bottom: 24px;
+}
+
+.weekdays {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.day-card {
+    padding: 8px;
+}
+
+.day-card mat-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.day-card mat-card-title {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.closed-badge {
+    background: #f5f5f5;
+    color: #999;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+}
+
+.slot-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.slot-row:last-child {
+    border-bottom: none;
+}
+
+.slot-time {
+    flex: 1;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.slot-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.slot-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.slot-form mat-form-field {
+    width: 120px;
+}
+
+.time-separator {
+    color: #666;
+}
+
+.add-form {
+    padding-top: 8px;
+    margin-top: 8px;
+    border-top: 1px dashed #ddd;
+}
+
+mat-card-actions {
+    padding: 8px 16px;
+}
+
+mat-card-content {
+    padding: 0 16px;
+}

@@ -91,6 +91,17 @@ namespace Restaurant {
         datetime: created_at
         datetime: updated_at
     }
+
+    class opening_hours {
+        number: opening_hours_id*
+        number: restaurant_id* ~FK~
+        number: day_of_week    [0=Mon, 6=Sun]
+        time: open_time
+        time: close_time
+
+        datetime: created_at
+        datetime: updated_at
+    }
 }
 
 %% =====================
@@ -194,6 +205,7 @@ Order.order "*" -- "1" Location.address : delivered_to
 
 %% Restaurant ownership
 Restaurant.restaurant "*" -- "1" User.user : owned_by
+Restaurant.restaurant "1" -- "*" Restaurant.opening_hours : has
 
 %% Menu
 Restaurant.restaurant "1" -- "*" Menu.category : has
