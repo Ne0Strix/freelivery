@@ -108,6 +108,30 @@ export interface UpdateOpeningHours {
     closeTime?: string;
 }
 
+// =====================
+// Analytics DTOs
+// =====================
+
+export interface DailyOrderCount {
+    date: string; // ISO date string (YYYY-MM-DD)
+    orderCount: number;
+    revenue: number;
+}
+
+export interface TopDish {
+    dishId: number;
+    dishName: string;
+    totalQuantity: number;
+    orderCount: number;
+}
+
+export interface RestaurantAnalytics {
+    dailyOrders: DailyOrderCount[];
+    weeklyTotal: number;
+    weeklyRevenue: number;
+    topDishes: TopDish[];
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -275,6 +299,19 @@ export class RestaurantOwnerService {
                 `${this.baseUrl}/opening-hours/${openingHoursId}`
             )
         );
+    }
+
+    // =====================
+    // Analytics Methods
+    // =====================
+
+    async getAnalytics(): Promise<RestaurantAnalytics> {
+        const response = await firstValueFrom(
+            this.http.get<ApiResponse<RestaurantAnalytics>>(
+                `${this.baseUrl}/analytics`
+            )
+        );
+        return response.data;
     }
 
     // =====================

@@ -3,8 +3,10 @@ import { RestaurantRepository } from '../restaurant/restaurant.repository.js';
 import { OrderStatus } from './order.model.js';
 import {
     OrderRepository,
+    type DailyOrderCountRow,
     type OrderItemRow,
     type RestaurantOrderRow,
+    type TopDishRow,
 } from './order.repository.js';
 
 // =====================
@@ -35,6 +37,30 @@ export interface RestaurantOrder {
     paymentMethod: string;
     estimatedDeliveryTime: Date | null;
     createdAt: Date;
+}
+
+// =====================
+// Analytics DTOs
+// =====================
+
+export interface DailyOrderCount {
+    date: string; // ISO date string (YYYY-MM-DD)
+    orderCount: number;
+    revenue: number;
+}
+
+export interface TopDish {
+    dishId: number;
+    dishName: string;
+    totalQuantity: number;
+    orderCount: number;
+}
+
+export interface RestaurantAnalytics {
+    dailyOrders: DailyOrderCount[];
+    weeklyTotal: number;
+    weeklyRevenue: number;
+    topDishes: TopDish[];
 }
 
 // =====================
@@ -199,5 +225,77 @@ export class OrderService {
             parts.push(`(${row.delivery_additional_info})`);
         }
         return parts.join(', ');
+    }
+
+    // =====================
+    // Analytics
+    // =====================
+
+    /**
+     * Get analytics for the restaurant owned by the given user
+     * Returns daily order counts for last 7 days and top 5 dishes
+     */
+    async getAnalyticsForOwner(
+        ownerUserId: number
+    ): Promise<RestaurantAnalytics> {
+        // Find the owner's restaurant
+        const restaurant =
+            await this.restaurantRepository.findByOwnerId(ownerUserId);
+
+        if (!restaurant) {
+            throw new ForbiddenError('You do not own a restaurant');
+        }
+
+        // Get daily order counts for last 7 days
+        const dailyRows =
+            await this.orderRepository.getDailyOrderCountsForRestaurant(
+                restaurant.restaurant_id,
+                7
+            );
+
+        // Get top 5 dishes
+        const topDishRows =
+            await this.orderRepository.getTopDishesForRestaurant(
+                restaurant.restaurant_id,
+                5
+            );
+
+        // Transform rows to DTOs
+        const dailyOrders = this.toDailyOrderDTOs(dailyRows);
+        const topDishes = this.toTopDishDTOs(topDishRows);
+
+        // Calculate weekly totals
+        const weeklyTotal = dailyOrders.reduce(
+            (sum, day) => sum + day.orderCount,
+            0
+        );
+        const weeklyRevenue = dailyOrders.reduce(
+            (sum, day) => sum + day.revenue,
+            0
+        );
+
+        return {
+            dailyOrders,
+            weeklyTotal,
+            weeklyRevenue,
+            topDishes,
+        };
+    }
+
+    private toDailyOrderDTOs(rows: DailyOrderCountRow[]): DailyOrderCount[] {
+        return rows.map((row) => ({
+            date: row.order_date.toISOString().split('T')[0],
+            orderCount: Number(row.order_count),
+            revenue: Number(row.daily_revenue),
+        }));
+    }
+
+    private toTopDishDTOs(rows: TopDishRow[]): TopDish[] {
+        return rows.map((row) => ({
+            dishId: row.dish_id,
+            dishName: row.dish_name,
+            totalQuantity: Number(row.total_quantity),
+            orderCount: Number(row.order_count),
+        }));
     }
 }

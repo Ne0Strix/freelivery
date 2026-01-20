@@ -1,0 +1,102 @@
+.analytics-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.analytics-header {
+    margin-bottom: 32px;
+}
+
+.analytics-header h1 {
+    margin: 16px 0 8px 0;
+    font-size: 28px;
+    font-weight: 500;
+}
+
+.analytics-header p {
+    margin: 0;
+    color: #666;
+}
+
+.loading-container {
+    display: flex;
+    justify-content: center;
+    padding: 64px;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.summary-cards mat-card {
+    text-align: center;
+}
+
+.summary-cards mat-card-header {
+    justify-content: center;
+}
+
+.card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #e8f5e9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px auto;
+}
+
+.card-icon i {
+    font-size: 20px;
+    color: #4caf50;
+}
+
+.stat-value {
+    font-size: 36px;
+    font-weight: 600;
+    margin: 16px 0 8px 0;
+    color: #333;
+}
+
+.stat-label {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+/* Table Cards */
+.table-card {
+    margin-bottom: 24px;
+}
+
+.table-card mat-card-content {
+    padding-top: 16px;
+}
+
+.daily-table,
+.top-dishes-table {
+    width: 100%;
+}
+
+.no-data {
+    text-align: center;
+    color: #999;
+    padding: 32px 0;
+    font-style: italic;
+}
+
+/* Table Styling */
+th.mat-mdc-header-cell {
+    font-weight: 600;
+    color: #333;
+}
+
+td.mat-mdc-cell {
+    color: #555;
+}
