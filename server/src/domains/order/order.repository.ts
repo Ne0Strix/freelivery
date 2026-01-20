@@ -120,6 +120,61 @@ export class OrderRepository extends Repository<OrderRow> {
         return result.rows[0];
     }
 
+    // =====================
+    // Analytics Queries
+    // =====================
+
+    /**
+     * Get daily order counts for a restaurant over the last N days
+     */
+    async getDailyOrderCountsForRestaurant(
+        restaurantId: number,
+        days: number = 7
+    ): Promise<DailyOrderCountRow[]> {
+        const query = `
+            SELECT 
+                DATE(created_at) AS order_date,
+                COUNT(*) AS order_count,
+                COALESCE(SUM(total_amount), 0) AS daily_revenue
+            FROM "order"
+            WHERE restaurant_id = $1
+              AND created_at >= CURRENT_DATE - INTERVAL '${days - 1} days'
+            GROUP BY DATE(created_at)
+            ORDER BY order_date DESC
+        `;
+        const result = await this.query<DailyOrderCountRow>(query, [
+            restaurantId,
+        ]);
+        return result.rows;
+    }
+
+    /**
+     * Get top dishes by quantity ordered for a restaurant
+     */
+    async getTopDishesForRestaurant(
+        restaurantId: number,
+        limit: number = 5
+    ): Promise<TopDishRow[]> {
+        const query = `
+            SELECT 
+                oi.dish_id,
+                oi.dish_name_snapshot AS dish_name,
+                SUM(oi.quantity) AS total_quantity,
+                COUNT(DISTINCT oi.order_id) AS order_count
+            FROM order_item oi
+            JOIN "order" o ON oi.order_id = o.order_id
+            WHERE o.restaurant_id = $1
+            GROUP BY oi.dish_id, oi.dish_name_snapshot
+            ORDER BY total_quantity DESC
+            LIMIT $2
+        `;
+        const result = await this.query<TopDishRow>(query, [
+            restaurantId,
+            limit,
+        ]);
+        return result.rows;
+    }
+
     // Required abstract methods
     async create(_item: OrderRow): Promise<OrderRow> {
         throw new Error('Use dedicated order creation method');
@@ -128,4 +183,21 @@ export class OrderRepository extends Repository<OrderRow> {
     async update(_id: number, _item: Partial<OrderRow>): Promise<OrderRow> {
         throw new Error('Use dedicated update methods');
     }
+}
+
+// =====================
+// Analytics Row Interfaces
+// =====================
+
+export interface DailyOrderCountRow {
+    order_date: Date;
+    order_count: string; // COUNT returns string from pg
+    daily_revenue: string; // SUM returns string from pg
+}
+
+export interface TopDishRow {
+    dish_id: number;
+    dish_name: string;
+    total_quantity: string; // SUM returns string from pg
+    order_count: string; // COUNT returns string from pg
 }

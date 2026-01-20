@@ -420,4 +420,18 @@ router.delete(
     })
 );
 
+// =====================
+// Analytics Routes
+// =====================
+
+/** GET /analytics - Get analytics for the owner's restaurant */
+router.get(
+    '/analytics',
+    asyncHandler(async (req: Request, res: Response) => {
+        const ownerUserId = getOwnerUserId(req);
+        const analytics = await orderService.getAnalyticsForOwner(ownerUserId);
+        return res.json({ status: 'ok', data: analytics });
+    })
+);
+
 export default router;

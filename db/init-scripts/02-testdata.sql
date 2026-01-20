@@ -373,6 +373,172 @@ INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, un
   (32, 11, 32, 'Verhackertes', 5.90, 1),
   (33, 11, 43, 'Sturm', 3.50, 1);
 
+-- =====================
+-- Historical Orders for Analytics (last 7 days)
+-- Orders for Gasthaus Bründlwirt (restaurant_id=1)
+-- =====================
+
+-- Yesterday (1 day ago) - 3 orders
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, created_at, delivered_at
+) VALUES
+  (12, 1, 1, 1, 'DELIVERED', 35.80, 1.79, 0.00, 37.59, 'CREDIT_CARD', CURRENT_DATE - INTERVAL '1 day' + TIME '12:30:00', CURRENT_DATE - INTERVAL '1 day' + TIME '13:15:00'),
+  (13, 3, 1, 6, 'DELIVERED', 28.70, 1.44, 0.00, 30.14, 'CASH_ON_DELIVERY', CURRENT_DATE - INTERVAL '1 day' + TIME '18:45:00', CURRENT_DATE - INTERVAL '1 day' + TIME '19:30:00'),
+  (14, 1, 1, 1, 'DELIVERED', 42.30, 2.12, 0.00, 44.42, 'PAYPAL', CURRENT_DATE - INTERVAL '1 day' + TIME '20:00:00', CURRENT_DATE - INTERVAL '1 day' + TIME '20:45:00');
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (34, 12, 5, 'Wiener Schnitzel', 18.90, 1),
+  (35, 12, 8, 'Backhendl', 16.90, 1),
+  (36, 13, 6, 'Schweinsbraten', 15.90, 1),
+  (37, 13, 19, 'Kaiserschmarrn', 12.90, 1),
+  (38, 14, 7, 'Tafelspitz', 22.50, 1),
+  (39, 14, 5, 'Wiener Schnitzel', 18.90, 1);
+
+-- 2 days ago - 2 orders
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, created_at, delivered_at
+) VALUES
+  (15, 3, 1, 6, 'DELIVERED', 31.70, 1.59, 0.00, 33.29, 'CREDIT_CARD', CURRENT_DATE - INTERVAL '2 days' + TIME '13:00:00', CURRENT_DATE - INTERVAL '2 days' + TIME '13:45:00'),
+  (16, 1, 1, 1, 'DELIVERED', 25.80, 1.29, 0.00, 27.09, 'CASH_ON_DELIVERY', CURRENT_DATE - INTERVAL '2 days' + TIME '19:30:00', CURRENT_DATE - INTERVAL '2 days' + TIME '20:15:00');
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (40, 15, 5, 'Wiener Schnitzel', 18.90, 1),
+  (41, 15, 19, 'Kaiserschmarrn', 12.90, 1),
+  (42, 16, 10, 'Käsespätzle', 13.90, 1),
+  (43, 16, 18, 'Apfelstrudel', 6.90, 1),
+  (44, 16, 24, 'Almdudler', 3.90, 1);
+
+-- 3 days ago - 4 orders (busy day)
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, created_at, delivered_at
+) VALUES
+  (17, 1, 1, 1, 'DELIVERED', 37.80, 1.89, 0.00, 39.69, 'CREDIT_CARD', CURRENT_DATE - INTERVAL '3 days' + TIME '11:30:00', CURRENT_DATE - INTERVAL '3 days' + TIME '12:15:00'),
+  (18, 3, 1, 6, 'DELIVERED', 44.40, 2.22, 0.00, 46.62, 'PAYPAL', CURRENT_DATE - INTERVAL '3 days' + TIME '12:45:00', CURRENT_DATE - INTERVAL '3 days' + TIME '13:30:00'),
+  (19, 1, 1, 1, 'DELIVERED', 29.70, 1.49, 0.00, 31.19, 'CASH_ON_DELIVERY', CURRENT_DATE - INTERVAL '3 days' + TIME '18:00:00', CURRENT_DATE - INTERVAL '3 days' + TIME '18:45:00'),
+  (20, 3, 1, 6, 'DELIVERED', 52.30, 2.62, 0.00, 54.92, 'CREDIT_CARD', CURRENT_DATE - INTERVAL '3 days' + TIME '20:30:00', CURRENT_DATE - INTERVAL '3 days' + TIME '21:15:00');
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (45, 17, 5, 'Wiener Schnitzel', 18.90, 2),
+  (46, 18, 7, 'Tafelspitz', 22.50, 1),
+  (47, 18, 9, 'Zwiebelrostbraten', 21.90, 1),
+  (48, 19, 6, 'Schweinsbraten', 15.90, 1),
+  (49, 19, 10, 'Käsespätzle', 13.90, 1),
+  (50, 20, 5, 'Wiener Schnitzel', 18.90, 2),
+  (51, 20, 14, 'Erdäpfelsalat', 4.90, 2),
+  (52, 20, 26, 'Ottakringer Helles', 4.50, 1);
+
+-- 4 days ago - 1 order (slow day)
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, created_at, delivered_at
+) VALUES
+  (21, 1, 1, 1, 'DELIVERED', 22.50, 1.13, 0.00, 23.63, 'CREDIT_CARD', CURRENT_DATE - INTERVAL '4 days' + TIME '19:00:00', CURRENT_DATE - INTERVAL '4 days' + TIME '19:45:00');
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (53, 21, 7, 'Tafelspitz', 22.50, 1);
+
+-- 5 days ago - 2 orders
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, created_at, delivered_at
+) VALUES
+  (22, 3, 1, 6, 'DELIVERED', 33.80, 1.69, 0.00, 35.49, 'PAYPAL', CURRENT_DATE - INTERVAL '5 days' + TIME '12:00:00', CURRENT_DATE - INTERVAL '5 days' + TIME '12:45:00'),
+  (23, 1, 1, 1, 'DELIVERED', 27.80, 1.39, 0.00, 29.19, 'CASH_ON_DELIVERY', CURRENT_DATE - INTERVAL '5 days' + TIME '18:30:00', CURRENT_DATE - INTERVAL '5 days' + TIME '19:15:00');
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (54, 22, 8, 'Backhendl', 16.90, 2),
+  (55, 23, 5, 'Wiener Schnitzel', 18.90, 1),
+  (56, 23, 18, 'Apfelstrudel', 6.90, 1);
+
+-- 6 days ago - 3 orders
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, created_at, delivered_at
+) VALUES
+  (24, 1, 1, 1, 'DELIVERED', 40.70, 2.04, 0.00, 42.74, 'CREDIT_CARD', CURRENT_DATE - INTERVAL '6 days' + TIME '11:00:00', CURRENT_DATE - INTERVAL '6 days' + TIME '11:45:00'),
+  (25, 3, 1, 6, 'DELIVERED', 18.90, 0.95, 0.00, 19.85, 'CASH_ON_DELIVERY', CURRENT_DATE - INTERVAL '6 days' + TIME '13:30:00', CURRENT_DATE - INTERVAL '6 days' + TIME '14:15:00'),
+  (26, 1, 1, 1, 'DELIVERED', 35.80, 1.79, 0.00, 37.59, 'PAYPAL', CURRENT_DATE - INTERVAL '6 days' + TIME '20:00:00', CURRENT_DATE - INTERVAL '6 days' + TIME '20:45:00');
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (57, 24, 9, 'Zwiebelrostbraten', 21.90, 1),
+  (58, 24, 5, 'Wiener Schnitzel', 18.90, 1),
+  (59, 25, 5, 'Wiener Schnitzel', 18.90, 1),
+  (60, 26, 6, 'Schweinsbraten', 15.90, 1),
+  (61, 26, 19, 'Kaiserschmarrn', 12.90, 1),
+  (62, 26, 24, 'Almdudler', 3.90, 2);
+
+-- =====================
+-- Historical Orders for Heuriger zum Weinberg (restaurant_id=2, owned by restaurant-owner user_id=4)
+-- =====================
+
+-- Yesterday - 2 orders
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, created_at, delivered_at
+) VALUES
+  (27, 1, 2, 1, 'DELIVERED', 28.30, 1.27, 0.00, 29.57, 'CREDIT_CARD', CURRENT_DATE - INTERVAL '1 day' + TIME '14:00:00', CURRENT_DATE - INTERVAL '1 day' + TIME '14:45:00'),
+  (28, 3, 2, 6, 'DELIVERED', 21.80, 0.98, 0.00, 22.78, 'CASH_ON_DELIVERY', CURRENT_DATE - INTERVAL '1 day' + TIME '19:00:00', CURRENT_DATE - INTERVAL '1 day' + TIME '19:45:00');
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (63, 27, 30, 'Brettljause', 14.90, 1),
+  (64, 27, 34, 'Stelze', 16.90, 1),
+  (65, 28, 35, 'Blunzn mit Kraut', 11.90, 1),
+  (66, 28, 40, 'Mohnnudeln', 9.90, 1);
+
+-- 2 days ago - 1 order
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, created_at, delivered_at
+) VALUES
+  (29, 1, 2, 1, 'DELIVERED', 32.30, 1.45, 0.00, 33.75, 'PAYPAL', CURRENT_DATE - INTERVAL '2 days' + TIME '18:30:00', CURRENT_DATE - INTERVAL '2 days' + TIME '19:15:00');
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (67, 29, 34, 'Stelze', 16.90, 1),
+  (68, 29, 38, 'Buchteln', 7.90, 1),
+  (69, 29, 41, 'Gemischter Satz', 4.50, 2);
+
+-- 3 days ago - 3 orders
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, created_at, delivered_at
+) VALUES
+  (30, 3, 2, 6, 'DELIVERED', 24.40, 1.10, 0.00, 25.50, 'CREDIT_CARD', CURRENT_DATE - INTERVAL '3 days' + TIME '12:00:00', CURRENT_DATE - INTERVAL '3 days' + TIME '12:45:00'),
+  (31, 1, 2, 1, 'DELIVERED', 29.80, 1.34, 0.00, 31.14, 'CASH_ON_DELIVERY', CURRENT_DATE - INTERVAL '3 days' + TIME '17:30:00', CURRENT_DATE - INTERVAL '3 days' + TIME '18:15:00'),
+  (32, 3, 2, 6, 'DELIVERED', 18.40, 0.83, 0.00, 19.23, 'PAYPAL', CURRENT_DATE - INTERVAL '3 days' + TIME '20:00:00', CURRENT_DATE - INTERVAL '3 days' + TIME '20:45:00');
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (70, 30, 30, 'Brettljause', 14.90, 1),
+  (71, 30, 39, 'Powidltascherl', 8.50, 1),
+  (72, 31, 30, 'Brettljause', 14.90, 2),
+  (73, 32, 37, 'Erdäpfelgulasch', 10.90, 1),
+  (74, 32, 38, 'Buchteln', 7.90, 1);
+
+-- 5 days ago - 2 orders
+INSERT INTO "order" (
+  order_id, customer_user_id, restaurant_id, delivery_address_id,
+  status, subtotal_amount, service_fee_amount, discount_amount, total_amount,
+  payment_method, created_at, delivered_at
+) VALUES
+  (33, 1, 2, 1, 'DELIVERED', 26.80, 1.21, 0.00, 28.01, 'CREDIT_CARD', CURRENT_DATE - INTERVAL '5 days' + TIME '13:00:00', CURRENT_DATE - INTERVAL '5 days' + TIME '13:45:00'),
+  (34, 3, 2, 6, 'DELIVERED', 33.80, 1.52, 0.00, 35.32, 'CASH_ON_DELIVERY', CURRENT_DATE - INTERVAL '5 days' + TIME '19:30:00', CURRENT_DATE - INTERVAL '5 days' + TIME '20:15:00');
+
+INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, unit_price, quantity) VALUES
+  (75, 33, 34, 'Stelze', 16.90, 1),
+  (76, 33, 40, 'Mohnnudeln', 9.90, 1),
+  (77, 34, 34, 'Stelze', 16.90, 2);
+
 -- Reset sequences to continue after test data IDs
 SELECT setval('user_user_id_seq', (SELECT MAX(user_id) FROM "user"));
 SELECT setval('user_data_user_id_seq', (SELECT MAX(user_id) FROM user_data));
@@ -383,7 +549,7 @@ SELECT setval('category_category_id_seq', (SELECT MAX(category_id) FROM category
 SELECT setval('dish_dish_id_seq', (SELECT MAX(dish_id) FROM dish));
 SELECT setval('cart_cart_id_seq', (SELECT MAX(cart_id) FROM cart));
 SELECT setval('cart_item_cart_item_id_seq', (SELECT MAX(cart_item_id) FROM cart_item));
-SELECT setval('order_order_id_seq', (SELECT MAX(order_id) FROM "order"));
-SELECT setval('order_item_order_item_id_seq', (SELECT MAX(order_item_id) FROM order_item));
+SELECT setval('order_order_id_seq', (SELECT COALESCE(MAX(order_id), 1) FROM "order"));
+SELECT setval('order_item_order_item_id_seq', (SELECT COALESCE(MAX(order_item_id), 1) FROM order_item));
 
 -- End of test data

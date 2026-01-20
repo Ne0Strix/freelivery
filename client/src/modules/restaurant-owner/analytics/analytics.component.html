@@ -1,0 +1,155 @@
+<div class="analytics-container">
+    <header class="analytics-header">
+        <a mat-button routerLink="/restaurant">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+        <h1>Analytics</h1>
+        <p>Order statistics for the last 7 days</p>
+    </header>
+
+    @if (loading()) {
+        <div class="loading-container">
+            <mat-spinner diameter="48"></mat-spinner>
+        </div>
+    } @else if (analytics(); as data) {
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <mat-card>
+                <mat-card-header>
+                    <div class="card-icon">
+                        <i class="fa-solid fa-receipt"></i>
+                    </div>
+                    <mat-card-title>Weekly Orders</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <p class="stat-value">{{ data.weeklyTotal }}</p>
+                    <p class="stat-label">orders in the last 7 days</p>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card>
+                <mat-card-header>
+                    <div class="card-icon">
+                        <i class="fa-solid fa-euro-sign"></i>
+                    </div>
+                    <mat-card-title>Weekly Revenue</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <p class="stat-value">
+                        {{ data.weeklyRevenue | currency: 'EUR' }}
+                    </p>
+                    <p class="stat-label">revenue in the last 7 days</p>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <!-- Daily Orders Table -->
+        <mat-card class="table-card">
+            <mat-card-header>
+                <mat-card-title>Daily Breakdown</mat-card-title>
+                <mat-card-subtitle
+                    >Order counts and revenue per day</mat-card-subtitle
+                >
+            </mat-card-header>
+            <mat-card-content>
+                @if (data.dailyOrders.length === 0) {
+                    <p class="no-data">No orders in the last 7 days</p>
+                } @else {
+                    <table
+                        mat-table
+                        [dataSource]="data.dailyOrders"
+                        class="daily-table"
+                    >
+                        <ng-container matColumnDef="date">
+                            <th mat-header-cell *matHeaderCellDef>Date</th>
+                            <td mat-cell *matCellDef="let row">
+                                {{ formatDate(row.date) }}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="orderCount">
+                            <th mat-header-cell *matHeaderCellDef>Orders</th>
+                            <td mat-cell *matCellDef="let row">
+                                {{ row.orderCount }}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="revenue">
+                            <th mat-header-cell *matHeaderCellDef>Revenue</th>
+                            <td mat-cell *matCellDef="let row">
+                                {{ row.revenue | currency: 'EUR' }}
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="dailyColumns"></tr>
+                        <tr
+                            mat-row
+                            *matRowDef="let row; columns: dailyColumns"
+                        ></tr>
+                    </table>
+                }
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Top Dishes Table -->
+        <mat-card class="table-card">
+            <mat-card-header>
+                <mat-card-title>Top 5 Most-Ordered Dishes</mat-card-title>
+                <mat-card-subtitle>All-time best sellers</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                @if (data.topDishes.length === 0) {
+                    <p class="no-data">No dish data available</p>
+                } @else {
+                    <table
+                        mat-table
+                        [dataSource]="data.topDishes"
+                        class="top-dishes-table"
+                    >
+                        <ng-container matColumnDef="rank">
+                            <th mat-header-cell *matHeaderCellDef>#</th>
+                            <td mat-cell *matCellDef="let row; let i = index">
+                                {{ i + 1 }}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="dishName">
+                            <th mat-header-cell *matHeaderCellDef>Dish</th>
+                            <td mat-cell *matCellDef="let row">
+                                {{ row.dishName }}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="totalQuantity">
+                            <th mat-header-cell *matHeaderCellDef>
+                                Quantity Sold
+                            </th>
+                            <td mat-cell *matCellDef="let row">
+                                {{ row.totalQuantity }}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="orderCount">
+                            <th mat-header-cell *matHeaderCellDef>
+                                In # Orders
+                            </th>
+                            <td mat-cell *matCellDef="let row">
+                                {{ row.orderCount }}
+                            </td>
+                        </ng-container>
+
+                        <tr
+                            mat-header-row
+                            *matHeaderRowDef="topDishColumns"
+                        ></tr>
+                        <tr
+                            mat-row
+                            *matRowDef="let row; columns: topDishColumns"
+                        ></tr>
+                    </table>
+                }
+            </mat-card-content>
+        </mat-card>
+    }
+</div>
