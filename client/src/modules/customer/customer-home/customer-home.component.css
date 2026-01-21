@@ -146,6 +146,17 @@
     color: #6b7280;
 }
 
+/* Mobile responsive */
+@media (max-width: 640px) {
+    .customer-home {
+        padding: 1rem;
+    }
+
+    .filter-section {
+        flex-direction: column;
+    }
+}
+
 .view-menu {
     width: 100%;
     padding: 0.5rem 1rem;

@@ -3,6 +3,7 @@ import {
     Component,
     computed,
     inject,
+    signal,
 } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthenticationService } from '../../commons/services/authentication.service';
@@ -20,6 +21,15 @@ export class NavbarComponent {
 
     isLoggedIn = this.authService.isLoggedIn;
     isAdmin = computed(() => this.authService.hasAnyRole(['admin']));
+    menuOpen = signal(false);
+
+    toggleMenu(): void {
+        this.menuOpen.update((open) => !open);
+    }
+
+    closeMenu(): void {
+        this.menuOpen.set(false);
+    }
 
     signOut(): void {
         this.authService.logout();

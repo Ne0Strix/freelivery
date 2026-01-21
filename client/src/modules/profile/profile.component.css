@@ -197,14 +197,12 @@
     padding: 2rem;
 }
 
-@media (max-width: 600px) {
-    .form-row {
-        grid-template-columns: 1fr;
+@media (max-width: 640px) {
+    .profile-container {
+        padding: 1rem;
     }
 
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
+    .form-row {
+        grid-template-columns: 1fr;
     }
 }
