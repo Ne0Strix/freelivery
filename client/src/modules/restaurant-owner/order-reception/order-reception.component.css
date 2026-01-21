@@ -116,6 +116,23 @@
     padding: 1rem 0;
 }
 
+@media (max-width: 640px) {
+    .order-reception {
+        padding: 1rem;
+    }
+
+    .order-details {
+        grid-template-columns: 1fr;
+    }
+
+    /* Hide extra info on mobile, show only order ID and time */
+    .order-total,
+    .order-customer,
+    .order-separator {
+        display: none;
+    }
+}
+
 .order-details h4 {
     margin: 0 0 0.5rem;
     font-size: 0.85rem;

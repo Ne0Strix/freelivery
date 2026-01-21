@@ -77,11 +77,24 @@
 
 .table-card mat-card-content {
     padding-top: 16px;
+    overflow-x: auto;
 }
 
 .daily-table,
 .top-dishes-table {
     width: 100%;
+    min-width: 400px;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+    .analytics-container {
+        padding: 16px;
+    }
+
+    .summary-cards {
+        grid-template-columns: 1fr;
+    }
 }
 
 .no-data {

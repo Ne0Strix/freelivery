@@ -2,6 +2,13 @@ mat-dialog-content {
     min-width: 450px;
 }
 
+@media (max-width: 640px) {
+    mat-dialog-content {
+        min-width: unset;
+        width: 85vw;
+    }
+}
+
 form {
     display: flex;
     flex-direction: column;

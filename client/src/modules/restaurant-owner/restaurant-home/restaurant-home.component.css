@@ -62,3 +62,9 @@ mat-card-actions {
 mat-card-actions a i {
     margin-right: 8px;
 }
+
+@media (max-width: 640px) {
+    .restaurant-dashboard {
+        padding: 1rem;
+    }
+}

@@ -52,8 +52,13 @@
                                         }}</span>
                                     </mat-panel-title>
                                     <mat-panel-description>
-                                        {{ order.customerName }} •
-                                        {{ formatDate(order.createdAt) }}
+                                        <span class="order-customer">{{
+                                            order.customerName
+                                        }}</span>
+                                        <span class="order-separator"> • </span>
+                                        <span class="order-time">{{
+                                            formatDate(order.createdAt)
+                                        }}</span>
                                     </mat-panel-description>
                                 </mat-expansion-panel-header>
 
