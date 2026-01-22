@@ -39,6 +39,53 @@ server:R -- L:db
 │       └── site-manager
 ```
 
+#### Navigation & Network
+
+`app.routes.ts`
+
+- defines routes to
+    - central functions
+        - login, signup, profile
+    - lazy loaded modules
+        - customer
+        - restaurant
+        - site-manager
+        - profile
+- where necessary, routes are protected via `canActivate` using `authGuard`
+    - for modules roles are defined in a route's data
+
+`auth.guard.ts`
+
+- uses the `authentication.service.ts` to verify whether a user is logged in and
+- verify that the logged in user posseses the given role.
+
+`authenticator.interceptor.ts`
+
+- clones request (conceptually immutable) and sets authorization header
+
+`serverError.interceptor.ts`
+
+- taps into responses and verifies its format and
+- catches any HttpErrors and surfaces them in a dismissible snackbar
+
+`app.config.ts`
+
+- `provideHttpClient(withInterceptors([…,…]))` provides the interceptors as `HttpHandler` to the `HttpClient` in the given order
+
+#### Modules
+
+Restaurant-owner:
+
+- `restaurant-owner.routes.ts`
+    - defines lazy-loded routes used in `app.routes.ts`
+- `restaurant-owner.service.ts`
+    - contains general DTOs and DTOs for creating/updating given entities
+    - provides methods used solely by the `restaurant-owner`-module
+        - all calls to `/api/restaurant-owner` require the `restaurant-owner` role (see backend section)
+        - manipulating restaurant-owner specific entities
+- other folders in the module
+    - contain form-elements and target components
+
 ### Backend
 
 ```
@@ -248,6 +295,51 @@ Related code-parts:
 - `client/src/commons/services/authentication.service.ts`
 - `client/src/layout/login/*`
 - `client/src/layout/signup/*`
+
+#### Login
+
+```mermaid
+sequenceDiagram
+
+    actor User
+    participant Frontend
+    participant Router
+    participant AuthenticationService
+    participant HttpClient
+    box HttpHandler
+    participant authenticatorInterceptor
+    participant serverErrorInterceptor
+    participant HttpBackend
+    end
+
+    User ->> Frontend: provides Credentials
+    activate Frontend
+    Frontend ->> AuthenticationService: requests authentication
+    activate AuthenticationService
+    AuthenticationService ->> HttpClient: POST request to login
+    activate HttpClient
+    HttpClient ->> authenticatorInterceptor: forwards to registered interceptors
+    activate authenticatorInterceptor
+    Note over authenticatorInterceptor: sets auth-header
+    authenticatorInterceptor ->> serverErrorInterceptor: forwards to next interceptor
+    activate serverErrorInterceptor
+    serverErrorInterceptor ->> HttpBackend: forwards to final HttpHandler
+    activate HttpBackend
+    HttpBackend ->> serverErrorInterceptor: provides server response
+    deactivate HttpBackend
+    Note over serverErrorInterceptor: validates response format<br/> & catches errors
+    serverErrorInterceptor ->> authenticatorInterceptor:forwards server response
+    deactivate serverErrorInterceptor
+    authenticatorInterceptor ->> HttpClient: forwards server response
+    deactivate authenticatorInterceptor
+    HttpClient ->> AuthenticationService: forwards  server response
+    deactivate HttpClient
+    note over AuthenticationService: saves token, sets<br/>user-roles & id
+    deactivate AuthenticationService
+    AuthenticationService ->> Frontend: sends success message
+    deactivate Frontend
+    Frontend ->> Router: activates route
+```
 
 ### Profile Management
 
