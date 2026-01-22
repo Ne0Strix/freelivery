@@ -138,6 +138,9 @@ export class AuthenticationService {
     }
 
     hasAnyRole(roles: string[]): boolean {
+        if (roles.length === 0) {
+            return false;
+        }
         const userRoles = this._userRoles();
         return roles.some((role) => userRoles.includes(role));
     }
