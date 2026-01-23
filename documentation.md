@@ -282,6 +282,28 @@ classDiagram
 
 ### REST API
 
+`index.ts`
+
+- entrypoint for HTTP requests
+- `/uploads` served statically for image hosting
+- _public_ endpoints:
+    - `/api/auth` to authenticate users
+- _authenticated_ endpoints: any logged in user can access them
+    - `/api/addresses`
+        - CRUD endpoints for addresses
+    - `/api/restaurants`
+        - get active restaurants and
+        - their categories/dishes
+    - `/api/profile`
+        - profile management (updating password & address)
+        - restaurant management
+- _authenticated & restricted_ endpoints: only users with given role can access
+    - `/api/restaurant-owner`
+        - CRUD endpoints for managing the menu
+        - accessing orders and updating their status
+        - managing opening hours
+        - accessing analytics
+
 ## Shared Components and Backend Services
 
 ### User Registration & Authentication
