@@ -1,10 +1,15 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
     FormBuilder,
+    FormControl,
     FormGroup,
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
 import { UserRole } from '../../commons/model/role.model';
@@ -12,13 +17,27 @@ import { AuthenticationService } from '../../commons/services/authentication.ser
 // source https://blog.angular-university.io/angular-jwt-authentication/
 @Component({
     selector: 'app-login',
-    imports: [ReactiveFormsModule, RouterLink],
+    imports: [
+        ReactiveFormsModule,
+        RouterLink,
+        MatButtonModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+    ],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent {
     form: FormGroup;
+
+    readonly email = new FormControl('', [
+        Validators.required,
+        Validators.email,
+    ]);
+    readonly password = new FormControl('', [Validators.required]);
 
     constructor(
         private fb: FormBuilder,
@@ -27,8 +46,8 @@ export class LoginComponent {
         private snackbar: MatSnackBar
     ) {
         this.form = this.fb.group({
-            email: ['', Validators.required],
-            password: ['', Validators.required],
+            email: this.email,
+            password: this.password,
         });
     }
 

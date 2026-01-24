@@ -2,6 +2,14 @@
 
 @import 'tailwindcss';
 
+:root {
+    --primary-c: #e469ff;
+    --border-c: #8e008e;
+    --warning-red: #ff0066;
+    --muted-text: #6b7280;
+    --hover-bg: #e4e4e5;
+}
+
 .mat-mdc-select-panel {
     background-color: white !important; /* Without this the dropdown background is transparent */
 }

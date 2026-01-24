@@ -21,13 +21,33 @@
 
 .dashboard-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: 1fr;
     gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+    .dashboard-cards {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 mat-card {
     display: flex;
     flex-direction: column;
+}
+
+mat-card-header {
+    display: flex;
+    align-items: flex-start;
+    font-weight: bold;
+}
+
+mat-card {
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 30px;
+    padding: 10px;
 }
 
 .card-icon {
@@ -36,14 +56,15 @@ mat-card {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 16px;
-    background-color: #e3f2fd;
+    flex-shrink: 0;
+    margin-left: auto;
+    background-color: lightblue;
     border-radius: 50%;
 }
 
 .card-icon i {
     font-size: 18px;
-    color: #1976d2;
+    color: var(--border-c);
 }
 
 mat-card-content {
@@ -51,7 +72,7 @@ mat-card-content {
 }
 
 mat-card-content p {
-    color: #666;
+    color: var(--muted-text);
     font-size: 0.9rem;
 }
 
@@ -63,8 +84,17 @@ mat-card-actions a i {
     margin-right: 8px;
 }
 
-@media (max-width: 640px) {
-    .restaurant-dashboard {
-        padding: 1rem;
-    }
+.navigation-button {
+    background-color: var(--primary-c);
+    border: var(--border-c) 2px solid;
+    border-radius: 12px;
+}
+
+.navigation-button:hover {
+    background-color: var(--border-c);
+    color: white;
+}
+
+.navigation-button:active {
+    transform: scale(0.98);
 }

@@ -1,3 +1,64 @@
-:host {
-    display: block;
+.login-container {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    background: #fafafa;
+}
+
+mat-card-header {
+    justify-content: center;
+    font-weight: bold;
+}
+
+mat-card-title {
+    font-size: 1.75rem;
+}
+
+mat-card {
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 30px;
+    padding: 10px;
+}
+
+.login-button {
+    background-color: var(--primary-c);
+    border: var(--border-c) 2px solid;
+    border-radius: 12px;
+}
+
+.login-button:hover {
+    background-color: var(--border-c);
+    color: white;
+}
+
+.login-button:active {
+    transform: scale(0.98);
+}
+
+.login-button:disabled {
+    background-color: gray;
+    border-color: darkgray;
+    cursor: not-allowed;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+mat-error {
+    color: var(--warning-red);
+}
+
+mat-card-footer {
+    text-align: center;
+    padding: 8px 16px;
+}
+
+mat-card-footer p {
+    margin: 0;
+    font-size: 14px;
 }
