@@ -22,6 +22,7 @@ import { UserRole } from '../../commons/model/role.model';
 import { UserProfile } from '../../commons/model/user.model';
 import { Address, CreateAddress } from '../../commons/services/address.service';
 import { AuthenticationService } from '../../commons/services/authentication.service';
+import { phoneNumberValidator } from '../../commons/validators/phone-number.validator';
 import { AddressFormComponent } from '../../layout/address-form/address-form.component';
 import { ProfileService } from './profile.service';
 
@@ -74,7 +75,7 @@ export class ProfileComponent implements OnInit {
             firstName: [''],
             lastName: [''],
             salutation: [''],
-            phoneNumber: [''],
+            phoneNumber: ['', phoneNumberValidator()],
             dateOfBirth: [''],
         });
 
@@ -88,7 +89,7 @@ export class ProfileComponent implements OnInit {
             name: ['', Validators.required],
             description: [''],
             contactEmail: ['', [Validators.required, Validators.email]],
-            contactPhone: ['', Validators.required],
+            contactPhone: ['', [Validators.required, phoneNumberValidator()]],
             maxDeliveryDistance: [
                 5,
                 [Validators.required, Validators.min(1), Validators.max(20)],
