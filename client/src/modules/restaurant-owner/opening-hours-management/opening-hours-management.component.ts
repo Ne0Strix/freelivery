@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -13,10 +14,12 @@ import {
     Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTabsModule } from '@angular/material/tabs';
+import { RouterModule } from '@angular/router';
 import {
     OpeningHours,
     RestaurantOwnerService,
@@ -41,12 +44,15 @@ interface SlotsByDay {
 @Component({
     selector: 'app-opening-hours-management',
     imports: [
+        NgTemplateOutlet,
         ReactiveFormsModule,
-        MatCardModule,
+        RouterModule,
         MatButtonModule,
+        MatExpansionModule,
         MatFormFieldModule,
         MatInputModule,
         MatSnackBarModule,
+        MatTabsModule,
     ],
     templateUrl: './opening-hours-management.component.html',
     styleUrl: './opening-hours-management.component.css',

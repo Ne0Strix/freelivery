@@ -1,101 +1,125 @@
-.opening-hours-container {
-    padding: 24px;
-    max-width: 800px;
+.opening-hours-management {
+    max-width: 900px;
     margin: 0 auto;
+    padding: 2rem;
 }
 
-.opening-hours-container h2 {
-    margin: 0 0 8px 0;
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    margin: 0 0 0.5rem;
+    font-size: 1.75rem;
+    font-weight: 600;
 }
 
 .subtitle {
-    color: #666;
-    margin-bottom: 24px;
-}
-
-.weekdays {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.day-card {
-    padding: 8px;
-}
-
-.day-card mat-card-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.day-card mat-card-title {
+    color: var(--muted-text);
     margin: 0;
-    font-size: 1.1rem;
+}
+
+/* Desktop: show tabs, hide accordion */
+.desktop-tabs {
+    display: block;
+}
+
+.mobile-accordion {
+    display: none;
 }
 
 .closed-badge {
     background: #f5f5f5;
-    color: #999;
-    padding: 4px 12px;
-    border-radius: 16px;
-    font-size: 0.85rem;
+    color: var(--muted-text);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
+}
+
+.day-content {
+    padding: 1rem 0;
+    overflow-x: hidden;
 }
 
 .slot-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 0;
-    border-bottom: 1px solid #eee;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
 }
 
-.slot-row:last-child {
-    border-bottom: none;
+.slot-row:not(:last-child) {
+    border-bottom: 1px solid #eee;
 }
 
 .slot-time {
     flex: 1;
-    font-size: 1rem;
     font-weight: 500;
 }
 
 .slot-actions {
     display: flex;
-    gap: 4px;
+    gap: 0.25rem;
 }
 
 .slot-form {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex: 1;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    width: 100%;
 }
 
 .slot-form mat-form-field {
-    width: 120px;
+    flex: 1 1 120px;
+    min-width: 0;
 }
 
 .time-separator {
-    color: #666;
+    flex: 0 0 auto;
 }
 
 .add-form {
-    padding-top: 8px;
-    margin-top: 8px;
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
     border-top: 1px dashed #ddd;
 }
 
-mat-card-actions {
-    padding: 8px 16px;
+.add-slot-button {
+    background-color: var(--primary-c);
+    border: var(--border-c) 2px solid;
+    border-radius: 12px;
+    margin-top: 1rem;
 }
 
-mat-card-content {
-    padding: 0 16px;
+.add-slot-button:hover {
+    background-color: var(--border-c);
+    color: white;
+}
+
+.add-slot-button:active {
+    transform: scale(0.98);
+}
+
+.add-slot-button i {
+    margin-right: 8px;
 }
 
 @media (max-width: 640px) {
-    .opening-hours-container {
-        padding: 16px;
+    .opening-hours-management {
+        padding: 1rem;
+    }
+
+    .desktop-tabs {
+        display: none;
+    }
+
+    .mobile-accordion {
+        display: block;
+    }
+
+    .slot-form mat-form-field {
+        flex: 1 1 100px;
     }
 }
