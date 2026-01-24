@@ -55,4 +55,11 @@ export class SiteManagerService {
     ): Promise<void> {
         return this.userService.setActiveStatus(userId, isActive, adminUserId);
     }
+
+    async updateRestaurantFees(
+        restaurantId: number,
+        data: { serviceFeePercent?: number; minOrderAmount?: number }
+    ): Promise<void> {
+        return this.restaurantService.updateRestaurantFees(restaurantId, data);
+    }
 }

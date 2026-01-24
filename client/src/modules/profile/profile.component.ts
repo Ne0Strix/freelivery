@@ -94,6 +94,7 @@ export class ProfileComponent implements OnInit {
                 5,
                 [Validators.required, Validators.min(1), Validators.max(20)],
             ],
+            minOrderAmount: [0, [Validators.required, Validators.min(0)]],
         });
     }
 
@@ -125,6 +126,7 @@ export class ProfileComponent implements OnInit {
                         contactEmail: restaurant.contactEmail,
                         contactPhone: restaurant.contactPhone,
                         maxDeliveryDistance: restaurant.maxDeliveryDistance,
+                        minOrderAmount: restaurant.minOrderAmount,
                     });
                 }
 

@@ -201,13 +201,13 @@ CREATE TABLE IF NOT EXISTS "order" (
 CREATE TABLE IF NOT EXISTS order_item (
     order_item_id SERIAL PRIMARY KEY,
     order_id INT NOT NULL,
-    dish_id INT,
+    dish_id INT NOT NULL,
     dish_name_snapshot VARCHAR(255) NOT NULL,
     unit_price DECIMAL(10,2) NOT NULL,
     quantity INT NOT NULL CHECK (quantity > 0),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (order_id) REFERENCES "order"(order_id) ON DELETE CASCADE,
-    FOREIGN KEY (dish_id) REFERENCES dish(dish_id) ON DELETE SET NULL
+    FOREIGN KEY (order_id) REFERENCES "order"(order_id) ON DELETE CASCADE
+    -- Note: dish_id has no FK constraint to allow dish deletion while preserving order history
 );
 
 -- ======================

@@ -160,7 +160,7 @@ namespace Order {
     class order_item {
         number: order_item_id*
         number: order_id* ~FK~
-        number: dish_id* ~FK~
+        number: dish_id*
 
         string: dish_name_snapshot
         number: unit_price
@@ -216,7 +216,7 @@ Restaurant.restaurant "1" -- "*" Menu.dish : offers
 User.user "1" -- "*" Order.order : places
 Restaurant.restaurant "1" -- "*" Order.order : receives
 Order.order "1" -- "*" Order.order_item : contains
-Menu.dish "1" -- "*" Order.order_item : ordered_as
+%% Note: order_item.dish_id has no FK - dishes can be deleted while order history is preserved
 
 %% Cart
 User.user "1" -- "*" Order.cart : has

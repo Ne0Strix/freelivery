@@ -64,6 +64,7 @@
                             <th>Address</th>
                             <th>Orders</th>
                             <th>Revenue</th>
+                            <th>Service Fee %</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -79,10 +80,26 @@
                                 <td>
                                     €{{ restaurant.totalRevenue.toFixed(2) }}
                                 </td>
+                                <td>
+                                    <input
+                                        type="number"
+                                        class="fee-input"
+                                        min="2"
+                                        max="50"
+                                        step="0.5"
+                                        [ngModel]="restaurant.serviceFeePercent"
+                                        (blur)="
+                                            updateRestaurantFees(
+                                                restaurant.restaurantId,
+                                                $any($event.target).value
+                                            )
+                                        "
+                                    />
+                                </td>
                             </tr>
                         } @empty {
                             <tr>
-                                <td colspan="5" class="empty-message">
+                                <td colspan="6" class="empty-message">
                                     No active restaurants
                                 </td>
                             </tr>

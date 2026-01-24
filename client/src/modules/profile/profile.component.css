@@ -53,6 +53,10 @@ mat-hint {
     gap: 1rem;
 }
 
+.form-row-with-hints {
+    margin-bottom: 1rem;
+}
+
 .form-actions {
     display: flex;
     justify-content: flex-end;

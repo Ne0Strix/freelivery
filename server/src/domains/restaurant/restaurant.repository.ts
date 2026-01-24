@@ -148,6 +148,7 @@ export class RestaurantRepository extends Repository<RestaurantRow> {
             contactEmail?: string;
             contactPhone?: string;
             maxDeliveryDistance?: number;
+            minOrderAmount?: number;
         }
     ): Promise<RestaurantRow> {
         const query = `
@@ -157,8 +158,9 @@ export class RestaurantRepository extends Repository<RestaurantRow> {
                 contact_email = COALESCE($3, contact_email),
                 contact_phone = COALESCE($4, contact_phone),
                 max_delivery_distance = COALESCE($5, max_delivery_distance),
+                min_order_amount = COALESCE($6, min_order_amount),
                 updated_at = NOW()
-            WHERE ${this.primaryKey} = $6
+            WHERE ${this.primaryKey} = $7
             RETURNING *
         `;
         const result = await this.query<RestaurantRow>(query, [
@@ -167,6 +169,31 @@ export class RestaurantRepository extends Repository<RestaurantRow> {
             data.contactEmail,
             data.contactPhone,
             data.maxDeliveryDistance,
+            data.minOrderAmount,
+            restaurantId,
+        ]);
+        return result.rows[0];
+    }
+
+    /** Update restaurant fees (admin only) */
+    async updateFees(
+        restaurantId: number,
+        data: {
+            serviceFeePercent?: number;
+            minOrderAmount?: number;
+        }
+    ): Promise<RestaurantRow> {
+        const query = `
+            UPDATE ${this.tableName}
+            SET service_fee_percent = COALESCE($1, service_fee_percent),
+                min_order_amount = COALESCE($2, min_order_amount),
+                updated_at = NOW()
+            WHERE ${this.primaryKey} = $3
+            RETURNING *
+        `;
+        const result = await this.query<RestaurantRow>(query, [
+            data.serviceFeePercent,
+            data.minOrderAmount,
             restaurantId,
         ]);
         return result.rows[0];
