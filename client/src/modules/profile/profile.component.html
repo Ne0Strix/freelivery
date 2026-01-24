@@ -71,6 +71,13 @@
                                 type="tel"
                                 formControlName="phoneNumber"
                             />
+                            @if (
+                                profileForm
+                                    .get('phoneNumber')
+                                    ?.hasError('phoneNumber')
+                            ) {
+                                <mat-error>Invalid phone number</mat-error>
+                            }
                         </mat-form-field>
                         <mat-form-field appearance="outline">
                             <mat-label>Date of Birth</mat-label>
@@ -367,6 +374,13 @@
                                     <mat-error
                                         >Contact phone is required</mat-error
                                     >
+                                }
+                                @if (
+                                    restaurantForm
+                                        .get('contactPhone')
+                                        ?.hasError('phoneNumber')
+                                ) {
+                                    <mat-error>Invalid phone number</mat-error>
                                 }
                             </mat-form-field>
                         </div>

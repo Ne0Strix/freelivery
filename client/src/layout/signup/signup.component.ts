@@ -16,6 +16,7 @@ import { UserRole } from '../../commons/model/role.model';
 import { RoleLabelPipe } from '../../commons/pipes/role-label.pipe';
 import { CreateAddress } from '../../commons/services/address.service';
 import { AuthenticationService } from '../../commons/services/authentication.service';
+import { phoneNumberValidator } from '../../commons/validators/phone-number.validator';
 
 @Component({
     selector: 'app-signup',
@@ -103,7 +104,10 @@ export class SignupComponent {
 
         if (role === UserRole.CUSTOMER) {
             // Customer needs phone and address
-            phoneNumber?.setValidators([Validators.required]);
+            phoneNumber?.setValidators([
+                Validators.required,
+                phoneNumberValidator(),
+            ]);
             streetName?.setValidators([Validators.required]);
             houseNumber?.setValidators([Validators.required]);
             cityName?.setValidators([Validators.required]);
@@ -116,7 +120,10 @@ export class SignupComponent {
                 Validators.required,
                 Validators.email,
             ]);
-            contactPhone?.setValidators([Validators.required]);
+            contactPhone?.setValidators([
+                Validators.required,
+                phoneNumberValidator(),
+            ]);
             streetName?.setValidators([Validators.required]);
             houseNumber?.setValidators([Validators.required]);
             cityName?.setValidators([Validators.required]);

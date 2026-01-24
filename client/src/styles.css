@@ -13,3 +13,7 @@
 .mat-mdc-select-panel {
     background-color: white !important; /* Without this the dropdown background is transparent */
 }
+
+.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+    background-color: white !important; /* Without this the snackbar background is transparent */
+}
