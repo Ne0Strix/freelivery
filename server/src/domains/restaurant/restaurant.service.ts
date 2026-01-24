@@ -23,6 +23,8 @@ export interface ActiveRestaurant {
     address: string;
     orderCount: number;
     totalRevenue: number;
+    serviceFeePercent: number;
+    minOrderAmount: number;
 }
 
 /** Restaurant with delivery info for customer view */
@@ -103,6 +105,8 @@ export class RestaurantService {
             address: `${row.street_name} ${row.house_number}, ${row.zip_code} ${row.city_name}`,
             orderCount: Number(row.order_count),
             totalRevenue: Number(row.total_revenue),
+            serviceFeePercent: Number(row.service_fee_percent),
+            minOrderAmount: Number(row.min_order_amount),
         }));
     }
 
@@ -189,6 +193,7 @@ export class RestaurantService {
             contactPhone: row.contact_phone,
             status: row.status,
             maxDeliveryDistance: row.max_delivery_distance,
+            minOrderAmount: Number(row.min_order_amount),
         };
     }
 
@@ -212,7 +217,19 @@ export class RestaurantService {
             contactEmail: data.contactEmail,
             contactPhone: data.contactPhone,
             maxDeliveryDistance: data.maxDeliveryDistance,
+            minOrderAmount: data.minOrderAmount,
         });
+    }
+
+    /** Update restaurant fees (admin only) */
+    async updateRestaurantFees(
+        restaurantId: number,
+        data: { serviceFeePercent?: number; minOrderAmount?: number }
+    ): Promise<void> {
+        await this.repository.getByIdOrThrow(restaurantId, {
+            message: 'Restaurant not found',
+        });
+        await this.repository.updateFees(restaurantId, data);
     }
 }
 
@@ -226,6 +243,7 @@ export interface OwnerRestaurant {
     contactPhone: string;
     status: RestaurantStatus;
     maxDeliveryDistance: number;
+    minOrderAmount: number;
 }
 
 /** DTO for updating restaurant details */
@@ -235,4 +253,5 @@ export interface UpdateRestaurantData {
     contactEmail?: string;
     contactPhone?: string;
     maxDeliveryDistance?: number;
+    minOrderAmount?: number;
 }

@@ -118,6 +118,18 @@ router.put(
             }
         }
 
+        // Validate minOrderAmount if provided
+        const minOrderAmount = req.body.minOrderAmount;
+        if (minOrderAmount !== undefined) {
+            const num = Number(minOrderAmount);
+            if (isNaN(num) || num < 0) {
+                return res.status(400).json({
+                    status: 'error',
+                    error: 'minOrderAmount must be a non-negative number',
+                });
+            }
+        }
+
         const data: UpdateRestaurantData = {
             name: req.body.name,
             description: req.body.description,
@@ -126,6 +138,10 @@ router.put(
             maxDeliveryDistance: maxDeliveryDistance
                 ? Number(maxDeliveryDistance)
                 : undefined,
+            minOrderAmount:
+                minOrderAmount !== undefined
+                    ? Number(minOrderAmount)
+                    : undefined,
         };
 
         await restaurantService.updateRestaurantDetails(

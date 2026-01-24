@@ -70,4 +70,16 @@ export class SiteManagerService {
             )
         );
     }
+
+    async updateRestaurantFees(
+        restaurantId: number,
+        data: { serviceFeePercent: number }
+    ): Promise<void> {
+        await firstValueFrom(
+            this.http.patch<ApiResponse<void>>(
+                `${this.baseUrl}/site-manager/restaurants/${restaurantId}`,
+                data
+            )
+        );
+    }
 }

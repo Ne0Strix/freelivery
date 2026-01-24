@@ -21,6 +21,8 @@ export interface ActiveRestaurant {
     address: string;
     orderCount: number;
     totalRevenue: number;
+    serviceFeePercent: number;
+    minOrderAmount: number;
 }
 
 /** DTO for creating a new restaurant during signup */
@@ -49,6 +51,7 @@ export interface OwnerRestaurant {
     contactPhone: string;
     status: string;
     maxDeliveryDistance: number;
+    minOrderAmount: number;
 }
 
 /** DTO for updating restaurant details */
@@ -58,6 +61,7 @@ export interface UpdateRestaurant {
     contactEmail?: string;
     contactPhone?: string;
     maxDeliveryDistance?: number;
+    minOrderAmount?: number;
 }
 
 /** DTO for restaurant owner signup data */

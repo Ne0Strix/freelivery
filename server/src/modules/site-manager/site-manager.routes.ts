@@ -82,4 +82,33 @@ router.delete(
     })
 );
 
+// PATCH /restaurants/:id - update restaurant service fee (admin only)
+router.patch(
+    '/restaurants/:id',
+    asyncHandler(async (req: Request, res: Response) => {
+        const restaurantId = Number(req.params.id);
+        const { serviceFeePercent } = req.body;
+
+        if (serviceFeePercent === undefined) {
+            throw new ValidationError('serviceFeePercent is required');
+        }
+
+        const fee = Number(serviceFeePercent);
+        if (isNaN(fee) || fee < 2 || fee > 50) {
+            throw new ValidationError(
+                'serviceFeePercent must be between 2 and 50'
+            );
+        }
+
+        await service.updateRestaurantFees(restaurantId, {
+            serviceFeePercent: fee,
+        });
+
+        return res.json({
+            status: 'ok',
+            data: { message: 'Restaurant fee updated' },
+        });
+    })
+);
+
 export default router;

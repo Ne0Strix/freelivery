@@ -43,8 +43,11 @@ export class ForbiddenError extends AppError {
 }
 
 export class NotFoundError extends AppError {
-    constructor(message = 'Not found') {
+    public readonly details?: Record<string, unknown>;
+
+    constructor(message = 'Not found', details?: Record<string, unknown>) {
         super(message, 404, 'NOT_FOUND');
+        this.details = details;
     }
 }
 

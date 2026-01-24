@@ -98,4 +98,18 @@ export class SiteManagerHomeComponent implements OnInit {
         });
         await this.loadData();
     }
+
+    async updateRestaurantFees(
+        restaurantId: number,
+        serviceFeePercent: string | number
+    ): Promise<void> {
+        const fee = Number(serviceFeePercent);
+        if (isNaN(fee) || fee < 2 || fee > 50) {
+            return; // Invalid value, don't submit
+        }
+        await this.siteManagerService.updateRestaurantFees(restaurantId, {
+            serviceFeePercent: fee,
+        });
+        await this.loadData();
+    }
 }

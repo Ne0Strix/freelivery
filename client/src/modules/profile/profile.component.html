@@ -396,10 +396,7 @@
                                 min="1"
                                 max="20"
                             />
-                            <mat-hint
-                                >Maximum Manhattan distance (1-20). Each step =
-                                5 min delivery time.</mat-hint
-                            >
+                            <mat-hint>Each step = 5 min delivery time</mat-hint>
                             @if (
                                 restaurantForm
                                     .get('maxDeliveryDistance')
@@ -419,6 +416,34 @@
                                     ?.hasError('max')
                             ) {
                                 <mat-error>Must be between 1 and 20</mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Minimum Order Amount (€)</mat-label>
+                            <input
+                                matInput
+                                type="number"
+                                formControlName="minOrderAmount"
+                                min="0"
+                                step="0.5"
+                            />
+                            <mat-hint>Required value for delivery</mat-hint>
+                            @if (
+                                restaurantForm
+                                    .get('minOrderAmount')
+                                    ?.hasError('required')
+                            ) {
+                                <mat-error
+                                    >Minimum order amount is required</mat-error
+                                >
+                            }
+                            @if (
+                                restaurantForm
+                                    .get('minOrderAmount')
+                                    ?.hasError('min')
+                            ) {
+                                <mat-error>Must be 0 or greater</mat-error>
                             }
                         </mat-form-field>
 

@@ -247,3 +247,19 @@ mat-chip-set {
     --mdc-chip-elevated-container-color: #e0e7ff;
     --mdc-chip-label-text-color: #3730a3;
 }
+
+/* Fee Input */
+.fee-input {
+    width: 70px;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--primary-c);
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    text-align: right;
+}
+
+.fee-input:focus {
+    outline: none;
+    border-color: var(--border-c);
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
