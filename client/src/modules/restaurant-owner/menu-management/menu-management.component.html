@@ -1,12 +1,16 @@
 <div class="menu-management">
     <header class="page-header">
+        <a mat-button routerLink="/restaurant">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
         <h1>Menu Management</h1>
         <div class="header-actions">
-            <button mat-stroked-button (click)="openCategoryDialog()">
+            <button class="menu-button" (click)="openCategoryDialog()">
                 <i class="fa-solid fa-folder-plus"></i>
                 New Category
             </button>
-            <button mat-flat-button color="primary" (click)="openDishDialog()">
+            <button class="menu-button" (click)="openDishDialog()">
                 <i class="fa-solid fa-plus"></i>
                 New Dish
             </button>
@@ -22,11 +26,7 @@
             <i class="fa-solid fa-utensils empty-icon"></i>
             <h2>No Categories Yet</h2>
             <p>Start by creating your first menu category.</p>
-            <button
-                mat-flat-button
-                color="primary"
-                (click)="openCategoryDialog()"
-            >
+            <button class="menu-button" (click)="openCategoryDialog()">
                 <i class="fa-solid fa-plus"></i>
                 Create Category
             </button>
@@ -56,23 +56,21 @@
 
                     <div class="category-actions">
                         <button
-                            mat-stroked-button
+                            class="menu-button"
                             (click)="openCategoryDialog(category)"
                         >
                             <i class="fa-solid fa-pen"></i>
                             Edit Category
                         </button>
                         <button
-                            mat-stroked-button
-                            color="warn"
+                            class="menu-button"
                             (click)="deleteCategory(category)"
                         >
                             <i class="fa-solid fa-trash"></i>
                             Delete Category
                         </button>
                         <button
-                            mat-flat-button
-                            color="primary"
+                            class="menu-button"
                             (click)="openDishDialog(null, category.categoryId)"
                         >
                             <i class="fa-solid fa-plus"></i>
@@ -82,31 +80,40 @@
 
                     <div class="dishes-grid">
                         @for (
-                            dish of dishesByCategory().get(category.categoryId);
+                            dish of dishesByCategory().get(
+                                category.categoryId
+                            ) || [];
                             track dish.dishId
                         ) {
                             <div class="dish-item">
-                                <app-dish-card [dish]="dish" />
+                                <app-dish-card [dish]="dish"></app-dish-card>
                                 <div class="dish-actions">
-                                    <mat-slide-toggle
-                                        [checked]="dish.isAvailable"
-                                        (change)="toggleAvailability(dish)"
-                                        labelPosition="before"
+                                    <mat-chip
+                                        class="availability-chip"
+                                        [class.available]="dish.isAvailable"
+                                        [class.unavailable]="!dish.isAvailable"
+                                        (click)="toggleAvailability(dish)"
                                     >
-                                        Available
-                                    </mat-slide-toggle>
+                                        {{
+                                            dish.isAvailable
+                                                ? 'Available'
+                                                : 'Unavailable'
+                                        }}
+                                    </mat-chip>
                                     <button
-                                        mat-icon-button
-                                        (click)="openDishDialog(dish)"
-                                        title="Edit dish"
+                                        (click)="
+                                            openDishDialog(
+                                                dish,
+                                                category.categoryId
+                                            )
+                                        "
+                                        title="Edit"
                                     >
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
                                     <button
-                                        mat-icon-button
-                                        color="warn"
                                         (click)="deleteDish(dish)"
-                                        title="Delete dish"
+                                        title="Delete"
                                     >
                                         <i class="fa-solid fa-trash"></i>
                                     </button>

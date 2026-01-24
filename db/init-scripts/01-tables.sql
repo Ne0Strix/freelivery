@@ -180,9 +180,9 @@ CREATE TABLE IF NOT EXISTS cart_item (
 
 CREATE TABLE IF NOT EXISTS "order" (
     order_id SERIAL PRIMARY KEY,
-    customer_user_id INT NOT NULL,
-    restaurant_id INT NOT NULL,
-    delivery_address_id INT NOT NULL,
+    customer_user_id INT,
+    restaurant_id INT,
+    delivery_address_id INT,
     status order_status DEFAULT 'PENDING',
     subtotal_amount DECIMAL(10,2) NOT NULL,
     service_fee_amount DECIMAL(10,2) DEFAULT 0,
@@ -193,21 +193,21 @@ CREATE TABLE IF NOT EXISTS "order" (
     delivered_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (customer_user_id) REFERENCES "user"(user_id) ON DELETE RESTRICT,
-    FOREIGN KEY (restaurant_id) REFERENCES restaurant(restaurant_id) ON DELETE RESTRICT,
-    FOREIGN KEY (delivery_address_id) REFERENCES address(address_id) ON DELETE RESTRICT
+    FOREIGN KEY (customer_user_id) REFERENCES "user"(user_id) ON DELETE SET NULL,
+    FOREIGN KEY (restaurant_id) REFERENCES restaurant(restaurant_id) ON DELETE SET NULL,
+    FOREIGN KEY (delivery_address_id) REFERENCES address(address_id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS order_item (
     order_item_id SERIAL PRIMARY KEY,
     order_id INT NOT NULL,
-    dish_id INT NOT NULL,
+    dish_id INT,
     dish_name_snapshot VARCHAR(255) NOT NULL,
     unit_price DECIMAL(10,2) NOT NULL,
     quantity INT NOT NULL CHECK (quantity > 0),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES "order"(order_id) ON DELETE CASCADE,
-    FOREIGN KEY (dish_id) REFERENCES dish(dish_id) ON DELETE RESTRICT
+    FOREIGN KEY (dish_id) REFERENCES dish(dish_id) ON DELETE SET NULL
 );
 
 -- ======================

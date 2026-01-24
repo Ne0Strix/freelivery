@@ -31,11 +31,6 @@
     }
 }
 
-mat-card {
-    display: flex;
-    flex-direction: column;
-}
-
 mat-card-header {
     display: flex;
     align-items: flex-start;
@@ -43,6 +38,8 @@ mat-card-header {
 }
 
 mat-card {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     max-width: 380px;
     box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.2);
