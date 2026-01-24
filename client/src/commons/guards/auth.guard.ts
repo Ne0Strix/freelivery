@@ -17,5 +17,10 @@ export const authGuard: CanActivateFn = (route) => {
 
     const allowedRoles: string[] = route.data?.['roles'] || [];
 
+    // If no roles specified, any authenticated user can access
+    if (allowedRoles.length === 0) {
+        return true;
+    }
+
     return auth.hasAnyRole(allowedRoles);
 };

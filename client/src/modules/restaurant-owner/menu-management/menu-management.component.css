@@ -5,14 +5,11 @@
 }
 
 .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: 2rem;
 }
 
 .page-header h1 {
-    margin: 0;
+    margin: 0 0 0.5rem;
     font-size: 1.75rem;
     font-weight: 600;
 }
@@ -22,55 +19,75 @@
     gap: 0.75rem;
 }
 
+.menu-button {
+    background-color: var(--primary-c);
+    border: var(--border-c) 2px solid;
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
+}
+
+.menu-button:hover {
+    background-color: var(--border-c);
+    color: white;
+}
+
+.menu-button:active {
+    transform: scale(0.98);
+}
+
+.menu-button i {
+    margin-right: 8px;
+}
+
 .loading {
     text-align: center;
     padding: 3rem;
-    color: #666;
+    color: var(--muted-text);
 }
 
 .empty-state {
     text-align: center;
     padding: 4rem 2rem;
-    background: #f5f5f5;
-    border-radius: 12px;
+    box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 30px;
 }
 
-.empty-state .empty-icon {
+.empty-icon {
     font-size: 64px;
-    color: #9e9e9e;
+    color: var(--muted-text);
     margin-bottom: 1rem;
-    display: block;
 }
 
 .empty-state h2 {
     margin: 0 0 0.5rem;
-    color: #333;
 }
 
 .empty-state p {
     margin: 0 0 1.5rem;
-    color: #666;
+    color: var(--muted-text);
 }
 
-mat-expansion-panel {
+mat-expansion-panel mat-accordion {
     margin-bottom: 1rem;
+    box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 30px;
+    padding: 10px;
 }
 
 mat-panel-title {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    font-weight: bold;
 }
 
 .dish-count {
     font-size: 0.85rem;
-    color: #888;
+    color: var(--muted-text);
     font-weight: normal;
+    margin-left: 0.5rem;
 }
 
 .category-description {
     margin: 0 0 1rem;
-    color: #666;
+    color: var(--muted-text);
     font-size: 0.9rem;
 }
 
@@ -79,12 +96,6 @@ mat-panel-title {
     gap: 0.5rem;
     margin-bottom: 1.5rem;
     flex-wrap: wrap;
-}
-
-.category-actions button i,
-.header-actions button i,
-.empty-state button i {
-    margin-right: 8px;
 }
 
 .dishes-grid {
@@ -96,7 +107,8 @@ mat-panel-title {
 .dish-item {
     display: flex;
     gap: 1rem;
-    align-items: center;
+    align-items: stretch;
+    flex-direction: row;
 }
 
 .dish-item app-dish-card {
@@ -106,33 +118,59 @@ mat-panel-title {
 .dish-actions {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-    flex-shrink: 0;
+    gap: 0.5rem;
+}
+
+.dish-actions button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    color: var(--border-c);
+    transition: background-color 0.2s;
+}
+
+.dish-actions button:hover {
+    background-color: var(--primary-c);
+}
+
+.availability-chip {
+    cursor: pointer;
+    transition:
+        filter 0.2s,
+        transform 0.2s;
+}
+
+.availability-chip:hover {
+    filter: brightness(1.1);
+    transform: scale(1.05);
+}
+
+.availability-chip.available {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.availability-chip.unavailable {
+    background-color: #f8d7da;
+    color: #721c24;
 }
 
 .no-dishes {
-    color: #888;
+    color: var(--muted-text);
     font-style: italic;
     padding: 1rem;
     text-align: center;
-    background: #fafafa;
     border-radius: 8px;
 }
 
-/* Responsive */
 @media (max-width: 640px) {
     .menu-management {
         padding: 1rem;
     }
 
-    .page-header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: flex-start;
-    }
-
     .dish-item {
         flex-direction: column;
-        align-items: stretch;
     }
 }

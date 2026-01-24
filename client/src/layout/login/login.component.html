@@ -24,10 +24,9 @@
                         type="password"
                         formControlName="password"
                     />
-                    <mat-error
-                        *ngIf="form.get('password')?.hasError('required')"
-                        >Password is required</mat-error
-                    >
+                    @if (password.hasError('required')) {
+                        <mat-error>Password is required</mat-error>
+                    }
                 </mat-form-field>
 
                 <button

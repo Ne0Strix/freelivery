@@ -7,10 +7,12 @@ import {
     signal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { RouterLink } from '@angular/router';
 import { Category, Dish } from '../../../commons/model/restaurant.model';
 import { RestaurantService } from '../../../commons/services/restaurant.service';
 import { DishCardComponent } from '../../../layout/dish-card/dish-card.component';
@@ -29,10 +31,12 @@ import { RestaurantOwnerService } from '../restaurant-owner.service';
     imports: [
         MatExpansionModule,
         MatButtonModule,
+        MatChipsModule,
         MatSlideToggleModule,
         MatDialogModule,
         MatSnackBarModule,
         DishCardComponent,
+        RouterLink,
     ],
     templateUrl: './menu-management.component.html',
     styleUrl: './menu-management.component.css',
@@ -240,14 +244,8 @@ export class MenuManagementComponent implements OnInit {
 
     async toggleAvailability(dish: Dish): Promise<void> {
         try {
-            const updated = await this.ownerService.toggleDishAvailability(
-                dish.dishId
-            );
-            this.dishes.update((d) =>
-                d.map((item) =>
-                    item.dishId === updated.dishId ? updated : item
-                )
-            );
+            await this.ownerService.toggleDishAvailability(dish.dishId);
+            await this.loadData();
         } catch (error) {
             console.error('Failed to toggle availability', error);
         }
