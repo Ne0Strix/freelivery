@@ -1,97 +1,62 @@
-<div class="opening-hours-container">
-    <h2>Opening Hours</h2>
-    <p class="subtitle">
-        Define when your restaurant is open for orders. Days without time slots
-        are considered closed.
-    </p>
+<div class="opening-hours-management">
+    <header class="page-header">
+        <a mat-button routerLink="/restaurant">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+        <h1>Opening Hours</h1>
+        <p class="subtitle">
+            Define when your restaurant is open for orders. Days without time
+            slots are considered closed.
+        </p>
+    </header>
 
     @if (loading()) {
         <p>Loading...</p>
     } @else {
-        <div class="weekdays">
+        <!-- Desktop: Tabs -->
+        <mat-tab-group class="desktop-tabs">
             @for (day of slotsByDay(); track day.dayOfWeek) {
-                <mat-card class="day-card">
-                    <mat-card-header>
-                        <mat-card-title>{{ day.dayName }}</mat-card-title>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        {{ day.dayName }}
                         @if (day.slots.length === 0) {
                             <span class="closed-badge">Closed</span>
                         }
-                    </mat-card-header>
+                    </ng-template>
+                    <ng-container
+                        *ngTemplateOutlet="dayContent; context: { day: day }"
+                    ></ng-container>
+                </mat-tab>
+            }
+        </mat-tab-group>
 
-                    <mat-card-content>
-                        <!-- Existing slots -->
-                        @for (slot of day.slots; track slot.openingHoursId) {
-                            <div class="slot-row">
-                                @if (editingSlotId() === slot.openingHoursId) {
-                                    <!-- Edit mode -->
-                                    <form
-                                        [formGroup]="slotForm"
-                                        class="slot-form"
-                                    >
-                                        <mat-form-field appearance="outline">
-                                            <mat-label>Open</mat-label>
-                                            <input
-                                                matInput
-                                                type="time"
-                                                formControlName="openTime"
-                                            />
-                                        </mat-form-field>
-                                        <span class="time-separator">–</span>
-                                        <mat-form-field appearance="outline">
-                                            <mat-label>Close</mat-label>
-                                            <input
-                                                matInput
-                                                type="time"
-                                                formControlName="closeTime"
-                                            />
-                                        </mat-form-field>
-                                        <button
-                                            mat-icon-button
-                                            color="primary"
-                                            (click)="saveEditedSlot(slot)"
-                                            type="button"
-                                        >
-                                            <i class="fa-solid fa-check"></i>
-                                        </button>
-                                        <button
-                                            mat-icon-button
-                                            (click)="cancelEdit()"
-                                            type="button"
-                                        >
-                                            <i class="fa-solid fa-xmark"></i>
-                                        </button>
-                                    </form>
-                                } @else {
-                                    <!-- View mode -->
-                                    <span class="slot-time">
-                                        {{ formatTime(slot.openTime) }} –
-                                        {{ formatTime(slot.closeTime) }}
-                                    </span>
-                                    <div class="slot-actions">
-                                        <button
-                                            mat-icon-button
-                                            (click)="startEditSlot(slot)"
-                                        >
-                                            <i class="fa-solid fa-pen"></i>
-                                        </button>
-                                        <button
-                                            mat-icon-button
-                                            color="warn"
-                                            (click)="deleteSlot(slot)"
-                                        >
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </div>
-                                }
-                            </div>
-                        }
+        <!-- Mobile: Accordion -->
+        <mat-accordion class="mobile-accordion">
+            @for (day of slotsByDay(); track day.dayOfWeek) {
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            {{ day.dayName }}
+                            @if (day.slots.length === 0) {
+                                <span class="closed-badge">Closed</span>
+                            }
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <ng-container
+                        *ngTemplateOutlet="dayContent; context: { day: day }"
+                    ></ng-container>
+                </mat-expansion-panel>
+            }
+        </mat-accordion>
 
-                        <!-- Add slot form -->
-                        @if (addingForDay() === day.dayOfWeek) {
-                            <form
-                                [formGroup]="slotForm"
-                                class="slot-form add-form"
-                            >
+        <!-- Shared template for day content -->
+        <ng-template #dayContent let-day="day">
+            <div class="day-content">
+                @for (slot of day.slots; track slot.openingHoursId) {
+                    <div class="slot-row">
+                        @if (editingSlotId() === slot.openingHoursId) {
+                            <form [formGroup]="slotForm" class="slot-form">
                                 <mat-form-field appearance="outline">
                                     <mat-label>Open</mat-label>
                                     <input
@@ -112,35 +77,91 @@
                                 <button
                                     mat-icon-button
                                     color="primary"
-                                    (click)="saveNewSlot(day.dayOfWeek)"
+                                    (click)="saveEditedSlot(slot)"
                                     type="button"
                                 >
                                     <i class="fa-solid fa-check"></i>
                                 </button>
                                 <button
                                     mat-icon-button
-                                    (click)="cancelAdd()"
+                                    (click)="cancelEdit()"
                                     type="button"
                                 >
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
                             </form>
+                        } @else {
+                            <span class="slot-time">
+                                {{ formatTime(slot.openTime) }} –
+                                {{ formatTime(slot.closeTime) }}
+                            </span>
+                            <div class="slot-actions">
+                                <button
+                                    mat-icon-button
+                                    (click)="startEditSlot(slot)"
+                                >
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button
+                                    mat-icon-button
+                                    color="warn"
+                                    (click)="deleteSlot(slot)"
+                                >
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
                         }
-                    </mat-card-content>
+                    </div>
+                }
 
-                    <mat-card-actions>
-                        @if (addingForDay() !== day.dayOfWeek) {
-                            <button
-                                mat-stroked-button
-                                (click)="startAddSlot(day.dayOfWeek)"
-                            >
-                                <i class="fa-solid fa-plus"></i>
-                                Add time slot
-                            </button>
-                        }
-                    </mat-card-actions>
-                </mat-card>
-            }
-        </div>
+                @if (addingForDay() === day.dayOfWeek) {
+                    <form [formGroup]="slotForm" class="slot-form add-form">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Open</mat-label>
+                            <input
+                                matInput
+                                type="time"
+                                formControlName="openTime"
+                            />
+                        </mat-form-field>
+                        <span class="time-separator">–</span>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Close</mat-label>
+                            <input
+                                matInput
+                                type="time"
+                                formControlName="closeTime"
+                            />
+                        </mat-form-field>
+                        <button
+                            mat-icon-button
+                            color="primary"
+                            (click)="saveNewSlot(day.dayOfWeek)"
+                            type="button"
+                        >
+                            <i class="fa-solid fa-check"></i>
+                        </button>
+                        <button
+                            mat-icon-button
+                            (click)="cancelAdd()"
+                            type="button"
+                        >
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </form>
+                }
+
+                @if (addingForDay() !== day.dayOfWeek) {
+                    <button
+                        mat-flat-button
+                        class="add-slot-button"
+                        (click)="startAddSlot(day.dayOfWeek)"
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                        Add time slot
+                    </button>
+                }
+            </div>
+        </ng-template>
     }
 </div>

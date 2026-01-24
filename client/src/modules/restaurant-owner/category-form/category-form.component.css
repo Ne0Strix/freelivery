@@ -1,5 +1,11 @@
+h2 {
+    font-weight: bold !important;
+    font-size: 1.25rem !important;
+}
+
 mat-dialog-content {
     min-width: 400px;
+    padding-top: 1.5rem !important;
 }
 
 @media (max-width: 640px) {
@@ -13,9 +19,30 @@ form {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    padding-top: 0.5rem;
+    width: 100%;
 }
 
-.full-width {
+input,
+textarea {
+    padding-left: 0.5rem;
+}
+
+mat-form-field {
     width: 100%;
+}
+
+.cancel-button:hover {
+    background-color: var(--hover-bg);
+    border-radius: 12px;
+}
+
+.submit-button {
+    background-color: var(--primary-c);
+    border: var(--border-c) 2px solid;
+    border-radius: 12px;
+}
+
+.submit-button:hover {
+    background-color: var(--border-c);
+    color: white;
 }

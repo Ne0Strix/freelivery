@@ -11,6 +11,11 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { OwnerRestaurant } from '../../commons/model/restaurant.model';
 import { UserRole } from '../../commons/model/role.model';
@@ -22,7 +27,15 @@ import { ProfileService } from './profile.service';
 
 @Component({
     selector: 'app-profile',
-    imports: [ReactiveFormsModule, AddressFormComponent],
+    imports: [
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        AddressFormComponent,
+    ],
     templateUrl: './profile.component.html',
     styleUrl: './profile.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -148,6 +161,7 @@ export class ProfileComponent implements OnInit {
             this.snackbar.open('Profile updated successfully', 'Close', {
                 duration: 3000,
             });
+            this.profileForm.markAsPristine();
         } catch {
             // Error handled by interceptor
         }
@@ -200,6 +214,7 @@ export class ProfileComponent implements OnInit {
             this.snackbar.open('Restaurant updated successfully', 'Close', {
                 duration: 3000,
             });
+            this.restaurantForm.markAsPristine();
         } catch {
             // Error handled by interceptor
         }

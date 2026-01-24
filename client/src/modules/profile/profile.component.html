@@ -5,313 +5,471 @@
         <h1>Profile Settings</h1>
 
         <!-- Personal Information -->
-        <section class="profile-section">
-            <h2>Personal Information</h2>
-            <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input
-                            id="email"
-                            type="email"
-                            formControlName="email"
-                        />
-                    </div>
-                    <div class="form-group">
-                        <label for="salutation">Salutation</label>
-                        <select id="salutation" formControlName="salutation">
-                            <option value="">-- Select --</option>
-                            <option value="Mr.">Mr.</option>
-                            <option value="Ms.">Ms.</option>
-                            <option value="Mrs.">Mrs.</option>
-                            <option value="Dr.">Dr.</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="firstName">First Name</label>
-                        <input
-                            id="firstName"
-                            type="text"
-                            formControlName="firstName"
-                        />
-                    </div>
-                    <div class="form-group">
-                        <label for="lastName">Last Name</label>
-                        <input
-                            id="lastName"
-                            type="text"
-                            formControlName="lastName"
-                        />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="phoneNumber">Phone Number</label>
-                        <input
-                            id="phoneNumber"
-                            type="tel"
-                            formControlName="phoneNumber"
-                        />
-                    </div>
-                    <div class="form-group">
-                        <label for="dateOfBirth">Date of Birth</label>
-                        <input
-                            id="dateOfBirth"
-                            type="date"
-                            formControlName="dateOfBirth"
-                        />
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-primary">Save Profile</button>
-            </form>
-        </section>
-
-        <!-- Customer Addresses -->
-        @if (isCustomer) {
-            <section class="profile-section">
-                <div class="section-header">
-                    <h2>Delivery Addresses</h2>
-                    @if (!addingNewAddress() && editingAddressId() === null) {
-                        <button
-                            type="button"
-                            class="btn-secondary"
-                            (click)="startAddingAddress()"
-                        >
-                            + Add Address
-                        </button>
-                    }
-                </div>
-
-                @if (addingNewAddress()) {
-                    <div class="address-form-container">
-                        <h3>Add New Address</h3>
-                        <app-address-form
-                            [address]="null"
-                            [showLabel]="true"
-                            (save)="saveNewAddress($event)"
-                            (cancel)="cancelAddressForm()"
-                        />
-                    </div>
-                }
-
-                @if (addresses().length === 0 && !addingNewAddress()) {
-                    <p class="no-addresses">
-                        No addresses yet. Add your first delivery address.
-                    </p>
-                }
-
-                @for (address of addresses(); track address.addressId) {
-                    <div class="address-card">
-                        @if (editingAddressId() === address.addressId) {
-                            <app-address-form
-                                [address]="address"
-                                [showLabel]="true"
-                                (save)="
-                                    saveEditedAddress(address.addressId, $event)
-                                "
-                                (cancel)="cancelAddressForm()"
-                            />
-                        } @else {
-                            <div class="address-content">
-                                @if (address.label) {
-                                    <strong class="address-label">{{
-                                        address.label
-                                    }}</strong>
-                                }
-                                <p class="address-line">
-                                    {{ address.streetName }}
-                                    {{ address.houseNumber }}
-                                    @if (address.additionalInfo) {
-                                        , {{ address.additionalInfo }}
-                                    }
-                                </p>
-                                <p class="address-line">
-                                    {{ address.zipCode }}
-                                    {{ address.cityName }},
-                                    {{ address.country }}
-                                </p>
-                                <p class="address-grid">
-                                    Grid: ({{ address.gridX }},
-                                    {{ address.gridY }})
-                                </p>
-                            </div>
-                            <div class="address-actions">
-                                <button
-                                    type="button"
-                                    class="btn-text"
-                                    (click)="
-                                        startEditingAddress(address.addressId)
-                                    "
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    type="button"
-                                    class="btn-text btn-danger"
-                                    (click)="deleteAddress(address.addressId)"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        }
-                    </div>
-                }
-            </section>
-        }
-
-        <!-- Change Password -->
-        <section class="profile-section">
-            <h2>Change Password</h2>
-            <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
-                <div class="form-group">
-                    <label for="currentPassword">Current Password *</label>
-                    <input
-                        id="currentPassword"
-                        type="password"
-                        formControlName="currentPassword"
-                    />
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="newPassword">New Password *</label>
-                        <input
-                            id="newPassword"
-                            type="password"
-                            formControlName="newPassword"
-                        />
-                    </div>
-                    <div class="form-group">
-                        <label for="confirmPassword">Confirm Password *</label>
-                        <input
-                            id="confirmPassword"
-                            type="password"
-                            formControlName="confirmPassword"
-                        />
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-primary">
-                    Change Password
-                </button>
-            </form>
-        </section>
-
-        <!-- Restaurant Details (for restaurant owners only) -->
-        @if (isRestaurantOwner && restaurant()) {
-            <section class="profile-section">
-                <h2>Restaurant Details</h2>
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>Personal Information</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
                 <form
-                    [formGroup]="restaurantForm"
-                    (ngSubmit)="saveRestaurant()"
+                    [formGroup]="profileForm"
+                    (ngSubmit)="saveProfile()"
+                    class="profile-form"
                 >
-                    <div class="form-group">
-                        <label for="restaurantName">Restaurant Name *</label>
-                        <input
-                            id="restaurantName"
-                            type="text"
-                            formControlName="name"
-                        />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea
-                            id="description"
-                            formControlName="description"
-                            rows="3"
-                        ></textarea>
+                    <div class="form-row">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Email</mat-label>
+                            <input
+                                matInput
+                                type="email"
+                                formControlName="email"
+                            />
+                            @if (profileForm.get('email')?.hasError('email')) {
+                                <mat-error>Invalid email format</mat-error>
+                            }
+                            @if (
+                                profileForm.get('email')?.hasError('required')
+                            ) {
+                                <mat-error>Email is required</mat-error>
+                            }
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Salutation</mat-label>
+                            <mat-select formControlName="salutation">
+                                <mat-option value="">-- Select --</mat-option>
+                                <mat-option value="Mr.">Mr.</mat-option>
+                                <mat-option value="Ms.">Ms.</mat-option>
+                                <mat-option value="Mrs.">Mrs.</mat-option>
+                                <mat-option value="Dr.">Dr.</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </div>
 
                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="contactEmail">Contact Email *</label>
+                        <mat-form-field appearance="outline">
+                            <mat-label>First Name</mat-label>
                             <input
-                                id="contactEmail"
-                                type="email"
-                                formControlName="contactEmail"
+                                matInput
+                                type="text"
+                                formControlName="firstName"
                             />
-                        </div>
-                        <div class="form-group">
-                            <label for="contactPhone">Contact Phone *</label>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Last Name</mat-label>
                             <input
-                                id="contactPhone"
+                                matInput
+                                type="text"
+                                formControlName="lastName"
+                            />
+                        </mat-form-field>
+                    </div>
+
+                    <div class="form-row">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Phone Number</mat-label>
+                            <input
+                                matInput
                                 type="tel"
-                                formControlName="contactPhone"
+                                formControlName="phoneNumber"
+                            />
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Date of Birth</mat-label>
+                            <input
+                                matInput
+                                type="date"
+                                formControlName="dateOfBirth"
+                            />
+                        </mat-form-field>
+                    </div>
+
+                    <div class="form-actions">
+                        <button
+                            mat-flat-button
+                            class="submit-button"
+                            type="submit"
+                            [disabled]="
+                                profileForm.pristine || profileForm.invalid
+                            "
+                        >
+                            Save Profile
+                        </button>
+                    </div>
+                </form>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Customer Addresses -->
+        @if (isCustomer) {
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>Delivery Addresses</mat-card-title>
+                    @if (!addingNewAddress() && editingAddressId() === null) {
+                        <button
+                            mat-flat-button
+                            class="submit-button"
+                            type="button"
+                            (click)="startAddingAddress()"
+                        >
+                            <i class="fa-solid fa-plus"></i>
+                            Add Address
+                        </button>
+                    }
+                </mat-card-header>
+                <mat-card-content>
+                    @if (addingNewAddress()) {
+                        <div class="address-form-container">
+                            <h3>Add New Address</h3>
+                            <app-address-form
+                                [address]="null"
+                                [showLabel]="true"
+                                (save)="saveNewAddress($event)"
+                                (cancel)="cancelAddressForm()"
                             />
                         </div>
-                    </div>
+                    }
 
-                    <div class="form-group">
-                        <label for="maxDeliveryDistance"
-                            >Max Delivery Distance (grid steps) *</label
-                        >
-                        <input
-                            id="maxDeliveryDistance"
-                            type="number"
-                            formControlName="maxDeliveryDistance"
-                            min="1"
-                            max="20"
-                        />
-                        <p class="form-hint">
-                            Maximum Manhattan distance (1-20) you can deliver
-                            to. Each step = 5 min delivery time.
+                    @if (addresses().length === 0 && !addingNewAddress()) {
+                        <p class="no-addresses">
+                            No addresses yet. Add your first delivery address.
                         </p>
+                    }
+
+                    @for (address of addresses(); track address.addressId) {
+                        <div class="address-card">
+                            @if (editingAddressId() === address.addressId) {
+                                <app-address-form
+                                    [address]="address"
+                                    [showLabel]="true"
+                                    (save)="
+                                        saveEditedAddress(
+                                            address.addressId,
+                                            $event
+                                        )
+                                    "
+                                    (cancel)="cancelAddressForm()"
+                                />
+                            } @else {
+                                <div class="address-content">
+                                    @if (address.label) {
+                                        <strong class="address-label">{{
+                                            address.label
+                                        }}</strong>
+                                    }
+                                    <p class="address-line">
+                                        {{ address.streetName }}
+                                        {{ address.houseNumber }}
+                                        @if (address.additionalInfo) {
+                                            , {{ address.additionalInfo }}
+                                        }
+                                    </p>
+                                    <p class="address-line">
+                                        {{ address.zipCode }}
+                                        {{ address.cityName }},
+                                        {{ address.country }}
+                                    </p>
+                                    <p class="address-grid">
+                                        Grid: ({{ address.gridX }},
+                                        {{ address.gridY }})
+                                    </p>
+                                </div>
+                                <div class="address-actions">
+                                    <button
+                                        mat-button
+                                        type="button"
+                                        (click)="
+                                            startEditingAddress(
+                                                address.addressId
+                                            )
+                                        "
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        mat-button
+                                        color="warn"
+                                        type="button"
+                                        (click)="
+                                            deleteAddress(address.addressId)
+                                        "
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    }
+                </mat-card-content>
+            </mat-card>
+        }
+
+        <!-- Change Password -->
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>Change Password</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <form
+                    [formGroup]="passwordForm"
+                    (ngSubmit)="changePassword()"
+                    class="profile-form"
+                >
+                    <mat-form-field appearance="outline">
+                        <mat-label>Current Password</mat-label>
+                        <input
+                            matInput
+                            type="password"
+                            formControlName="currentPassword"
+                        />
+                        @if (
+                            passwordForm
+                                .get('currentPassword')
+                                ?.hasError('required')
+                        ) {
+                            <mat-error>Current password is required</mat-error>
+                        }
+                    </mat-form-field>
+
+                    <div class="form-row">
+                        <mat-form-field appearance="outline">
+                            <mat-label>New Password</mat-label>
+                            <input
+                                matInput
+                                type="password"
+                                formControlName="newPassword"
+                            />
+                            @if (
+                                passwordForm
+                                    .get('newPassword')
+                                    ?.hasError('required')
+                            ) {
+                                <mat-error>New password is required</mat-error>
+                            }
+                            @if (
+                                passwordForm
+                                    .get('newPassword')
+                                    ?.hasError('minlength')
+                            ) {
+                                <mat-error
+                                    >Password must be at least 6
+                                    characters</mat-error
+                                >
+                            }
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Confirm Password</mat-label>
+                            <input
+                                matInput
+                                type="password"
+                                formControlName="confirmPassword"
+                            />
+                            @if (
+                                passwordForm
+                                    .get('confirmPassword')
+                                    ?.hasError('required')
+                            ) {
+                                <mat-error
+                                    >Please confirm your password</mat-error
+                                >
+                            }
+                        </mat-form-field>
                     </div>
 
-                    <button type="submit" class="btn-primary">
-                        Save Restaurant
-                    </button>
+                    <div class="form-actions">
+                        <button
+                            mat-flat-button
+                            class="submit-button"
+                            type="submit"
+                            [disabled]="
+                                passwordForm.pristine || passwordForm.invalid
+                            "
+                        >
+                            Change Password
+                        </button>
+                    </div>
                 </form>
-            </section>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Restaurant Details (for restaurant owners only) -->
+        @if (isRestaurantOwner && restaurant()) {
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>Restaurant Details</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <form
+                        [formGroup]="restaurantForm"
+                        (ngSubmit)="saveRestaurant()"
+                        class="profile-form"
+                    >
+                        <mat-form-field appearance="outline">
+                            <mat-label>Restaurant Name</mat-label>
+                            <input
+                                matInput
+                                type="text"
+                                formControlName="name"
+                            />
+                            @if (
+                                restaurantForm.get('name')?.hasError('required')
+                            ) {
+                                <mat-error
+                                    >Restaurant name is required</mat-error
+                                >
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Description</mat-label>
+                            <textarea
+                                matInput
+                                formControlName="description"
+                                rows="3"
+                            ></textarea>
+                        </mat-form-field>
+
+                        <div class="form-row">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Contact Email</mat-label>
+                                <input
+                                    matInput
+                                    type="email"
+                                    formControlName="contactEmail"
+                                />
+                                @if (
+                                    restaurantForm
+                                        .get('contactEmail')
+                                        ?.hasError('required')
+                                ) {
+                                    <mat-error
+                                        >Contact email is required</mat-error
+                                    >
+                                }
+                                @if (
+                                    restaurantForm
+                                        .get('contactEmail')
+                                        ?.hasError('email')
+                                ) {
+                                    <mat-error>Invalid email format</mat-error>
+                                }
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Contact Phone</mat-label>
+                                <input
+                                    matInput
+                                    type="tel"
+                                    formControlName="contactPhone"
+                                />
+                                @if (
+                                    restaurantForm
+                                        .get('contactPhone')
+                                        ?.hasError('required')
+                                ) {
+                                    <mat-error
+                                        >Contact phone is required</mat-error
+                                    >
+                                }
+                            </mat-form-field>
+                        </div>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label
+                                >Max Delivery Distance (grid steps)</mat-label
+                            >
+                            <input
+                                matInput
+                                type="number"
+                                formControlName="maxDeliveryDistance"
+                                min="1"
+                                max="20"
+                            />
+                            <mat-hint
+                                >Maximum Manhattan distance (1-20). Each step =
+                                5 min delivery time.</mat-hint
+                            >
+                            @if (
+                                restaurantForm
+                                    .get('maxDeliveryDistance')
+                                    ?.hasError('required')
+                            ) {
+                                <mat-error
+                                    >Max delivery distance is
+                                    required</mat-error
+                                >
+                            }
+                            @if (
+                                restaurantForm
+                                    .get('maxDeliveryDistance')
+                                    ?.hasError('min') ||
+                                restaurantForm
+                                    .get('maxDeliveryDistance')
+                                    ?.hasError('max')
+                            ) {
+                                <mat-error>Must be between 1 and 20</mat-error>
+                            }
+                        </mat-form-field>
+
+                        <div class="form-actions">
+                            <button
+                                mat-flat-button
+                                class="submit-button"
+                                type="submit"
+                                [disabled]="
+                                    restaurantForm.pristine ||
+                                    restaurantForm.invalid
+                                "
+                            >
+                                Save Restaurant
+                            </button>
+                        </div>
+                    </form>
+                </mat-card-content>
+            </mat-card>
 
             <!-- Restaurant Address -->
-            <section class="profile-section">
-                <div class="section-header">
-                    <h2>Restaurant Address</h2>
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>Restaurant Address</mat-card-title>
                     @if (editingAddressId() !== -1 && restaurantAddress()) {
                         <button
+                            mat-flat-button
+                            class="submit-button"
                             type="button"
-                            class="btn-secondary"
                             (click)="startEditingRestaurantAddress()"
                         >
                             Edit Address
                         </button>
                     }
-                </div>
-
-                @if (editingAddressId() === -1) {
-                    <app-address-form
-                        [address]="restaurantAddress()"
-                        [showLabel]="false"
-                        (save)="saveRestaurantAddress($event)"
-                        (cancel)="cancelRestaurantAddressForm()"
-                    />
-                } @else if (restaurantAddress(); as address) {
-                    <div class="address-content">
-                        <p class="address-line">
-                            {{ address.streetName }} {{ address.houseNumber }}
-                            @if (address.additionalInfo) {
-                                , {{ address.additionalInfo }}
-                            }
-                        </p>
-                        <p class="address-line">
-                            {{ address.zipCode }} {{ address.cityName }},
-                            {{ address.country }}
-                        </p>
-                        <p class="address-grid">
-                            Grid: ({{ address.gridX }}, {{ address.gridY }})
-                        </p>
-                    </div>
-                } @else {
-                    <p class="no-addresses">No restaurant address found.</p>
-                }
-            </section>
+                </mat-card-header>
+                <mat-card-content>
+                    @if (editingAddressId() === -1) {
+                        <app-address-form
+                            [address]="restaurantAddress()"
+                            [showLabel]="false"
+                            (save)="saveRestaurantAddress($event)"
+                            (cancel)="cancelRestaurantAddressForm()"
+                        />
+                    } @else if (restaurantAddress(); as address) {
+                        <div class="address-content">
+                            <p class="address-line">
+                                {{ address.streetName }}
+                                {{ address.houseNumber }}
+                                @if (address.additionalInfo) {
+                                    , {{ address.additionalInfo }}
+                                }
+                            </p>
+                            <p class="address-line">
+                                {{ address.zipCode }} {{ address.cityName }},
+                                {{ address.country }}
+                            </p>
+                            <p class="address-grid">
+                                Grid: ({{ address.gridX }}, {{ address.gridY }})
+                            </p>
+                        </div>
+                    } @else {
+                        <p class="no-addresses">No restaurant address found.</p>
+                    }
+                </mat-card-content>
+            </mat-card>
         }
     }
 </div>
