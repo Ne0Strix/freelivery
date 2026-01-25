@@ -82,6 +82,12 @@ export class LoginComponent {
                             'Close',
                             { duration: 8000 }
                         );
+                    } else if (result.code === 'RESTAURANT_PENDING') {
+                        this.snackbar.open(
+                            'Your restaurant registration is pending approval. Please wait for a site manager to review your application.',
+                            'Close',
+                            { duration: 8000 }
+                        );
                     } else {
                         this.snackbar.open(
                             'Invalid email or password',
