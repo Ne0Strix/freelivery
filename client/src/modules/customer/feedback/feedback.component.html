@@ -1,0 +1,40 @@
+<div class="feedback">
+    <h2>Feedback</h2>
+
+    <div class="feedback-card">
+        <h3>Rate our service</h3>
+
+        <div class="rating">
+            <p>Rating:</p>
+            <div class="stars">
+                <button
+                    *ngFor="let star of [1, 2, 3, 4, 5]"
+                    (click)="rate(star)"
+                    class="star"
+                    [class.active]="star <= ratingSelected"
+                ></button>
+            </div>
+            <p class="rating-text">{{ ratingText }}</p>
+        </div>
+
+        <div class="comment">
+            <label> Add a comment:</label>
+            <textarea
+                [(ngModel)]="comment"
+                placeholder="Add a comment.."
+            ></textarea>
+        </div>
+
+        <div class="buttons">
+            <button
+                class="submit"
+                (click)="submitFeedback()"
+                [disabled]="ratingSelected === 0"
+            >
+                Submit your feedback
+            </button>
+            <button class="cancel" (click)="goBack()">Cancel feedback</button>
+        </div>
+        <p *ngIf="message" class="success">{{ message }}</p>
+    </div>
+</div>
