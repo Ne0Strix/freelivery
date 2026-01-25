@@ -1,326 +1,385 @@
 <div class="signup-container">
-    <div class="signup-card">
-        <form [formGroup]="form" class="signup-form">
-            <fieldset>
-                <legend>Sign Up</legend>
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Sign Up</mat-card-title>
+        </mat-card-header>
 
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input
-                        id="username"
-                        name="username"
-                        formControlName="username"
-                    />
-                </div>
+        <mat-card-content>
+            <form [formGroup]="form" class="signup-form">
+                <!-- Basic Fields -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Username</mat-label>
+                    <input matInput formControlName="username" />
+                    @if (form.get('username')?.hasError('required')) {
+                        <mat-error>Username is required</mat-error>
+                    }
+                    @if (form.get('username')?.hasError('minlength')) {
+                        <mat-error
+                            >Username must be at least 3 characters</mat-error
+                        >
+                    }
+                </mat-form-field>
 
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input
-                        id="email"
-                        name="email"
-                        formControlName="email"
-                        type="email"
-                    />
-                </div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input matInput type="email" formControlName="email" />
+                    @if (form.get('email')?.hasError('email')) {
+                        <mat-error>Invalid email format</mat-error>
+                    }
+                    @if (form.get('email')?.hasError('required')) {
+                        <mat-error>Email is required</mat-error>
+                    }
+                </mat-form-field>
 
-                <div class="form-group">
-                    <label for="password">Password:</label>
+                <mat-form-field appearance="outline">
+                    <mat-label>Password</mat-label>
                     <input
-                        id="password"
-                        name="password"
-                        formControlName="password"
+                        matInput
                         type="password"
+                        formControlName="password"
                     />
-                </div>
+                    @if (form.get('password')?.hasError('required')) {
+                        <mat-error>Password is required</mat-error>
+                    }
+                    @if (form.get('password')?.hasError('minlength')) {
+                        <mat-error
+                            >Password must be at least 6 characters</mat-error
+                        >
+                    }
+                </mat-form-field>
 
-                <div class="form-group">
-                    <label for="role">Role:</label>
-                    <select id="role" formControlName="role">
+                <mat-form-field appearance="outline">
+                    <mat-label>Role</mat-label>
+                    <mat-select formControlName="role">
                         @for (role of availableRoles; track role) {
-                            <option [value]="role">
+                            <mat-option [value]="role">
                                 {{ role | roleLabel }}
-                            </option>
+                            </mat-option>
                         }
-                    </select>
-                </div>
-            </fieldset>
+                    </mat-select>
+                </mat-form-field>
 
-            <!-- Customer-specific fields -->
-            @if (selectedRole === UserRole.CUSTOMER) {
-                <fieldset class="role-fields">
-                    <legend>Your Details</legend>
+                <!-- Customer-specific fields -->
+                @if (selectedRole === UserRole.CUSTOMER) {
+                    <div class="role-section">
+                        <h3 class="section-title">Your Details</h3>
 
-                    <div class="form-group">
-                        <label for="phoneNumber">Phone Number:</label>
-                        <input
-                            id="phoneNumber"
-                            name="phoneNumber"
-                            formControlName="phoneNumber"
-                            type="tel"
-                            placeholder="+43 XXX XXX XXXX"
-                        />
-                    </div>
-
-                    <div class="form-section-title">Delivery Address</div>
-
-                    <div class="form-row">
-                        <div class="form-group flex-3">
-                            <label for="streetName">Street:</label>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Phone Number</mat-label>
                             <input
-                                id="streetName"
-                                name="streetName"
-                                formControlName="streetName"
-                            />
-                        </div>
-                        <div class="form-group flex-1">
-                            <label for="houseNumber">Number:</label>
-                            <input
-                                id="houseNumber"
-                                name="houseNumber"
-                                formControlName="houseNumber"
-                            />
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="additionalInfo"
-                            >Additional Info (Optional):</label
-                        >
-                        <input
-                            id="additionalInfo"
-                            name="additionalInfo"
-                            formControlName="additionalInfo"
-                            placeholder="Apt, Suite, Floor, etc."
-                        />
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group flex-1">
-                            <label for="zipCode">ZIP Code:</label>
-                            <input
-                                id="zipCode"
-                                name="zipCode"
-                                formControlName="zipCode"
-                            />
-                        </div>
-                        <div class="form-group flex-2">
-                            <label for="cityName">City:</label>
-                            <input
-                                id="cityName"
-                                name="cityName"
-                                formControlName="cityName"
-                            />
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="country">Country:</label>
-                        <input
-                            id="country"
-                            name="country"
-                            formControlName="country"
-                        />
-                    </div>
-
-                    <div class="form-section-title">Grid Location</div>
-                    <p class="form-hint">
-                        Enter your location on the delivery grid (-10 to +10)
-                    </p>
-
-                    <div class="form-row">
-                        <div class="form-group flex-1">
-                            <label for="gridX">Grid X:</label>
-                            <input
-                                id="gridX"
-                                name="gridX"
-                                formControlName="gridX"
-                                type="number"
-                                min="-10"
-                                max="10"
-                            />
-                        </div>
-                        <div class="form-group flex-1">
-                            <label for="gridY">Grid Y:</label>
-                            <input
-                                id="gridY"
-                                name="gridY"
-                                formControlName="gridY"
-                                type="number"
-                                min="-10"
-                                max="10"
-                            />
-                        </div>
-                    </div>
-                </fieldset>
-            }
-
-            <!-- Restaurant Owner-specific fields -->
-            @if (selectedRole === UserRole.RESTAURANT_OWNER) {
-                <fieldset class="role-fields">
-                    <legend>Restaurant Details</legend>
-
-                    <div class="form-group">
-                        <label for="restaurantName">Restaurant Name:</label>
-                        <input
-                            id="restaurantName"
-                            name="restaurantName"
-                            formControlName="restaurantName"
-                        />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="restaurantDescription"
-                            >Description (Optional):</label
-                        >
-                        <textarea
-                            id="restaurantDescription"
-                            name="restaurantDescription"
-                            formControlName="restaurantDescription"
-                            rows="3"
-                            placeholder="Tell customers about your restaurant..."
-                        ></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="cuisineType">Cuisine Type:</label>
-                        <select id="cuisineType" formControlName="cuisineType">
-                            @for (cuisine of cuisineTypes; track cuisine) {
-                                <option [value]="cuisine">
-                                    {{ cuisine }}
-                                </option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group flex-1">
-                            <label for="contactEmail">Contact Email:</label>
-                            <input
-                                id="contactEmail"
-                                name="contactEmail"
-                                formControlName="contactEmail"
-                                type="email"
-                            />
-                        </div>
-                        <div class="form-group flex-1">
-                            <label for="contactPhone">Contact Phone:</label>
-                            <input
-                                id="contactPhone"
-                                name="contactPhone"
-                                formControlName="contactPhone"
+                                matInput
                                 type="tel"
+                                formControlName="phoneNumber"
+                                placeholder="+43 XXX XXX XXXX"
                             />
+                            @if (
+                                form.get('phoneNumber')?.hasError('required')
+                            ) {
+                                <mat-error>Phone number is required</mat-error>
+                            }
+                            @if (
+                                form.get('phoneNumber')?.hasError('phoneNumber')
+                            ) {
+                                <mat-error
+                                    >Invalid phone number format</mat-error
+                                >
+                            }
+                        </mat-form-field>
+
+                        <h4 class="subsection-title">Delivery Address</h4>
+
+                        <div class="form-row">
+                            <mat-form-field appearance="outline" class="flex-3">
+                                <mat-label>Street</mat-label>
+                                <input matInput formControlName="streetName" />
+                                @if (
+                                    form.get('streetName')?.hasError('required')
+                                ) {
+                                    <mat-error>Street is required</mat-error>
+                                }
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="flex-1">
+                                <mat-label>Number</mat-label>
+                                <input matInput formControlName="houseNumber" />
+                                @if (
+                                    form
+                                        .get('houseNumber')
+                                        ?.hasError('required')
+                                ) {
+                                    <mat-error>Required</mat-error>
+                                }
+                            </mat-form-field>
                         </div>
-                    </div>
 
-                    <div class="form-section-title">Restaurant Address</div>
-
-                    <div class="form-row">
-                        <div class="form-group flex-3">
-                            <label for="streetName">Street:</label>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Additional Info (Optional)</mat-label>
                             <input
-                                id="streetName"
-                                name="streetName"
-                                formControlName="streetName"
+                                matInput
+                                formControlName="additionalInfo"
+                                placeholder="Apt, Suite, Floor, etc."
                             />
+                        </mat-form-field>
+
+                        <div class="form-row">
+                            <mat-form-field appearance="outline" class="flex-1">
+                                <mat-label>ZIP Code</mat-label>
+                                <input matInput formControlName="zipCode" />
+                                @if (
+                                    form.get('zipCode')?.hasError('required')
+                                ) {
+                                    <mat-error>Required</mat-error>
+                                }
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="flex-2">
+                                <mat-label>City</mat-label>
+                                <input matInput formControlName="cityName" />
+                                @if (
+                                    form.get('cityName')?.hasError('required')
+                                ) {
+                                    <mat-error>City is required</mat-error>
+                                }
+                            </mat-form-field>
                         </div>
-                        <div class="form-group flex-1">
-                            <label for="houseNumber">Number:</label>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Country</mat-label>
+                            <input matInput formControlName="country" />
+                            @if (form.get('country')?.hasError('required')) {
+                                <mat-error>Country is required</mat-error>
+                            }
+                        </mat-form-field>
+
+                        <h4 class="subsection-title">Grid Location</h4>
+                        <p class="form-hint">
+                            Enter your location on the delivery grid (-10 to
+                            +10)
+                        </p>
+
+                        <div class="form-row">
+                            <mat-form-field appearance="outline" class="flex-1">
+                                <mat-label>Grid X</mat-label>
+                                <input
+                                    matInput
+                                    type="number"
+                                    formControlName="gridX"
+                                    min="-10"
+                                    max="10"
+                                />
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="flex-1">
+                                <mat-label>Grid Y</mat-label>
+                                <input
+                                    matInput
+                                    type="number"
+                                    formControlName="gridY"
+                                    min="-10"
+                                    max="10"
+                                />
+                            </mat-form-field>
+                        </div>
+                    </div>
+                }
+
+                <!-- Restaurant Owner-specific fields -->
+                @if (selectedRole === UserRole.RESTAURANT_OWNER) {
+                    <div class="role-section">
+                        <h3 class="section-title">Restaurant Details</h3>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Restaurant Name</mat-label>
+                            <input matInput formControlName="restaurantName" />
+                            @if (
+                                form.get('restaurantName')?.hasError('required')
+                            ) {
+                                <mat-error
+                                    >Restaurant name is required</mat-error
+                                >
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Description (Optional)</mat-label>
+                            <textarea
+                                matInput
+                                formControlName="restaurantDescription"
+                                rows="3"
+                                placeholder="Tell customers about your restaurant..."
+                            ></textarea>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Cuisine Type</mat-label>
+                            <mat-select formControlName="cuisineType">
+                                @for (cuisine of cuisineTypes; track cuisine) {
+                                    <mat-option [value]="cuisine">
+                                        {{ cuisine }}
+                                    </mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+
+                        <div class="form-row">
+                            <mat-form-field appearance="outline" class="flex-1">
+                                <mat-label>Contact Email</mat-label>
+                                <input
+                                    matInput
+                                    type="email"
+                                    formControlName="contactEmail"
+                                />
+                                @if (
+                                    form
+                                        .get('contactEmail')
+                                        ?.hasError('required')
+                                ) {
+                                    <mat-error>Email is required</mat-error>
+                                }
+                                @if (
+                                    form.get('contactEmail')?.hasError('email')
+                                ) {
+                                    <mat-error>Invalid email format</mat-error>
+                                }
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="flex-1">
+                                <mat-label>Contact Phone</mat-label>
+                                <input
+                                    matInput
+                                    type="tel"
+                                    formControlName="contactPhone"
+                                />
+                                @if (
+                                    form
+                                        .get('contactPhone')
+                                        ?.hasError('required')
+                                ) {
+                                    <mat-error>Phone is required</mat-error>
+                                }
+                                @if (
+                                    form
+                                        .get('contactPhone')
+                                        ?.hasError('phoneNumber')
+                                ) {
+                                    <mat-error>Invalid phone format</mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+
+                        <h4 class="subsection-title">Restaurant Address</h4>
+
+                        <div class="form-row">
+                            <mat-form-field appearance="outline" class="flex-3">
+                                <mat-label>Street</mat-label>
+                                <input matInput formControlName="streetName" />
+                                @if (
+                                    form.get('streetName')?.hasError('required')
+                                ) {
+                                    <mat-error>Street is required</mat-error>
+                                }
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="flex-1">
+                                <mat-label>Number</mat-label>
+                                <input matInput formControlName="houseNumber" />
+                                @if (
+                                    form
+                                        .get('houseNumber')
+                                        ?.hasError('required')
+                                ) {
+                                    <mat-error>Required</mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Additional Info (Optional)</mat-label>
                             <input
-                                id="houseNumber"
-                                name="houseNumber"
-                                formControlName="houseNumber"
+                                matInput
+                                formControlName="additionalInfo"
+                                placeholder="Building name, entrance, etc."
                             />
+                        </mat-form-field>
+
+                        <div class="form-row">
+                            <mat-form-field appearance="outline" class="flex-1">
+                                <mat-label>ZIP Code</mat-label>
+                                <input matInput formControlName="zipCode" />
+                                @if (
+                                    form.get('zipCode')?.hasError('required')
+                                ) {
+                                    <mat-error>Required</mat-error>
+                                }
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="flex-2">
+                                <mat-label>City</mat-label>
+                                <input matInput formControlName="cityName" />
+                                @if (
+                                    form.get('cityName')?.hasError('required')
+                                ) {
+                                    <mat-error>City is required</mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Country</mat-label>
+                            <input matInput formControlName="country" />
+                            @if (form.get('country')?.hasError('required')) {
+                                <mat-error>Country is required</mat-error>
+                            }
+                        </mat-form-field>
+
+                        <h4 class="subsection-title">Grid Location</h4>
+                        <p class="form-hint">
+                            Enter your restaurant's location on the delivery
+                            grid (-10 to +10)
+                        </p>
+
+                        <div class="form-row">
+                            <mat-form-field appearance="outline" class="flex-1">
+                                <mat-label>Grid X</mat-label>
+                                <input
+                                    matInput
+                                    type="number"
+                                    formControlName="gridX"
+                                    min="-10"
+                                    max="10"
+                                />
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="flex-1">
+                                <mat-label>Grid Y</mat-label>
+                                <input
+                                    matInput
+                                    type="number"
+                                    formControlName="gridY"
+                                    min="-10"
+                                    max="10"
+                                />
+                            </mat-form-field>
+                        </div>
+
+                        <div class="info-notice">
+                            <strong>Note:</strong> Your restaurant registration
+                            will be reviewed by our team. You'll be notified
+                            once approved.
                         </div>
                     </div>
+                }
 
-                    <div class="form-group">
-                        <label for="additionalInfo"
-                            >Additional Info (Optional):</label
-                        >
-                        <input
-                            id="additionalInfo"
-                            name="additionalInfo"
-                            formControlName="additionalInfo"
-                            placeholder="Building name, entrance, etc."
-                        />
-                    </div>
+                <button
+                    mat-flat-button
+                    type="button"
+                    (click)="signup()"
+                    class="signup-button"
+                    [disabled]="form.invalid"
+                >
+                    Sign Up
+                </button>
+            </form>
+        </mat-card-content>
 
-                    <div class="form-row">
-                        <div class="form-group flex-1">
-                            <label for="zipCode">ZIP Code:</label>
-                            <input
-                                id="zipCode"
-                                name="zipCode"
-                                formControlName="zipCode"
-                            />
-                        </div>
-                        <div class="form-group flex-2">
-                            <label for="cityName">City:</label>
-                            <input
-                                id="cityName"
-                                name="cityName"
-                                formControlName="cityName"
-                            />
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="country">Country:</label>
-                        <input
-                            id="country"
-                            name="country"
-                            formControlName="country"
-                        />
-                    </div>
-
-                    <div class="form-section-title">Grid Location</div>
-                    <p class="form-hint">
-                        Enter your restaurant's location on the delivery grid
-                        (-10 to +10)
-                    </p>
-
-                    <div class="form-row">
-                        <div class="form-group flex-1">
-                            <label for="gridX">Grid X:</label>
-                            <input
-                                id="gridX"
-                                name="gridX"
-                                formControlName="gridX"
-                                type="number"
-                                min="-10"
-                                max="10"
-                            />
-                        </div>
-                        <div class="form-group flex-1">
-                            <label for="gridY">Grid Y:</label>
-                            <input
-                                id="gridY"
-                                name="gridY"
-                                formControlName="gridY"
-                                type="number"
-                                min="-10"
-                                max="10"
-                            />
-                        </div>
-                    </div>
-
-                    <div class="info-notice">
-                        <strong>Note:</strong> Your restaurant registration will
-                        be reviewed by our team. You'll be notified once
-                        approved.
-                    </div>
-                </fieldset>
-            }
-
-            <button type="button" (click)="signup()" class="btn-primary">
-                Sign Up
-            </button>
-
-            <p class="login-link">
+        <mat-card-footer>
+            <p>
                 Already have an account?
                 <a routerLink="/login">Log in</a>
             </p>
-        </form>
-    </div>
+        </mat-card-footer>
+    </mat-card>
 </div>
