@@ -5,6 +5,11 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
 import {
@@ -20,7 +25,16 @@ import { phoneNumberValidator } from '../../commons/validators/phone-number.vali
 
 @Component({
     selector: 'app-signup',
-    imports: [ReactiveFormsModule, RouterLink, RoleLabelPipe],
+    imports: [
+        ReactiveFormsModule,
+        RouterLink,
+        RoleLabelPipe,
+        MatButtonModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+    ],
     templateUrl: './signup.component.html',
     styleUrl: './signup.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
