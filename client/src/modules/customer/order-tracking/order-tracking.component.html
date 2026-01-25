@@ -1,0 +1,61 @@
+<div class="order-tracking">
+    <h2>Order #{{ orderId }}</h2>
+
+    <div class="order-status">
+        <h3>Status: {{ currentStatus }}</h3>
+
+        <div class="delivery-info">
+            <p>
+                Estimated: {{ deliveryTime }} min
+                <span class="info" title="{{  }}"></span>
+            </p>
+        </div>
+
+        <div class="progress">
+            <div class="step" [class.active]="step(1)">
+                <div class="circle">1</div>
+                <span> Ordered</span>
+            </div>
+            <div class="step" [class.active]="step(2)">
+                <div class="circle">2</div>
+                <span> Preparing</span>
+            </div>
+            <div class="step" [class.active]="step(3)">
+                <div class="circle">3</div>
+                <span> Ready</span>
+            </div>
+            <div class="step" [class.active]="step(4)">
+                <div class="circle">4</div>
+                <span> Delivered</span>
+            </div>
+        </div>
+
+        <div class="items">
+            <h4>Order Items</h4>
+            <div *ngFor="let item of sampleItems" class="item-row">
+                <span>{{ item.name }} x {{ item.quantity }}</span>
+                <span>€ {{ item.price * item.quantity }}</span>
+            </div>
+            <div class="total">
+                <span> Total: €{{ totalPrice }} </span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button
+                *ngIf="currentStatus !== 'delivered'"
+                class="refresh"
+                (click)="refreshStatus()"
+            >
+                Update Order Status
+            </button>
+            <button
+                *ngIf="currentStatus === 'delivered'"
+                class="feedback"
+                (click)="goToFeedback()"
+            >
+                Feedback
+            </button>
+        </div>
+    </div>
+</div>
