@@ -114,6 +114,77 @@ router.post(
     })
 );
 
+// GET /restaurant - Get the restaurant address for the authenticated owner
+// NOTE: Must be defined BEFORE /:addressId routes to avoid "restaurant" being matched as a parameter
+router.get(
+    '/restaurant',
+    asyncHandler(async (req: Request, res: Response) => {
+        const userId = (req as any).user.sub;
+        const restaurantRepo = new RestaurantRepository();
+        const restaurant = await restaurantRepo.findByOwnerId(userId);
+
+        if (!restaurant) {
+            return res.status(404).json({
+                status: 'error',
+                error: 'No restaurant found for this user',
+            });
+        }
+
+        const service = new AddressService(new AddressRepository());
+        const address = await service.getById(restaurant.address_id);
+
+        if (!address) {
+            return res.status(404).json({
+                status: 'error',
+                error: 'Restaurant address not found',
+            });
+        }
+
+        return res.json({ status: 'ok', data: address });
+    })
+);
+
+// PUT /restaurant - Update the restaurant address for the authenticated owner
+router.put(
+    '/restaurant',
+    asyncHandler(async (req: Request, res: Response) => {
+        const userId = (req as any).user.sub;
+        const restaurantRepo = new RestaurantRepository();
+        const restaurant = await restaurantRepo.findByOwnerId(userId);
+
+        if (!restaurant) {
+            return res.status(404).json({
+                status: 'error',
+                error: 'No restaurant found for this user',
+            });
+        }
+
+        // Validate grid coordinates if provided
+        const gridX = validateGridCoordinate(req.body.gridX, 'gridX');
+        const gridY = validateGridCoordinate(req.body.gridY, 'gridY');
+
+        const dto: UpdateAddress = {
+            label: req.body.label,
+            streetName: req.body.streetName,
+            houseNumber: req.body.houseNumber,
+            additionalInfo: req.body.additionalInfo,
+            cityName: req.body.cityName,
+            zipCode: req.body.zipCode,
+            country: req.body.country,
+            gridX,
+            gridY,
+        };
+
+        const service = new AddressService(new AddressRepository());
+        await service.updateAddress(restaurant.address_id, dto);
+
+        return res.json({
+            status: 'ok',
+            data: { message: 'Restaurant address updated' },
+        });
+    })
+);
+
 // PUT /:addressId - update an existing address (only if user owns it)
 router.put(
     '/:addressId',
@@ -198,76 +269,6 @@ router.delete(
         return res.json({
             status: 'ok',
             data: { message: 'Address deleted' },
-        });
-    })
-);
-
-// GET /restaurant - Get the restaurant address for the authenticated owner
-router.get(
-    '/restaurant',
-    asyncHandler(async (req: Request, res: Response) => {
-        const userId = (req as any).user.sub;
-        const restaurantRepo = new RestaurantRepository();
-        const restaurant = await restaurantRepo.findByOwnerId(userId);
-
-        if (!restaurant) {
-            return res.status(404).json({
-                status: 'error',
-                error: 'No restaurant found for this user',
-            });
-        }
-
-        const service = new AddressService(new AddressRepository());
-        const address = await service.getById(restaurant.address_id);
-
-        if (!address) {
-            return res.status(404).json({
-                status: 'error',
-                error: 'Restaurant address not found',
-            });
-        }
-
-        return res.json({ status: 'ok', data: address });
-    })
-);
-
-// PUT /restaurant - Update the restaurant address for the authenticated owner
-router.put(
-    '/restaurant',
-    asyncHandler(async (req: Request, res: Response) => {
-        const userId = (req as any).user.sub;
-        const restaurantRepo = new RestaurantRepository();
-        const restaurant = await restaurantRepo.findByOwnerId(userId);
-
-        if (!restaurant) {
-            return res.status(404).json({
-                status: 'error',
-                error: 'No restaurant found for this user',
-            });
-        }
-
-        // Validate grid coordinates if provided
-        const gridX = validateGridCoordinate(req.body.gridX, 'gridX');
-        const gridY = validateGridCoordinate(req.body.gridY, 'gridY');
-
-        const dto: UpdateAddress = {
-            label: req.body.label,
-            streetName: req.body.streetName,
-            houseNumber: req.body.houseNumber,
-            additionalInfo: req.body.additionalInfo,
-            cityName: req.body.cityName,
-            zipCode: req.body.zipCode,
-            country: req.body.country,
-            gridX,
-            gridY,
-        };
-
-        const service = new AddressService(new AddressRepository());
-        await service.updateAddress(restaurant.address_id, dto);
-
-        return res.json({
-            status: 'ok',
-            data: { message: 'Restaurant address updated' },
         });
     })
 );
