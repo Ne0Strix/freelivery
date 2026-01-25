@@ -1,87 +1,134 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="address-form">
     @if (showLabel) {
-        <div class="form-group">
-            <label for="label">Label</label>
+        <mat-form-field appearance="outline">
+            <mat-label>Label</mat-label>
             <input
-                id="label"
-                type="text"
+                matInput
                 formControlName="label"
                 placeholder="e.g., Home, Work, etc."
             />
-        </div>
+        </mat-form-field>
     }
 
     <div class="form-row">
-        <div class="form-group flex-3">
-            <label for="streetName">Street *</label>
-            <input id="streetName" type="text" formControlName="streetName" />
-        </div>
-        <div class="form-group flex-1">
-            <label for="houseNumber">Number *</label>
-            <input id="houseNumber" type="text" formControlName="houseNumber" />
-        </div>
+        <mat-form-field appearance="outline" class="flex-3">
+            <mat-label>Street</mat-label>
+            <input matInput formControlName="streetName" />
+            @if (form.get('streetName')?.hasError('required')) {
+                <mat-error>Street is required</mat-error>
+            }
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>Number</mat-label>
+            <input matInput formControlName="houseNumber" />
+            @if (form.get('houseNumber')?.hasError('required')) {
+                <mat-error>Required</mat-error>
+            }
+        </mat-form-field>
     </div>
 
-    <div class="form-group">
-        <label for="additionalInfo">Additional Info</label>
+    <mat-form-field appearance="outline">
+        <mat-label>Additional Info</mat-label>
         <input
-            id="additionalInfo"
-            type="text"
+            matInput
             formControlName="additionalInfo"
             placeholder="Apt, Suite, Floor, etc."
         />
-    </div>
+    </mat-form-field>
 
     <div class="form-row">
-        <div class="form-group flex-1">
-            <label for="zipCode">ZIP Code *</label>
-            <input id="zipCode" type="text" formControlName="zipCode" />
-        </div>
-        <div class="form-group flex-2">
-            <label for="cityName">City *</label>
-            <input id="cityName" type="text" formControlName="cityName" />
-        </div>
+        <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>ZIP Code</mat-label>
+            <input matInput formControlName="zipCode" />
+            @if (form.get('zipCode')?.hasError('required')) {
+                <mat-error>Required</mat-error>
+            }
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="flex-2">
+            <mat-label>City</mat-label>
+            <input matInput formControlName="cityName" />
+            @if (form.get('cityName')?.hasError('required')) {
+                <mat-error>City is required</mat-error>
+            }
+        </mat-form-field>
     </div>
 
-    <div class="form-group">
-        <label for="country">Country *</label>
-        <input id="country" type="text" formControlName="country" />
-    </div>
+    <mat-form-field appearance="outline">
+        <mat-label>Country</mat-label>
+        <input matInput formControlName="country" />
+        @if (form.get('country')?.hasError('required')) {
+            <mat-error>Country is required</mat-error>
+        }
+    </mat-form-field>
 
-    <div class="form-section-title">Grid Location</div>
+    <h4 class="section-title">Grid Location</h4>
     <p class="form-hint">
         Your location on the delivery grid ({{ GRID_MIN }} to {{ GRID_MAX }}).
         Used for delivery time calculation.
     </p>
 
     <div class="form-row">
-        <div class="form-group flex-1">
-            <label for="gridX">Grid X *</label>
+        <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>Grid X</mat-label>
             <input
-                id="gridX"
+                matInput
                 type="number"
                 formControlName="gridX"
                 [min]="GRID_MIN"
                 [max]="GRID_MAX"
             />
-        </div>
-        <div class="form-group flex-1">
-            <label for="gridY">Grid Y *</label>
+            @if (form.get('gridX')?.hasError('required')) {
+                <mat-error>Required</mat-error>
+            }
+            @if (
+                form.get('gridX')?.hasError('min') ||
+                form.get('gridX')?.hasError('max')
+            ) {
+                <mat-error
+                    >Must be between {{ GRID_MIN }} and
+                    {{ GRID_MAX }}</mat-error
+                >
+            }
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>Grid Y</mat-label>
             <input
-                id="gridY"
+                matInput
                 type="number"
                 formControlName="gridY"
                 [min]="GRID_MIN"
                 [max]="GRID_MAX"
             />
-        </div>
+            @if (form.get('gridY')?.hasError('required')) {
+                <mat-error>Required</mat-error>
+            }
+            @if (
+                form.get('gridY')?.hasError('min') ||
+                form.get('gridY')?.hasError('max')
+            ) {
+                <mat-error
+                    >Must be between {{ GRID_MIN }} and
+                    {{ GRID_MAX }}</mat-error
+                >
+            }
+        </mat-form-field>
     </div>
 
     <div class="form-actions">
-        <button type="button" class="btn-secondary" (click)="onCancel()">
+        <button
+            mat-flat-button
+            type="button"
+            class="btn-secondary"
+            (click)="onCancel()"
+        >
             Cancel
         </button>
-        <button type="submit" class="btn-primary" [disabled]="form.invalid">
+        <button
+            mat-flat-button
+            type="submit"
+            class="btn-primary"
+            [disabled]="form.invalid"
+        >
             {{ isEdit ? 'Save Changes' : 'Add Address' }}
         </button>
     </div>

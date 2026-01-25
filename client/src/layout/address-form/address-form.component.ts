@@ -12,6 +12,9 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import {
     Address,
     CreateAddress,
@@ -21,7 +24,12 @@ import {
 
 @Component({
     selector: 'app-address-form',
-    imports: [ReactiveFormsModule],
+    imports: [
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+    ],
     templateUrl: './address-form.component.html',
     styleUrl: './address-form.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
