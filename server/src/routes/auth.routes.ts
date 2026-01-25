@@ -1,10 +1,16 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
+import { RestaurantRepository } from '../domains/restaurant/restaurant.repository.js';
+import {
+    RestaurantService,
+    RestaurantStatus,
+} from '../domains/restaurant/restaurant.service.js';
 import { UserService } from '../domains/user/user.service.js';
-import { ALL_ROLES } from '../middleware/auth.js';
+import { ALL_ROLES, UserRole } from '../middleware/auth.js';
 
 const router = Router();
 const userService = new UserService();
+const restaurantService = new RestaurantService(new RestaurantRepository());
 
 // Source: https://medium.com/@kevinpatrickboylan/using-jwt-authentication-and-bcrypt-net-with-angular-and-net-core-web-api-51aab1153778
 
@@ -53,6 +59,20 @@ router.post('/login', async (req, res) => {
 
         // Fetch user roles
         const roles = await userService.getUserRoles(user.user_id);
+
+        // Check if restaurant owner has pending restaurant
+        if (roles.includes(UserRole.RESTAURANT_OWNER)) {
+            const restaurant = await restaurantService.getRestaurantByOwner(
+                user.user_id
+            );
+            if (restaurant && restaurant.status === RestaurantStatus.NEW) {
+                return res.status(403).json({
+                    status: 'error',
+                    error: 'Restaurant pending approval',
+                    code: 'RESTAURANT_PENDING',
+                });
+            }
+        }
 
         const secret = process.env.JWT_SECRET || 'dev-secret';
         const token = jwt.sign(
