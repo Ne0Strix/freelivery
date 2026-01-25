@@ -1,11 +1,17 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
+import {
+    ForbiddenError,
+    UnauthorizedError,
+    ValidationError,
+} from '../domains/commons/errors.js';
 import { RestaurantRepository } from '../domains/restaurant/restaurant.repository.js';
 import {
     RestaurantService,
     RestaurantStatus,
 } from '../domains/restaurant/restaurant.service.js';
 import { UserService } from '../domains/user/user.service.js';
+import { asyncHandler } from '../middleware/async-handler.js';
 import { ALL_ROLES, UserRole } from '../middleware/auth.js';
 
 const router = Router();
@@ -14,13 +20,12 @@ const restaurantService = new RestaurantService(new RestaurantRepository());
 
 // Source: https://medium.com/@kevinpatrickboylan/using-jwt-authentication-and-bcrypt-net-with-angular-and-net-core-web-api-51aab1153778
 
-router.post('/login', async (req, res) => {
-    try {
+router.post(
+    '/login',
+    asyncHandler(async (req, res) => {
         const { email, username, password } = req.body ?? {};
         if ((!email && !username) || !password) {
-            return res
-                .status(400)
-                .json({ status: 'error', error: 'Missing credentials' });
+            throw new ValidationError('Missing credentials');
         }
 
         const identifier = email ?? username;
@@ -32,18 +37,14 @@ router.post('/login', async (req, res) => {
             byEmail
         );
         if (!user) {
-            return res
-                .status(401)
-                .json({ status: 'error', error: 'Invalid credentials' });
+            throw new UnauthorizedError('Invalid credentials');
         }
 
         // Check if user is suspended
         if (!user.is_active) {
-            return res.status(403).json({
-                status: 'error',
-                error: 'Account suspended',
-                code: 'ACCOUNT_SUSPENDED',
-            });
+            throw new ForbiddenError(
+                'Your account has been suspended. Please contact support.'
+            );
         }
 
         // Verify password
@@ -52,9 +53,7 @@ router.post('/login', async (req, res) => {
             user.password_hash
         );
         if (!isValidPassword) {
-            return res
-                .status(401)
-                .json({ status: 'error', error: 'Invalid credentials' });
+            throw new UnauthorizedError('Invalid credentials');
         }
 
         // Fetch user roles
@@ -66,11 +65,9 @@ router.post('/login', async (req, res) => {
                 user.user_id
             );
             if (restaurant && restaurant.status === RestaurantStatus.NEW) {
-                return res.status(403).json({
-                    status: 'error',
-                    error: 'Restaurant pending approval',
-                    code: 'RESTAURANT_PENDING',
-                });
+                throw new ForbiddenError(
+                    'Your registration is pending approval. Please wait for a site-manager to review your application.'
+                );
             }
         }
 
@@ -87,14 +84,12 @@ router.post('/login', async (req, res) => {
         );
 
         return res.json({ status: 'ok', data: { token } });
-    } catch (err) {
-        console.error('Login error:', err);
-        return res.status(500).json({ status: 'error', error: 'Server error' });
-    }
-});
+    })
+);
 
-router.post('/signup', async (req, res) => {
-    try {
+router.post(
+    '/signup',
+    asyncHandler(async (req, res) => {
         const {
             username,
             email,
@@ -107,18 +102,16 @@ router.post('/signup', async (req, res) => {
 
         // Validate required fields
         if (!username || !email || !password || !role) {
-            return res.status(400).json({
-                status: 'error',
-                error: 'Missing required fields: username, email, password, role',
-            });
+            throw new ValidationError(
+                'Missing required fields: username, email, password, role'
+            );
         }
 
         // Validate role
         if (!ALL_ROLES.includes(role)) {
-            return res.status(400).json({
-                status: 'error',
-                error: `Invalid role. Must be one of: ${ALL_ROLES.join(', ')}`,
-            });
+            throw new ValidationError(
+                `Invalid role. Must be one of: ${ALL_ROLES.join(', ')}`
+            );
         }
 
         // Build customer data if present
@@ -148,10 +141,9 @@ router.post('/signup', async (req, res) => {
                 !restaurant.contactPhone ||
                 !restaurant.address
             ) {
-                return res.status(400).json({
-                    status: 'error',
-                    error: 'Restaurant registration requires name, contact email, contact phone, and address',
-                });
+                throw new ValidationError(
+                    'Restaurant registration requires name, contact email, contact phone, and address'
+                );
             }
             restaurantData = {
                 name: restaurant.name,
@@ -170,7 +162,7 @@ router.post('/signup', async (req, res) => {
             };
         }
 
-        // Create user via service
+        // Create user via service (throws ConflictError if email/username exists)
         const { userId } = await userService.createUser(
             username,
             email,
@@ -184,19 +176,7 @@ router.post('/signup', async (req, res) => {
             status: 'ok',
             data: { message: 'User created successfully', userId },
         });
-    } catch (err: any) {
-        console.error('Signup error:', err);
-
-        // Handle known errors
-        if (err.code === 'CONFLICT') {
-            return res.status(409).json({
-                status: 'error',
-                error: err.message,
-            });
-        }
-
-        return res.status(500).json({ status: 'error', error: 'Server error' });
-    }
-});
+    })
+);
 
 export default router;

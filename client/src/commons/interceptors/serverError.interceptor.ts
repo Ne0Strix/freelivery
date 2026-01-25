@@ -38,7 +38,8 @@ export const serverErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
             if (err instanceof HttpErrorResponse) {
                 console.error(err);
-                const message = err?.message ?? String(err);
+                const message =
+                    err?.error?.error?.message ?? 'An error occurred';
                 snackbar.open(message, 'Close', { duration: 5000 });
             } else {
                 snackbar.open('Unexpected error occurred.', 'Close', {

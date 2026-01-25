@@ -76,24 +76,6 @@ export class LoginComponent {
                                 { duration: 5000 }
                             );
                         }
-                    } else if (result.code === 'ACCOUNT_SUSPENDED') {
-                        this.snackbar.open(
-                            'Your account has been suspended. Please contact support.',
-                            'Close',
-                            { duration: 8000 }
-                        );
-                    } else if (result.code === 'RESTAURANT_PENDING') {
-                        this.snackbar.open(
-                            'Your restaurant registration is pending approval. Please wait for a site manager to review your application.',
-                            'Close',
-                            { duration: 8000 }
-                        );
-                    } else {
-                        this.snackbar.open(
-                            'Invalid email or password',
-                            'Close',
-                            { duration: 5000 }
-                        );
                     }
                 });
         }
