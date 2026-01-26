@@ -1,70 +1,42 @@
 import {
     HttpErrorResponse,
-    HttpEvent,
-    HttpResponse,
-    HttpStatusCode,
     type HttpInterceptorFn,
 } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { catchError, tap, throwError } from 'rxjs';
-// source: https://dev.to/cezar-plescan/error-handling-with-angular-interceptors-2548
-
-class HttpResponseFormatError extends Error {
-    constructor() {
-        super('The server response format is invalid.');
-    }
-}
+import { catchError } from 'rxjs';
 
 export const serverErrorInterceptor: HttpInterceptorFn = (req, next) => {
     const snackbar = inject(MatSnackBar);
 
     return next(req).pipe(
-        tap((httpEvent) => {
-            if (checkInvalid200Response(httpEvent)) {
-                snackbar.open('Server response format is invalid.', 'Close', {
-                    duration: 5000,
-                });
-                const error = new HttpResponseFormatError();
+        catchError((error: HttpErrorResponse) => {
+            let errorMessage = 'An error occurred';
 
-                console.warn(error);
-                throw error;
-            }
-        }),
-        catchError((err) => {
-            if (err instanceof HttpResponseFormatError) {
-                return throwError(() => err);
-            }
-
-            if (err instanceof HttpErrorResponse) {
-                console.error(err);
-                const message = err?.message ?? String(err);
-                snackbar.open(message, 'Close', { duration: 5000 });
-            } else {
-                snackbar.open('Unexpected error occurred.', 'Close', {
-                    duration: 5000,
-                });
+            if (error.status === 0) {
+                errorMessage = 'Network error - check your connection';
+            } else if (error.status === 401) {
+                errorMessage = 'Unauthorized - please login';
+            } else if (error.status === 403) {
+                errorMessage = 'Forbidden - insufficient permissions';
+            } else if (error.status === 404) {
+                errorMessage = 'Resource not found';
+            } else if (error.status >= 500) {
+                errorMessage = 'Server error - please try again later';
+            } else if (error.error?.message) {
+                errorMessage = error.error.message;
+            } else if (error.message) {
+                errorMessage = error.message;
             }
 
-            return throwError(() => err);
+            snackbar.open(errorMessage, 'Close', {
+                duration: 5000,
+            });
+
+            console.error('HTTP Error:', error);
+
+            // Re-throw the error so the calling code can handle it
+            throw error;
         })
     );
 };
-
-function checkInvalid200Response(httpEvent: HttpEvent<any>): boolean {
-    return (
-        // Must be an instance of HttpResponse (i.e., a response, not a request or other event)
-        httpEvent instanceof HttpResponse &&
-        // Must have a successful status code (200 OK)
-        httpEvent.status === HttpStatusCode.Ok &&
-        // But the body format must be invalid
-        !check200ResponseBodyFormat(httpEvent)
-    );
-}
-
-function check200ResponseBodyFormat(response: HttpResponse<any>): boolean {
-    const body = response.body;
-    if (typeof body !== 'object' || body === null || Array.isArray(body))
-        return false;
-    return (body as any).status === 'ok' && (body as any).data !== undefined;
-}
