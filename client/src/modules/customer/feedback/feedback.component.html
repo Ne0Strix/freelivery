@@ -9,12 +9,12 @@
             <div class="stars">
                 <button
                     *ngFor="let star of [1, 2, 3, 4, 5]"
-                    (click)="rate(star)"
+                    (click)="setRating(star)"
                     class="star"
                     [class.active]="star <= ratingSelected"
                 ></button>
             </div>
-            <p class="rating-text">{{ ratingText }}</p>
+            <p class="rating-text">{{ ratingMessage }}</p>
         </div>
 
         <div class="comment">
