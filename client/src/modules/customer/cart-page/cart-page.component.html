@@ -1,145 +1,221 @@
 <div class="cart-container">
-    <div class="cart-header">
-        <h2>Your Shopping Cart</h2>
-        <button class="go-back" (click)="goToRestaurant()">
-            Back to Restaurants
-        </button>
-    </div>
-
-    <div *ngIf="itemsInCart.length === 0" class="empty-cart">
-        <p>Your Cart is empty</p>
-        <button class="add-demo" (click)="addItems()">Add Demo Items</button>
-    </div>
-
-    <div *ngIf="itemsInCart.length > 0" class="cart-content">
-        <div class="cart-items-section">
-            <div class="section-header">
-                <h2>Items on Cart ({{ itemsInCart.length }})</h2>
-                <button class="clear-cart" (click)="clearCart()">
-                    Clear Cart
-                </button>
-            </div>
-
-            <div class="cart-items-list">
-                <div
-                    *ngFor="let item of itemsInCart; let i = index"
-                    class="cart-item-card"
-                >
-                    <div class="item-info">
-                        <h4>{{ item.name }}</h4>
-                        <p class="item-price">
-                            €{{ item.price.toFixed(2) }} each
-                        </p>
-                    </div>
-
-                    <div class="item-controls">
-                        <div class="quantity-control">
-                            <button
-                                class="quantity"
-                                (click)="changeQuantity(i, -1)"
-                                [disabled]="item.quantity <= 1"
-                            >
-                                -
-                            </button>
-                            <span class="quantity-display">
-                                {{ item.quantity }}
-                            </span>
-                            <button
-                                class="quantity"
-                                (click)="changeQuantity(i, 1)"
-                            >
-                                +
-                            </button>
-                        </div>
-
-                        <div class="item-subtotal">
-                            <span class="subtotal-label">Subtotal: </span>
-                            <span class="subtotal-amount"
-                                >€{{
-                                    (item.price * item.quantity).toFixed(2)
-                                }}</span
-                            >
-                        </div>
-
-                        <button
-                            class="remove-item"
-                            (click)="removeItem(item.dishId)"
-                            title="Remove item"
-                        ></button>
-                    </div>
-                </div>
-            </div>
+    <header class="cart-header">
+        <a mat-button routerLink="/customer/home">
+            <mat-icon>arrow_back</mat-icon>
+            Back to Dashboard
+        </a>
+        <h1>Your shopping cart</h1>
+        <div class="cart-stats">
+            <mat-chip color="primary">
+                <mat-icon>shopping_cart</mat-icon>
+                {{ itemsInCart.length }} items
+            </mat-chip>
         </div>
+    </header>
 
-        <div class="order-summary">
-            <div class="summary-card">
-                <h2>Order Summary</h2>
-
-                <div class="promo-code-section">
-                    <label for="promoCode">Do you have a promo code?</label>
-                    <div class="promo-input-group">
-                        <input
-                            type="text"
-                            id="promoCode"
-                            [(ngModel)]="promoInput"
-                            placeholder="Enter code"
-                            [disabled]="promoApplied"
-                            (keyup.enter)="applyPromoCode()"
-                        />
-
+    @if (itemsInCart.length === 0) {
+        <div class="empty-cart">
+            <mat-card>
+                <mat-card-content>
+                    <div class="empty-content">
+                        <mat-icon class="empty-icon">shopping_cart</mat-icon>
+                        <h2>The cart is empty</h2>
+                        <p>Browse menus to add new items to the cart</p>
                         <button
-                            class="apply-promo"
-                            (click)="applyPromoCode()"
-                            [disabled]="promoApplied || !promoInput.trim()"
+                            mat-flat-button
+                            color="primary"
+                            routerLink="/customer/menu"
                         >
-                            {{ promoApplied ? 'Applied ' : 'Apply' }}
+                            <mat-icon>restaurant</mat-icon>
+                            Browse Menu
                         </button>
                     </div>
-
-                    <p *ngIf="promoApplied" class="promo-success">
-                        Promo code was applied! You saved €{{
-                            discountValue.toFixed(2)
-                        }}
-                    </p>
-                </div>
-
-                <div class="price-breakdown">
-                    <div class="price-row">
-                        <span> Subtotal:</span>
-                        <span>
-                            €
-                            {{ subtotal.toFixed(2) }}</span
+                </mat-card-content>
+            </mat-card>
+        </div>
+    } @else {
+        <div class="cart-content">
+            <div class="cart-items-section">
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>
+                            Cart items ({{
+                                itemsInCart.length
+                            }})</mat-card-title
                         >
-                    </div>
+                        <mat-card-actions>
+                            <button
+                                mat-stroked-button
+                                color="warn"
+                                (click)="clearCart()"
+                            >
+                                <mat-icon>delete_sweep</mat-icon>
+                                Clear all
+                            </button>
+                        </mat-card-actions>
+                    </mat-card-header>
 
-                    <div *ngIf="promoApplied" class="price-row discount-row">
-                        <span> Discount (PROMO26):</span>
-                        <span>-€ {{ discountValue.toFixed(2) }}</span>
-                    </div>
+                    <mat-card-content>
+                        <div class="items-list">
+                            @for (
+                                item of itemsInCart;
+                                let i = index;
+                                track item.dishId
+                            ) {
+                                <div class="cart-item">
+                                    <div class="item-info">
+                                        <h3>{{ item.name }}</h3>
+                                        <p class="unit-price">
+                                            €{{ item.price.toFixed(2) }} each
+                                        </p>
+                                    </div>
+                                    <div class="item-controls">
+                                        <div class="quantity-control">
+                                            <button
+                                                mat-icon-button
+                                                (click)="changeQuantity(i, -1)"
+                                                [disabled]="item.quantity <= 1"
+                                            >
+                                                <mat-icon>remove</mat-icon>
+                                            </button>
+                                            <span class="quantity">
+                                                {{ item.quantity }}
+                                            </span>
+                                            <button
+                                                mat-icon-button
+                                                (click)="changeQuantity(i, 1)"
+                                            >
+                                                <mat-icon>add</mat-icon>
+                                            </button>
+                                        </div>
+                                        <div class="item-subtotal">
+                                            <span> Subtotal</span>
+                                            <span class="amount"
+                                                >€{{
+                                                    (
+                                                        item.price *
+                                                        item.quantity
+                                                    ).toFixed(2)
+                                                }}</span
+                                            >
+                                        </div>
 
-                    <div class="price-row total-row">
-                        <span> Total:</span>
-                        <span>€{{ totalPrice.toFixed(2) }}</span>
-                    </div>
-                </div>
+                                        <button
+                                            mat-icon-button
+                                            color="warn"
+                                            (click)="removeItem(item.dishId)"
+                                        >
+                                            <mat-icon>delete</mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
 
-                <div *ngIf="errorMessage" class="error-alert">
-                    {{ errorMessage }}
-                </div>
+            <div class="order-summary-section">
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>Order Summary</mat-card-title>
+                    </mat-card-header>
 
-                <button
-                    class="checkout"
-                    (click)="confirmOrder()"
-                    [disabled]="isProcessingOrder || itemsInCart.length === 0"
-                >
-                    <span *ngIf="!isProcessingOrder"> Proceed to Checkout</span>
-                    <span *ngIf="isProcessingOrder">
-                        <span class="spinner-small"></span>
-                        Processing..
-                    </span>
-                </button>
-                <p class="checkout">Redirecting to order tracking</p>
+                    <mat-card-content>
+                        <div class="promo-section">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width"
+                            >
+                                <mat-label> Promo Code</mat-label>
+                                <input
+                                    matInput
+                                    [(ngModel)]="promoInput"
+                                    placeholder="Enter promo code"
+                                    [disabled]="promoApplied"
+                                />
+                                <button
+                                    matSuffix
+                                    mat-icon-button
+                                    color="primary"
+                                    (click)="applyPromoCode()"
+                                    [disabled]="
+                                        promoApplied || !promoInput.trim()
+                                    "
+                                >
+                                    <mat-icon> local_offer</mat-icon>
+                                </button>
+                            </mat-form-field>
+
+                            @if (promoApplied) {
+                                <div class="promo-success">
+                                    <mat-icon color="primary"
+                                        >check_circle</mat-icon
+                                    >
+                                    <span>
+                                        Promo Applied! You saved €
+                                        {{ discountValue.toFixed(2) }}</span
+                                    >
+                                </div>
+                            }
+                        </div>
+
+                        <div class="price-breakdown">
+                            <div class="price-row">
+                                <span> Subtotal</span>
+                                <span> € {{ subtotal.toFixed(2) }}</span>
+                            </div>
+
+                            @if (promoApplied) {
+                                <div class="price-row discount">
+                                    <span> Discount</span>
+                                    <span>
+                                        -€ {{ discountValue.toFixed(2) }}</span
+                                    >
+                                </div>
+                            }
+
+                            <div class="price-row total">
+                                <span> Total</span>
+                                <span> € {{ totalPrice.toFixed(2) }}</span>
+                            </div>
+                        </div>
+
+                        @if (errorMessage) {
+                            <mat-error class="error-message">
+                                <mat-icon>error</mat-icon>
+                                {{ errorMessage }}
+                            </mat-error>
+                        }
+                    </mat-card-content>
+
+                    <mat-card-actions>
+                        <button
+                            mat-flat-button
+                            color="primary"
+                            class="checkout"
+                            (click)="confirmOrder()"
+                            [disabled]="isProcessingOrder"
+                        >
+                            @if (isProcessingOrder) {
+                                <mat-spinner
+                                    diameter="20"
+                                    class="spinner"
+                                ></mat-spinner>
+                                Processing...
+                            } @else {
+                                <mat-icon>lock</mat-icon>
+                                Proceed to payment
+                            }
+                        </button>
+
+                        <p class="checkout-note">
+                            <mat-icon>info</mat-icon>
+                            Redirecting you to order tracking
+                        </p>
+                    </mat-card-actions>
+                </mat-card>
             </div>
         </div>
-    </div>
+    }
 </div>

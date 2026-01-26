@@ -1,13 +1,27 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { CommonModule, TitleCasePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-order-tracking',
     standalone: true,
-    imports: [CommonModule],
+    imports: [
+        CommonModule,
+        TitleCasePipe,
+        RouterLink,
+        MatCardModule,
+        MatButtonModule,
+        MatChipsModule,
+        MatIconModule,
+    ],
     templateUrl: './order-tracking.component.html',
     styleUrls: ['./order-tracking.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderTrackingComponent implements OnInit {
     orderId: string = '';
@@ -29,7 +43,10 @@ export class OrderTrackingComponent implements OnInit {
 
     statusOrder = ['placed', 'preparing', 'ready', 'delivered'];
 
-    constructor(private route: ActivatedRoute) {}
+    constructor(
+        private route: ActivatedRoute,
+        private snackBar: MatSnackBar
+    ) {}
 
     ngOnInit(): void {
         this.orderId = this.route.snapshot.paramMap.get('id') || '1234';
@@ -46,10 +63,15 @@ export class OrderTrackingComponent implements OnInit {
     refreshStatus(): void {
         const nextStep = Math.min(
             this.statusOrder.indexOf(this.currentStatus) + 1,
-            3
+            this.statusOrder.length - 1
         );
         this.currentStatus = this.statusOrder[nextStep];
         this.updateDeliveryTime();
+
+        this.snackBar.open('Order status updated!', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar'],
+        });
     }
 
     updateDeliveryTime(): void {
