@@ -7,24 +7,24 @@
         <div class="delivery-info">
             <p>
                 Estimated: {{ deliveryTime }} min
-                <span class="info" title="{{  }}"></span>
+                <span class="info" title="Estimated delivery time"></span>
             </p>
         </div>
 
         <div class="progress">
-            <div class="step" [class.active]="step(1)">
+            <div class="step" [class.active]="currentStep(1)">
                 <div class="circle">1</div>
                 <span> Ordered</span>
             </div>
-            <div class="step" [class.active]="step(2)">
+            <div class="step" [class.active]="currentStep(2)">
                 <div class="circle">2</div>
                 <span> Preparing</span>
             </div>
-            <div class="step" [class.active]="step(3)">
+            <div class="step" [class.active]="currentStep(3)">
                 <div class="circle">3</div>
                 <span> Ready</span>
             </div>
-            <div class="step" [class.active]="step(4)">
+            <div class="step" [class.active]="currentStep(4)">
                 <div class="circle">4</div>
                 <span> Delivered</span>
             </div>
