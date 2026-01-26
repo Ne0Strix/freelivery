@@ -1,47 +1,70 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { RouterLink } from '@angular/router';
 import { MenuItem } from '../customer.model';
 
 @Component({
     selector: 'app-view-menu',
+    standalone: true,
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatCardModule,
+        MatChipsModule,
+        FormsModule,
+        RouterLink,
+    ],
     templateUrl: './view-menu.component.html',
     styleUrls: ['./view-menu.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ViewMenuComponent {
-    menuItems = [
+    menuItems: MenuItem[] = [
         {
-            id: 1,
+            dishId: 1,
             name: 'Pizza Margherita',
+            description: 'Tasty tomato sauce and mozzarella pizza',
             price: 8.5,
             category: 'Pizza',
-            image: '🍕',
+            photo: '🍕',
         },
         {
-            id: 2,
+            dishId: 2,
             name: 'Hamburger',
+            description: 'Fresh beef burger with cheese and salad',
             price: 9.5,
             category: 'Burgers',
-            image: '🍔',
+            photo: '🍔',
         },
         {
-            id: 3,
+            dishId: 3,
             name: 'Pasta al pomodoro',
+            description: 'Pasta with homemade tomato sauce',
             price: 10.0,
             category: 'Pasta',
-            image: '🍝',
+            photo: '🍝',
         },
         {
-            id: 4,
+            dishId: 4,
             name: 'Strawberry Cake',
+            description: 'Fresh strawbery cake',
             price: 7.9,
             category: 'Dessert',
-            image: '🍰',
+            photo: '🍰',
         },
     ];
     categories = ['All', 'Pizza', 'Burgers', 'Pasta', 'Dessert'];
     selectedCategory = 'All';
     cartCount = 0;
 
-    get filteredItems() {
+    constructor(private snackBar: MatSnackBar) {}
+
+    get filteredItems(): MenuItem[] {
         if (this.selectedCategory == 'All') {
             return this.menuItems;
         }
@@ -50,12 +73,11 @@ export class ViewMenuComponent {
         );
     }
 
-    selectCategory(category: string) {
-        this.selectedCategory = category;
-    }
-
     addToCart(item: MenuItem) {
         this.cartCount++;
-        alert(`Added ${item.name} to cart! (${this.cartCount} item total)`);
+        this.snackBar.open(`Added ${item.name} to cart!`, 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar'],
+        });
     }
 }

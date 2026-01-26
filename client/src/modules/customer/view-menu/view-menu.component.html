@@ -1,37 +1,66 @@
-<div class="menu-container">
-    <div class="header">
+<div class="menu-management">
+    <header class="page-header">
+        <a mat-button routerLink="/customer/home">
+            <i class="fa-solid fa-arrow-left"></i> Bacl to Dashboard
+        </a>
         <h1>Menu</h1>
-        <div class="cart">🛒 {{ cartCount }}</div>
-    </div>
+        <div class="cart-info">
+            <mat-chip color="primary">
+                <i class="fa-solid fa-cart-shopping"></i> {{ cartCount }} items
+            </mat-chip>
+        </div>
+    </header>
 
-    <div class="categories">
-        <button
-            *ngFor="let cat of categories"
-            [class.active]="selectedCategory == cat"
-            (click)="selectCategory(cat)"
+    <div class="category-filter">
+        <mat-chip-listbox
+            aria-label="Category filter"
+            [(ngModel)]="selectedCategory"
         >
-            {{ cat }}
-        </button>
+            @for (cat of categories; track cat) {
+                <mat-chip-option [value]="cat">{{ cat }}</mat-chip-option>
+            }
+        </mat-chip-listbox>
     </div>
 
     <div class="menu-grid">
-        <div *ngFor="let item of filteredItems" class="menu-card">
-            <div class="item-header">
-                <span class="emoji"> {{ item.photo }}</span>
-                <h3>{{ item.name }}</h3>
-            </div>
-            <p class="description">{{ item.description }}</p>
-            <p class="category">{{ item.category }}</p>
-            <div class="item-footer">
-                <span class="price">${{ item.price }}</span>
-                <button class="add" (click)="addToCart(item)">
-                    Add item to Cart
-                </button>
-            </div>
-        </div>
-    </div>
+        @for (item of filteredItems; track item.dishId) {
+            <mat-card class="menu-card">
+                <div class="dish-image">
+                    <div class="image-placeholder">
+                        {{ item.photo }}
+                    </div>
+                </div>
 
-    <div *ngIf="filteredItems.length === 0" class="empty">
-        No items in {{ selectedCategory }} category
+                <mat-card-header>
+                    <mat-card-title> {{ item.name }}</mat-card-title>
+                    <mat-card-subtitle>
+                        <span class="category-badge">{{ item.category }} </span>
+                    </mat-card-subtitle>
+                </mat-card-header>
+
+                <mat-card-content>
+                    <p class="description">{{ item.description }}</p>
+
+                    <div class="price-section">
+                        <span class="price">€{{ item.price.toFixed(2) }}</span>
+                    </div>
+                </mat-card-content>
+
+                <mat-card-actions align="end">
+                    <button
+                        mat-flat-button
+                        color="primary"
+                        (click)="addToCart(item)"
+                    >
+                        <i class="fa-solid fa-cart-plus"></i> Add item to cart
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+        } @empty {
+            <div class="empty-emnu">
+                <i class="fa-solid fa-utensils-slash"></i>
+                <h3>No items in {{ selectedCategory }} category</h3>
+            </div>
+        }
     </div>
 </div>

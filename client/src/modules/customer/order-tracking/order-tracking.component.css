@@ -1,17 +1,18 @@
 .order-tracking {
-    max-width: 600 px;
+    max-width: 800px;
     margin: 2rem auto;
     padding: 1.5rem;
-    background: #f9f9f9;
+}
+mat-card {
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
 .order-status {
     background: white;
-    padding: 20px;
+    padding: 1.5rem;
     border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
 }
 
 .delivery-info {
@@ -42,7 +43,7 @@
     line-height: 30px;
 }
 
-.step.active .circl {
+.step.active .circle {
     background: #4caf50;
     color: white;
 }
@@ -81,4 +82,20 @@ button {
 .feedback {
     background: #ff9800;
     color: white;
+}
+
+@media (max-width: 768px) {
+    .order-tracking {
+        padding: 1rem;
+    }
+
+    .progress:before {
+        display: none;
+    }
+    .step {
+        font-size: 0.8rem;
+    }
+    .actions {
+        flex-direction: column;
+    }
 }
