@@ -1,0 +1,36 @@
+<div class="menu-container">
+    <div class="header">
+        <h1>Menu</h1>
+        <div class="cart">🛒 {{ cartCount }}</div>
+    </div>
+
+    <div class="categories">
+        <button
+            *ngFor="let cat of categories"
+            [class.active]="selectedCategory == cat"
+            (click)="selectCategory(cat)"
+        >
+            {{ cat }}
+        </button>
+    </div>
+
+    <div class="menu-grid">
+        <div *ngFor="let item of filteredItems" class="menu-card">
+            <div class="item-header">
+                <span class="emoji"> {{ item.image }}</span>
+                <h3>{{ item.name }}</h3>
+            </div>
+            <p class="category">{{ item.category }}</p>
+            <div class="item-footer">
+                <span class="price">${{ item.price }}</span>
+                <button class="add" (click)="addToCart(item)">
+                    Add item to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="filteredItems.length === 0" class="empty">
+        No items in {{ selectedCategory }} category
+    </div>
+</div>
