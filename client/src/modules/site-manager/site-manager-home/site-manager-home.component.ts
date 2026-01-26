@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActiveRestaurant } from '../../../commons/model/restaurant.model';
 import { RoleLabelPipe } from '../../../commons/pipes/role-label.pipe';
 import { AuthenticationService } from '../../../commons/services/authentication.service';
@@ -22,7 +23,13 @@ import { SiteManagerService } from '../site-manager.service';
 
 @Component({
     selector: 'app-site-manager-home',
-    imports: [DatePipe, FormsModule, MatChipsModule, RoleLabelPipe],
+    imports: [
+        DatePipe,
+        FormsModule,
+        MatChipsModule,
+        MatProgressSpinnerModule,
+        RoleLabelPipe,
+    ],
     templateUrl: './site-manager-home.component.html',
     styleUrl: './site-manager-home.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,

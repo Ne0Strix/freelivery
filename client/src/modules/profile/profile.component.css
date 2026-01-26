@@ -79,7 +79,7 @@ mat-hint {
 }
 
 .submit-button:disabled {
-    background-color: lightgray;
+    background-color: var(--button-disabled);
     border: none;
     cursor: not-allowed;
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
@@ -90,7 +90,7 @@ mat-hint {
 }
 
 .address-card {
-    background: #fafafa;
+    background: var(--container-bg);
     border-radius: 12px;
     padding: 1rem;
     margin-bottom: 1rem;
@@ -134,7 +134,7 @@ mat-hint {
 }
 
 .address-form-container {
-    background: #fafafa;
+    background: var(--container-bg);
     border-radius: 12px;
     padding: 1rem;
     margin-bottom: 1rem;

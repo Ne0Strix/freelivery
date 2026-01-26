@@ -8,6 +8,12 @@
     --warning-red: #ff0066;
     --muted-text: #6b7280;
     --hover-bg: #e4e4e5;
+    --button-secondary: #e5e7eb;
+    --button-secondary-hover: #c0c0c0;
+    --button-primary: var(--primary-c);
+    --button-primary-hover: var(--border-c);
+    --button-disabled: lightgray;
+    --container-bg: #fafafa;
 }
 
 .mat-mdc-select-panel {

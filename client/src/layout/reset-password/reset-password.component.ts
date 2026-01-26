@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -24,6 +25,7 @@ import { AuthenticationService } from '../../commons/services/authentication.ser
 @Component({
     selector: 'app-reset-password',
     imports: [
+        NgTemplateOutlet,
         ReactiveFormsModule,
         RouterLink,
         MatButtonModule,

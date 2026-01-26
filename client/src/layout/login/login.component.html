@@ -31,7 +31,7 @@
 
                 <button
                     matButton
-                    class="login-button"
+                    class="login"
                     (click)="login()"
                     [disabled]="form.invalid"
                 >
@@ -41,13 +41,9 @@
         </mat-card-content>
 
         <mat-card-footer>
-            <p>
-                <a routerLink="/reset-password">Forgot password?</a>
-            </p>
-            <p>
-                Don't have an account?
-                <a matButton routerLink="/signup">Sign up</a>
-            </p>
+            <a routerLink="/reset-password">Forgot password?</a>
+            <p>Don't have an account?</p>
+            <a routerLink="/signup">Sign up</a>
         </mat-card-footer>
     </mat-card>
 </div>

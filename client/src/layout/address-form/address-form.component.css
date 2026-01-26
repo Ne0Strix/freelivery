@@ -17,6 +17,8 @@
     gap: 1rem;
 }
 
+/* utility classes for setting width */
+
 .flex-1 {
     flex: 1;
     min-width: 0;
@@ -35,7 +37,7 @@
 .section-title {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #6b7280;
+    color: black;
     margin: 0.5rem 0 0 0;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -43,7 +45,7 @@
 
 .form-hint {
     font-size: 0.75rem;
-    color: #6b7280;
+    color: var(--muted-text);
     margin: 0.25rem 0 0.5rem 0;
 }
 
@@ -57,38 +59,38 @@ mat-error {
     justify-content: flex-end;
     margin-top: 0.5rem;
     padding-top: 1rem;
-    border-top: 1px solid #e5e7eb;
 }
 
-.btn-primary {
-    background-color: var(--primary-c);
+button.save {
+    background-color: var(--button-primary);
     border: var(--border-c) 2px solid;
     border-radius: 12px;
 }
 
-.btn-primary:hover:not(:disabled) {
-    background-color: var(--border-c);
+button.save:hover:not(:disabled) {
+    background-color: var(--button-primary-hover);
     color: white;
 }
 
-.btn-primary:disabled {
-    background-color: lightgray;
+button.save:disabled {
+    background-color: var(--button-disabled);
     border: none;
     cursor: not-allowed;
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
-.btn-secondary {
-    background-color: #f3f4f6;
+button.cancel {
+    background-color: var(--button-secondary);
     border: #d1d5db 2px solid;
     border-radius: 12px;
 }
 
-.btn-secondary:hover {
-    background-color: #e5e7eb;
+button.cancel:hover {
+    background-color: var(--button-secondary-hover);
 }
 
 @media (max-width: 640px) {
+    /* Display all fields as columns of same width on mobile */
     .form-row {
         flex-direction: column;
         gap: 0;

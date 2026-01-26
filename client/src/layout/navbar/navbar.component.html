@@ -54,7 +54,7 @@
                 @if (!isLoggedIn()) {
                     <button
                         type="button"
-                        class="btn-signin nav-action"
+                        class="signin nav-action"
                         routerLink="/login"
                         (click)="closeMenu()"
                     >
@@ -72,7 +72,7 @@
                     </a>
                     <button
                         type="button"
-                        class="btn-signout nav-action"
+                        class="signout nav-action"
                         (click)="signOut(); closeMenu()"
                     >
                         Sign Out

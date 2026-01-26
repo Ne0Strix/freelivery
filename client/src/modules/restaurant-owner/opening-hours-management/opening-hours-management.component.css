@@ -29,7 +29,7 @@
 }
 
 .closed-badge {
-    background: #f5f5f5;
+    background: var(--hover-bg);
     color: var(--muted-text);
     padding: 2px 8px;
     border-radius: 12px;

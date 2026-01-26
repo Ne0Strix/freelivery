@@ -28,7 +28,7 @@
 
 .analytics-header p {
     margin: 0;
-    color: #666;
+    color: var(--muted-text);
 }
 
 .loading-container {
@@ -79,7 +79,7 @@
 
 .stat-label {
     margin: 0;
-    color: #666;
+    color: var(--muted-text);
     font-size: 14px;
 }
 
@@ -124,5 +124,5 @@ th.mat-mdc-header-cell {
 }
 
 td.mat-mdc-cell {
-    color: #555;
+    color: var(--muted-text);
 }

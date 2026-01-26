@@ -16,7 +16,7 @@
 
 .dashboard-header p {
     margin: 0;
-    color: #666;
+    color: var(--muted-text);
 }
 
 .dashboard-cards {
@@ -45,6 +45,12 @@ mat-card {
     box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.2);
     border-radius: 30px;
     padding: 10px;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+mat-card:hover {
+    box-shadow: 3px 6px 14px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s ease-in-out;
 }
 
 .card-icon {
@@ -57,6 +63,7 @@ mat-card {
     margin-left: auto;
     background-color: lightblue;
     border-radius: 50%;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.6);
 }
 
 .card-icon i {

@@ -1,3 +1,11 @@
+/** Salutation options */
+export enum Salutation {
+    MR = 'Mr.',
+    MS = 'Ms.',
+    MRS = 'Mrs.',
+    DR = 'Dr.',
+}
+
 /** User profile DTO from API */
 export interface UserProfile {
     userId: number;
