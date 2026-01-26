@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { ConflictError, ValidationError } from '../commons/errors.js';
 import { AddressRepository } from '../location/address.repository.js';
 import {
@@ -17,6 +18,7 @@ import {
 } from './user.repository.js';
 
 const SALT_ROUNDS = 10;
+const RESET_TOKEN_EXPIRY = '15m';
 
 /** DTO for customer signup data */
 export interface CustomerSignupData {
@@ -232,6 +234,53 @@ export class UserService {
 
         const newHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
         await this.userRepository.updatePasswordHash(userId, newHash);
+    }
+
+    /** Request password reset - generates token and logs reset link to console */
+    async requestPasswordReset(email: string): Promise<void> {
+        const user =
+            await this.userRepository.findByEmailOrUsernameIncludingInactive(
+                email,
+                true
+            );
+        if (!user) {
+            // Don't reveal if email exists
+            return;
+        }
+
+        const secret = process.env.JWT_SECRET || 'dev-secret';
+        const token = jwt.sign({ sub: user.user_id }, secret, {
+            expiresIn: RESET_TOKEN_EXPIRY,
+        });
+
+        await this.userRepository.setResetToken(user.user_id, token);
+
+        // Log reset link to console
+        const resetLink = `http://localhost:4200/reset-password/${token}`;
+        console.log(`\n🔐 Password Reset Link for ${email}:\n${resetLink}\n`);
+    }
+
+    async resetPassword(token: string, newPassword: string): Promise<void> {
+        const secret = process.env.JWT_SECRET || 'dev-secret';
+
+        // Verify JWT token
+        let decoded: { sub: number };
+        try {
+            decoded = jwt.verify(token, secret) as { sub: number };
+        } catch {
+            throw new ValidationError('Invalid or expired reset token');
+        }
+
+        // Find user and verify token matches
+        const user = await this.userRepository.findByResetToken(token);
+        if (!user || user.user_id !== decoded.sub) {
+            throw new ValidationError('Invalid or expired reset token');
+        }
+
+        // Hash new password and update
+        const newHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+        await this.userRepository.updatePasswordHash(user.user_id, newHash);
+        await this.userRepository.clearResetToken(user.user_id);
     }
 }
 

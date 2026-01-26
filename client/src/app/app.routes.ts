@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from '../commons/guards/auth.guard';
 import { UserRole } from '../commons/model/role.model';
 import { LoginComponent } from '../layout/login/login.component';
+import { ResetPasswordComponent } from '../layout/reset-password/reset-password.component';
 import { SignupComponent } from '../layout/signup/signup.component';
 
 export const routes: Routes = [
@@ -14,6 +15,16 @@ export const routes: Routes = [
         path: 'signup',
         component: SignupComponent,
         title: 'Sign Up',
+    },
+    {
+        path: 'reset-password',
+        component: ResetPasswordComponent,
+        title: 'Reset Password',
+    },
+    {
+        path: 'reset-password/:token',
+        component: ResetPasswordComponent,
+        title: 'Reset Password',
     },
     {
         path: 'customer',

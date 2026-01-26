@@ -217,21 +217,14 @@ export class SignupComponent {
                 customerSignup,
                 restaurantOwnerSignup
             )
-            .subscribe((result) => {
-                if (result.success) {
-                    const message =
-                        role === UserRole.RESTAURANT_OWNER
-                            ? 'Restaurant registration submitted! A site manager will review your application.'
-                            : 'Account created successfully! Please log in.';
-                    this.snackbar.open(message, 'Close', { duration: 5000 });
-                    this.router.navigateByUrl('/login');
-                } else {
-                    this.snackbar.open(
-                        result.error || 'Signup failed',
-                        'Close',
-                        { duration: 5000 }
-                    );
-                }
+            .subscribe(() => {
+                const message =
+                    role === UserRole.RESTAURANT_OWNER
+                        ? 'Restaurant registration submitted! A site manager will review your application.'
+                        : 'Account created successfully! Please log in.';
+                this.snackbar.open(message, 'Close', { duration: 5000 });
+                this.router.navigateByUrl('/login');
+                // Errors are handled by serverErrorInterceptor
             });
     }
 }

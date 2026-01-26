@@ -179,4 +179,41 @@ router.post(
     })
 );
 
+router.post(
+    '/forgot-password',
+    asyncHandler(async (req, res) => {
+        const { email } = req.body ?? {};
+        if (!email) {
+            throw new ValidationError('Email is required');
+        }
+
+        await userService.requestPasswordReset(email);
+
+        // Always return success to prevent leaking email info
+        return res.json({
+            status: 'ok',
+            data: {
+                message: 'If the email exists, a reset link has been sent',
+            },
+        });
+    })
+);
+
+router.post(
+    '/reset-password',
+    asyncHandler(async (req, res) => {
+        const { token, newPassword } = req.body ?? {};
+        if (!token || !newPassword) {
+            throw new ValidationError('Token and new password are required');
+        }
+
+        await userService.resetPassword(token, newPassword);
+
+        return res.json({
+            status: 'ok',
+            data: { message: 'Password has been reset successfully' },
+        });
+    })
+);
+
 export default router;
