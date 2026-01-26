@@ -17,9 +17,10 @@
     <div class="menu-grid">
         <div *ngFor="let item of filteredItems" class="menu-card">
             <div class="item-header">
-                <span class="emoji"> {{ item.image }}</span>
+                <span class="emoji"> {{ item.photo }}</span>
                 <h3>{{ item.name }}</h3>
             </div>
+            <p class="description">{{ item.description }}</p>
             <p class="category">{{ item.category }}</p>
             <div class="item-footer">
                 <span class="price">${{ item.price }}</span>
