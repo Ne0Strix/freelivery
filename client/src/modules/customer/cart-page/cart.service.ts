@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-export interface CartItem{
+export interface CartItem {
     dishId: number;
     name: string;
     price: number;
@@ -8,65 +8,73 @@ export interface CartItem{
 }
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
 })
-export class CartService{
+export class CartService {
     private readonly STORAGE_KEY = 'user_cart_items';
 
     getCustomerCart(): CartItem[] {
         const savedItems = localStorage.getItem(this.STORAGE_KEY);
-        return savedItems ? JSON.parse(savedItems): [];
+        return savedItems ? JSON.parse(savedItems) : [];
     }
 
-    saverCartToLocal(items: CartItem[]): void{
+    saveCartToLocal(items: CartItem[]): void {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(items));
     }
 
-    addToCart(item: CartItem): void{
+    addToCart(item: CartItem): void {
         const currentCart = this.getCustomerCart();
-        const index = currentCart.findIndex(cartItem => cartItem.dishId === item.dishId);
-        if(index !== -1) {
+        const index = currentCart.findIndex(
+            (cartItem) => cartItem.dishId === item.dishId
+        );
+        if (index !== -1) {
             currentCart[index].quantity += item.quantity;
         } else {
             currentCart.push(item);
         }
 
-        this.saverCartToLocal(currentCart);
+        this.saveCartToLocal(currentCart);
     }
-    removeFromCart(removeDish: number): void{
+    removeFromCart(removeDish: number): void {
         let currentCart = this.getCustomerCart();
-        currentCart = currentCart.filter(item => item.dishId !== removeDish);
-        this.saverCartToLocal(currentCart);
+        currentCart = currentCart.filter((item) => item.dishId !== removeDish);
+        this.saveCartToLocal(currentCart);
     }
 
     changeQuantity(dishId: number, newQ: number): void {
-        if(newQ < 1) {
+        if (newQ < 1) {
             this.removeFromCart(dishId);
-        } 
+        }
 
         const currentCart = this.getCustomerCart();
-        const index = currentCart.findIndex(item => item.dishId === dishId);
+        const index = currentCart.findIndex((item) => item.dishId === dishId);
 
-        if(index !== -1) {
+        if (index !== -1) {
             currentCart[index].quantity = newQ;
-            this.saverCartToLocal(currentCart);
+            this.saveCartToLocal(currentCart);
         }
     }
 
-    clearCart(): void{
+    clearCart(): void {
         localStorage.removeItem(this.STORAGE_KEY);
     }
 
-    getTotal(): number{
+    getTotal(): number {
         const items = this.getCustomerCart();
-        return items.reduce((total,item)=> total + (item.price * item.quantity), 0);
+        return items.reduce(
+            (total, item) => total + item.price * item.quantity,
+            0
+        );
     }
 
-    async submitOrderToServer(restaurantId: number, items: CartItem[], discountCode?: string):
-    Promise<{ order_number: number }> {
-        
+    async submitOrderToServer(
+        restaurantId: number,
+        items: CartItem[],
+        discountCode?: string
+    ): Promise<{ order_number: number }> {
+        console.log('Order:', { restaurantId, items, discountCode });
         return Promise.resolve({
-            order_number: Math.floor(Math.random() * 1000)
+            order_number: Math.floor(Math.random() * 1000),
         });
-    
+    }
 }
