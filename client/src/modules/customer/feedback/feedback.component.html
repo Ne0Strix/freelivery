@@ -1,40 +1,54 @@
-<div class="feedback">
-    <h2>Feedback</h2>
+<div class="feedback-container">
+    <mat-card class="feedback-card">
+        <mat-card-header>
+            <mat-card-title>Feedback</mat-card-title>
+            <mat-card-subtitle> Rate our service</mat-card-subtitle>
+        </mat-card-header>
 
-    <div class="feedback-card">
-        <h3>Rate our service</h3>
-
-        <div class="rating">
-            <p>Rating:</p>
-            <div class="stars">
-                <button
-                    *ngFor="let star of [1, 2, 3, 4, 5]"
-                    (click)="setRating(star)"
-                    class="star"
-                    [class.active]="star <= ratingSelected"
-                ></button>
+        <mat-card-content>
+            <div class="rating-section">
+                <p class="rating-label">Rating:</p>
+                <div class="stars">
+                    <button
+                        *ngFor="let star of [1, 2, 3, 4, 5]"
+                        (click)="setRating(star)"
+                        class="star"
+                        [class.active]="star <= ratingSelected"
+                    >
+                        {{ star <= ratingSelected ? '★' : '☆'
+                    </button>
+                </div>
+                <p class="rating-text">{{ ratingMessage }}</p>
             </div>
-            <p class="rating-text">{{ ratingMessage }}</p>
-        </div>
 
-        <div class="comment">
-            <label> Add a comment:</label>
-            <textarea
-                [(ngModel)]="comment"
-                placeholder="Add a comment.."
-            ></textarea>
-        </div>
+            <div class="comment-section">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label> Add a comment </mat-label>
+                    <textarea
+                        matInput
+                        [(ngModel)]="comment"
+                        placeholder="Add a comment"
+                        rows="4"
+                    >
+                    </textarea>
+                </mat-form-field>
+            </div>
 
-        <div class="buttons">
+            <div *ngIf="message" class="success-message">
+                {{ message }}
+            </div>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+            <button mat-stroked-button (click)="goBack()">Cancel</button>
             <button
-                class="submit"
+                mat-flat-button
+                color="primary"
                 (click)="submitFeedback()"
                 [disabled]="ratingSelected === 0"
             >
-                Submit your feedback
+                Submit Feedback
             </button>
-            <button class="cancel" (click)="goBack()">Cancel feedback</button>
-        </div>
-        <p *ngIf="message" class="success">{{ message }}</p>
-    </div>
+        </mat-card-actions>
+    </mat-card>
 </div>
