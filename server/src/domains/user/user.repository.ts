@@ -5,6 +5,7 @@ export interface UserRow {
     username: string;
     email: string;
     password_hash: string;
+    reset_token: string | null;
     is_active: boolean;
     created_at: Date;
     updated_at: Date;
@@ -91,14 +92,12 @@ export class UserRepository extends Repository<UserRow> {
         return result.rows.map((row) => row.name);
     }
 
-    /** Create empty user_data record */
     async createUserData(userId: number): Promise<void> {
         await this.query('INSERT INTO user_data (user_id) VALUES ($1)', [
             userId,
         ]);
     }
 
-    /** Update user_data with phone number */
     async updateUserDataPhone(
         userId: number,
         phoneNumber: string
@@ -109,7 +108,6 @@ export class UserRepository extends Repository<UserRow> {
         );
     }
 
-    /** Link user to address */
     async linkUserAddress(
         userId: number,
         addressId: number,
@@ -121,7 +119,6 @@ export class UserRepository extends Repository<UserRow> {
         );
     }
 
-    /** Find user by email or username, including inactive users; used to check suspension status */
     async findByEmailOrUsernameIncludingInactive(
         identifier: string,
         byEmail: boolean
@@ -148,7 +145,6 @@ export class UserRepository extends Repository<UserRow> {
         return result.rows as UserWithRoles[];
     }
 
-    /** Update user's active status */
     async setActiveStatus(userId: number, isActive: boolean): Promise<void> {
         await this.query(
             `UPDATE "user" SET is_active = $1, updated_at = CURRENT_TIMESTAMP WHERE user_id = $2`,
@@ -156,7 +152,6 @@ export class UserRepository extends Repository<UserRow> {
         );
     }
 
-    /** Get user_data for a user */
     async getUserData(userId: number): Promise<UserDataRow | null> {
         const result = await this.query<UserDataRow>(
             'SELECT * FROM user_data WHERE user_id = $1',
@@ -165,7 +160,6 @@ export class UserRepository extends Repository<UserRow> {
         return result.rows[0] ?? null;
     }
 
-    /** Update user_data fields */
     async updateUserData(
         userId: number,
         data: Partial<Omit<UserDataRow, 'user_id'>>
@@ -189,7 +183,6 @@ export class UserRepository extends Repository<UserRow> {
         );
     }
 
-    /** Update user email */
     async updateEmail(userId: number, email: string): Promise<void> {
         await this.query(
             `UPDATE "user" SET email = $1, updated_at = CURRENT_TIMESTAMP WHERE user_id = $2`,
@@ -197,7 +190,6 @@ export class UserRepository extends Repository<UserRow> {
         );
     }
 
-    /** Update user password hash */
     async updatePasswordHash(
         userId: number,
         passwordHash: string
@@ -208,7 +200,6 @@ export class UserRepository extends Repository<UserRow> {
         );
     }
 
-    /** Check if email is taken by another user */
     async isEmailTakenByOther(
         email: string,
         excludeUserId: number
@@ -220,7 +211,6 @@ export class UserRepository extends Repository<UserRow> {
         return result.rows.length > 0;
     }
 
-    /** Check if user owns an address */
     async userOwnsAddress(userId: number, addressId: number): Promise<boolean> {
         const result = await this.query(
             'SELECT 1 FROM user_address WHERE user_id = $1 AND address_id = $2 LIMIT 1',
@@ -229,11 +219,32 @@ export class UserRepository extends Repository<UserRow> {
         return result.rows.length > 0;
     }
 
-    /** Unlink address from user */
     async unlinkUserAddress(userId: number, addressId: number): Promise<void> {
         await this.query(
             'DELETE FROM user_address WHERE user_id = $1 AND address_id = $2',
             [userId, addressId]
         );
+    }
+
+    async setResetToken(userId: number, token: string): Promise<void> {
+        await this.query(
+            `UPDATE "user" SET reset_token = $1, updated_at = CURRENT_TIMESTAMP WHERE user_id = $2`,
+            [token, userId]
+        );
+    }
+
+    async clearResetToken(userId: number): Promise<void> {
+        await this.query(
+            `UPDATE "user" SET reset_token = NULL, updated_at = CURRENT_TIMESTAMP WHERE user_id = $1`,
+            [userId]
+        );
+    }
+
+    async findByResetToken(token: string): Promise<UserRow | null> {
+        const result = await this.query<UserRow>(
+            'SELECT * FROM "user" WHERE reset_token = $1 LIMIT 1',
+            [token]
+        );
+        return result.rows[0] ?? null;
     }
 }

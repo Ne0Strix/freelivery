@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, Injectable, signal } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
-import { catchError, of } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { ApiResponse } from '../model/api.model';
 import {
     CustomerSignup,
     RestaurantOwnerSignup,
@@ -100,26 +101,10 @@ export class AuthenticationService {
             body['restaurant'] = restaurantOwnerSignup.restaurant;
         }
 
-        return this.http
-            .post<{
-                status: string;
-                data?: { message: string; userId: number };
-                error?: string;
-            }>(`${this.apiBase}/auth/signup`, body)
-            .pipe(
-                map((res) => ({
-                    success: res.status === 'ok',
-                    message: res.data?.message,
-                    error: res.error,
-                })),
-                catchError((err) =>
-                    of({
-                        success: false,
-                        message: undefined,
-                        error: err.error?.error || 'Signup failed',
-                    })
-                )
-            );
+        return this.http.post<ApiResponse<{ message: string; userId: number }>>(
+            `${this.apiBase}/auth/signup`,
+            body
+        );
     }
 
     getToken(): string | null {
@@ -162,5 +147,39 @@ export class AuthenticationService {
             // Invalid token
             this.logout();
         }
+    }
+
+    requestPasswordReset(
+        email: string
+    ): Observable<{ success: boolean; message?: string }> {
+        return this.http
+            .post<{
+                status: string;
+                data?: { message: string };
+            }>(`${this.apiBase}/auth/forgot-password`, { email })
+            .pipe(
+                map((res) => ({
+                    success: res.status === 'ok',
+                    message: res.data?.message,
+                })),
+                // Intentionally return success even on error - security measure
+                catchError(() =>
+                    of({
+                        success: true,
+                        message:
+                            'If the email exists, a reset link has been sent',
+                    })
+                )
+            );
+    }
+
+    resetPassword(
+        token: string,
+        newPassword: string
+    ): Observable<ApiResponse<{ message: string }>> {
+        return this.http.post<ApiResponse<{ message: string }>>(
+            `${this.apiBase}/auth/reset-password`,
+            { token, newPassword }
+        );
     }
 }
