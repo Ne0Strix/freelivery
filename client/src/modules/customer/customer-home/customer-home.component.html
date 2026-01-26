@@ -2,13 +2,15 @@
     <h1 class="page-title">Browse Restaurants</h1>
 
     @if (loading()) {
-        <p class="loading-text">Loading restaurants...</p>
+        <div class="loading-container">
+            <mat-spinner diameter="48"></mat-spinner>
+        </div>
     } @else {
         <div class="filter-section">
             <div class="search-box">
                 <input
                     type="text"
-                    placeholder="Search restaurants..."
+                    placeholder="Search restaurants…"
                     (input)="onSearchChange($event)"
                     class="search-input"
                 />

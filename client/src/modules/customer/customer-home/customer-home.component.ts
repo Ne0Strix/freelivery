@@ -1,11 +1,12 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { Restaurant } from '../customer.model';
 import { CustomerService } from '../customer.service';
 
 @Component({
     selector: 'app-customer-home.component',
-    imports: [],
+    imports: [MatProgressSpinnerModule],
     templateUrl: './customer-home.component.html',
     styleUrl: './customer-home.component.css',
 })

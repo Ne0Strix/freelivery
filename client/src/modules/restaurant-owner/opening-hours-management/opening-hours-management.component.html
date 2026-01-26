@@ -12,7 +12,9 @@
     </header>
 
     @if (loading()) {
-        <p>Loading...</p>
+        <div class="loading-container">
+            <mat-spinner diameter="48"></mat-spinner>
+        </div>
     } @else {
         <!-- Desktop: Tabs -->
         <mat-tab-group class="desktop-tabs">

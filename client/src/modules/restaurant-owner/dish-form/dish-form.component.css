@@ -40,7 +40,7 @@ mat-form-field {
     padding: 1rem;
     border: 1px dashed #ccc;
     border-radius: 8px;
-    background: #fafafa;
+    background: var(--container-bg);
 }
 
 .image-preview {
@@ -68,21 +68,27 @@ mat-form-field {
 .image-hint {
     margin: 0;
     font-size: 0.75rem;
-    color: #888;
+    color: var(--muted-text);
+}
+
+.cancel-button {
+    background-color: var(--button-secondary);
+    border: #d1d5db 2px solid;
+    border-radius: 12px;
 }
 
 .cancel-button:hover {
-    background-color: var(--hover-bg);
+    background-color: var(--button-secondary-hover);
     border-radius: 12px;
 }
 
 .submit-button {
-    background-color: var(--primary-c);
+    background-color: var(--button-primary);
     border: var(--border-c) 2px solid;
     border-radius: 12px;
 }
 
 .submit-button:hover {
-    background-color: var(--border-c);
+    background-color: var(--button-primary-hover);
     color: white;
 }

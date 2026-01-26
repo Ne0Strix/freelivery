@@ -20,14 +20,14 @@
 }
 
 .menu-button {
-    background-color: var(--primary-c);
+    background-color: var(--button-primary);
     border: var(--border-c) 2px solid;
     border-radius: 12px;
     padding: 0.5rem 1rem;
 }
 
 .menu-button:hover {
-    background-color: var(--border-c);
+    background-color: var(--button-primary-hover);
     color: white;
 }
 
@@ -123,16 +123,17 @@ mat-panel-title {
 
 .dish-actions button {
     background: transparent;
-    border: none;
+    border: 2px solid var(--border-c);
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 8px;
-    color: var(--border-c);
+    color: var(--button-primary);
     transition: background-color 0.2s;
 }
 
 .dish-actions button:hover {
-    background-color: var(--primary-c);
+    background-color: var(--button-primary-hover);
+    color: white;
 }
 
 .availability-chip {

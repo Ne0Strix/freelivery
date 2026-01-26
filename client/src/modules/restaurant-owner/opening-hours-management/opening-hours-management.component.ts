@@ -17,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule } from '@angular/router';
@@ -51,6 +52,7 @@ interface SlotsByDay {
         MatExpansionModule,
         MatFormFieldModule,
         MatInputModule,
+        MatProgressSpinnerModule,
         MatSnackBarModule,
         MatTabsModule,
     ],

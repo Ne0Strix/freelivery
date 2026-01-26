@@ -2,7 +2,9 @@
     <h1 class="dashboard-title">Manager Dashboard</h1>
 
     @if (loading()) {
-        <p class="loading-text">Loading...</p>
+        <div class="loading-container">
+            <mat-spinner diameter="48"></mat-spinner>
+        </div>
     } @else {
         <!-- Statistics Section -->
         @if (statistics(); as stats) {
@@ -73,9 +75,15 @@
                             track restaurant.restaurantId
                         ) {
                             <tr>
-                                <td>{{ restaurant.name }}</td>
-                                <td>{{ restaurant.cuisineType }}</td>
-                                <td>{{ restaurant.address }}</td>
+                                <td [title]="restaurant.name">
+                                    {{ restaurant.name }}
+                                </td>
+                                <td [title]="restaurant.cuisineType">
+                                    {{ restaurant.cuisineType }}
+                                </td>
+                                <td [title]="restaurant.address">
+                                    {{ restaurant.address }}
+                                </td>
                                 <td>{{ restaurant.orderCount }}</td>
                                 <td>
                                     €{{ restaurant.totalRevenue.toFixed(2) }}
@@ -127,7 +135,7 @@
                             <th>Owner</th>
                             <th>Email</th>
                             <th>Registered</th>
-                            <th>Actions</th>
+                            <th>Accept?</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -136,31 +144,43 @@
                             track restaurant.restaurantId
                         ) {
                             <tr>
-                                <td>{{ restaurant.name }}</td>
-                                <td>{{ restaurant.cuisineType }}</td>
-                                <td>{{ restaurant.ownerUsername }}</td>
-                                <td>{{ restaurant.ownerEmail }}</td>
-                                <td>{{ restaurant.registeredAt }}</td>
+                                <td [title]="restaurant.name">
+                                    {{ restaurant.name }}
+                                </td>
+                                <td [title]="restaurant.cuisineType">
+                                    {{ restaurant.cuisineType }}
+                                </td>
+                                <td [title]="restaurant.ownerUsername">
+                                    {{ restaurant.ownerUsername }}
+                                </td>
+                                <td [title]="restaurant.ownerEmail">
+                                    {{ restaurant.ownerEmail }}
+                                </td>
+                                <td [title]="restaurant.registeredAt">
+                                    {{ restaurant.registeredAt }}
+                                </td>
                                 <td class="action-buttons">
                                     <button
-                                        class="btn btn-approve"
+                                        class="btn-icon btn-approve"
                                         (click)="
                                             approveRestaurant(
                                                 restaurant.restaurantId
                                             )
                                         "
+                                        title="Approve"
                                     >
-                                        Approve
+                                        <i class="fa-solid fa-check"></i>
                                     </button>
                                     <button
-                                        class="btn btn-reject"
+                                        class="btn-icon btn-reject"
                                         (click)="
                                             rejectRestaurant(
                                                 restaurant.restaurantId
                                             )
                                         "
+                                        title="Reject"
                                     >
-                                        Reject
+                                        <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -181,7 +201,7 @@
                 <input
                     type="text"
                     class="filter-input"
-                    placeholder="Filter by username or email..."
+                    placeholder="Filter by username or email…"
                     [ngModel]="userFilter()"
                     (ngModelChange)="onUserFilterChange($event)"
                 />
@@ -209,8 +229,10 @@
                     <tbody>
                         @for (user of filteredUsers(); track user.user_id) {
                             <tr [class.suspended-row]="!user.is_active">
-                                <td>{{ user.username }}</td>
-                                <td>{{ user.email }}</td>
+                                <td [title]="user.username">
+                                    {{ user.username }}
+                                </td>
+                                <td [title]="user.email">{{ user.email }}</td>
                                 <td>
                                     <mat-chip-set>
                                         @for (role of user.roles; track role) {

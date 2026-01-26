@@ -61,7 +61,7 @@
         }
     </mat-form-field>
 
-    <h4 class="section-title">Grid Location</h4>
+    <p class="section-title">Grid Location</p>
     <p class="form-hint">
         Your location on the delivery grid ({{ GRID_MIN }} to {{ GRID_MAX }}).
         Used for delivery time calculation.
@@ -118,7 +118,7 @@
         <button
             mat-flat-button
             type="button"
-            class="btn-secondary"
+            class="cancel"
             (click)="onCancel()"
         >
             Cancel
@@ -126,7 +126,7 @@
         <button
             mat-flat-button
             type="submit"
-            class="btn-primary"
+            class="save"
             [disabled]="form.invalid"
         >
             {{ isEdit ? 'Save Changes' : 'Add Address' }}

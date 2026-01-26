@@ -11,7 +11,7 @@
 }
 
 .loading-text {
-    color: #6b7280;
+    color: var(--muted-text);
 }
 
 /* Statistics Grid */
@@ -41,13 +41,13 @@
 .stat-card {
     background: white;
     padding: 1rem;
-    border-radius: 0.25rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .stat-label {
     font-size: 0.875rem;
-    color: #6b7280;
+    color: var(--muted-text);
     margin: 0;
 }
 
@@ -59,44 +59,49 @@
 
 /* Tab Navigation */
 .tab-nav {
-    border-bottom: 1px solid #e5e7eb;
-    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-c);
+    margin-bottom: 1.5rem;
     display: flex;
     gap: 0.5rem;
     overflow-x: auto;
 }
 
 .tab-btn {
-    padding: 0.5rem 1rem;
-    color: #6b7280;
+    padding: 0.75rem 1.25rem;
+    color: var(--muted-text);
     background: none;
     border: none;
-    border-bottom: 2px solid transparent;
+    border-bottom: 3px solid transparent;
     cursor: pointer;
     white-space: nowrap;
+    font-size: 0.95rem;
+    transition:
+        color 0.2s,
+        border-color 0.2s;
 }
 
 .tab-btn:hover {
-    color: #374151;
+    color: var(--button-primary);
 }
 
 .tab-btn.tab-active {
-    color: #4f46e5;
-    border-bottom-color: #4f46e5;
-    font-weight: 500;
+    color: var(--button-primary);
+    border-bottom-color: var(--button-primary);
+    font-weight: 600;
 }
 
 /* Table Styles */
 .table-container {
     background: white;
-    border-radius: 0.25rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.2);
     overflow-x: auto;
 }
 
 .data-table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
     min-width: 600px;
 }
 
@@ -117,6 +122,13 @@
     overflow: hidden;
     text-overflow: ellipsis;
     border-bottom: 1px solid #e5e7eb;
+    max-width: 0; /* Required for ellipsis with table-layout: fixed */
+}
+
+/* Action columns should not clip */
+.data-table td.action-buttons {
+    overflow: visible;
+    text-overflow: clip;
 }
 
 .data-table tbody tr:last-child td {
@@ -132,19 +144,64 @@
 .action-buttons {
     display: flex;
     gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.btn-icon {
+    padding: 0.4rem 0.6rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+        background-color 0.2s,
+        transform 0.1s;
+    font-size: 14px;
+}
+
+.btn-icon:active {
+    transform: scale(0.95);
+}
+
+.btn-icon.btn-approve {
+    background-color: #10b981;
+    color: white;
+}
+
+.btn-icon.btn-approve:hover {
+    background-color: #059669;
+}
+
+.btn-icon.btn-reject {
+    background-color: #ef4444;
+    color: white;
+}
+
+.btn-icon.btn-reject:hover {
+    background-color: #dc2626;
 }
 
 .btn {
-    padding: 0.375rem 0.75rem;
-    border: none;
-    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+    border: 2px solid transparent;
+    border-radius: 12px;
     font-size: 0.875rem;
     cursor: pointer;
     font-weight: 500;
+    transition:
+        background-color 0.2s,
+        transform 0.1s;
+}
+
+.btn:active {
+    transform: scale(0.98);
 }
 
 .btn-approve {
     background-color: #10b981;
+    border-color: #059669;
     color: white;
 }
 
@@ -154,6 +211,7 @@
 
 .btn-reject {
     background-color: #ef4444;
+    border-color: #dc2626;
     color: white;
 }
 
@@ -169,16 +227,19 @@
 .filter-input {
     width: 100%;
     max-width: 24rem;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border-c);
+    border-radius: 12px;
     font-size: 0.875rem;
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
 }
 
 .filter-input:focus {
     outline: none;
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+    border-color: var(--button-primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
 }
 
 .suspended-row {
@@ -205,6 +266,7 @@
 
 .btn-suspend {
     background-color: #f59e0b;
+    border-color: #d97706;
     color: white;
 }
 
@@ -214,6 +276,7 @@
 
 .btn-unsuspend {
     background-color: #10b981;
+    border-color: #059669;
     color: white;
 }
 
@@ -251,15 +314,18 @@ mat-chip-set {
 /* Fee Input */
 .fee-input {
     width: 70px;
-    padding: 0.25rem 0.5rem;
-    border: 1px solid var(--primary-c);
-    border-radius: 0.25rem;
+    padding: 0.375rem 0.5rem;
+    border: 2px solid var(--border-c);
+    border-radius: 8px;
     font-size: 0.875rem;
     text-align: right;
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
 }
 
 .fee-input:focus {
     outline: none;
-    border-color: var(--border-c);
-    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+    border-color: var(--button-primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
 }

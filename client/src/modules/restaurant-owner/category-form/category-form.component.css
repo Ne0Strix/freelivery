@@ -31,18 +31,24 @@ mat-form-field {
     width: 100%;
 }
 
+.cancel-button {
+    background-color: var(--button-secondary);
+    border: #d1d5db 2px solid;
+    border-radius: 12px;
+}
+
 .cancel-button:hover {
-    background-color: var(--hover-bg);
+    background-color: var(--button-secondary-hover);
     border-radius: 12px;
 }
 
 .submit-button {
-    background-color: var(--primary-c);
+    background-color: var(--button-primary);
     border: var(--border-c) 2px solid;
     border-radius: 12px;
 }
 
 .submit-button:hover {
-    background-color: var(--border-c);
+    background-color: var(--button-primary-hover);
     color: white;
 }

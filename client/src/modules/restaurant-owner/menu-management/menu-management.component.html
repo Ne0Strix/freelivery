@@ -18,8 +18,8 @@
     </header>
 
     @if (loading()) {
-        <div class="loading">
-            <p>Loading menu...</p>
+        <div class="loading-container">
+            <mat-spinner diameter="48"></mat-spinner>
         </div>
     } @else if (categories().length === 0) {
         <div class="empty-state">

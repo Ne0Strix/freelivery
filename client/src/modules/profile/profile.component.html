@@ -1,6 +1,8 @@
 <div class="profile-container">
     @if (loading()) {
-        <p>Loading...</p>
+        <div class="loading-container">
+            <mat-spinner diameter="48"></mat-spinner>
+        </div>
     } @else {
         <h1>Profile Settings</h1>
 
@@ -36,10 +38,14 @@
                             <mat-label>Salutation</mat-label>
                             <mat-select formControlName="salutation">
                                 <mat-option value="">-- Select --</mat-option>
-                                <mat-option value="Mr.">Mr.</mat-option>
-                                <mat-option value="Ms.">Ms.</mat-option>
-                                <mat-option value="Mrs.">Mrs.</mat-option>
-                                <mat-option value="Dr.">Dr.</mat-option>
+                                @for (
+                                    salutation of salutations;
+                                    track salutation
+                                ) {
+                                    <mat-option [value]="salutation">{{
+                                        salutation
+                                    }}</mat-option>
+                                }
                             </mat-select>
                         </mat-form-field>
                     </div>
