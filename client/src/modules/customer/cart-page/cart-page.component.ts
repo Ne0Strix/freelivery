@@ -115,7 +115,7 @@ export class CartPageComponent implements OnInit {
         this.errorMessage = '';
 
         try {
-            const result = await this.cartService.sendOrderToServer(
+            const result = await this.cartService.submitOrderToServer(
                 1,
                 this.itemsInCart,
                 this.promoApplied ? 'PROMO26' : undefined
