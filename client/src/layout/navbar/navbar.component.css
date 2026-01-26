@@ -84,6 +84,7 @@
     padding: 0.5rem 1rem;
     border-radius: 0.375rem;
     font-size: 0.875rem;
+    margin: 0.5rem auto;
     font-weight: 500;
     border: none;
     cursor: pointer;
@@ -101,6 +102,7 @@
     background-color: var(--warning-red);
     color: white;
     padding: 0.5rem 1rem;
+    margin: 0.5rem auto;
     border-radius: 0.375rem;
     font-size: 0.875rem;
     font-weight: 500;
@@ -119,6 +121,7 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 0.75rem;
+    margin: auto;
     border-radius: 0.375rem;
     color: var(--border-c);
     transition:
@@ -160,6 +163,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 0 1.5rem;
+        height: 4rem;
     }
 
     .navbar-header {
@@ -172,23 +176,29 @@
 
     .navbar-menu {
         display: flex;
-        align-items: center;
+        align-items: stretch;
         gap: 1.5rem;
         max-height: none;
         overflow: visible;
+        height: 100%;
     }
 
     .nav-links {
         flex-direction: row;
         gap: 2rem;
         padding: 0;
+        height: 100%;
+        align-items: stretch;
     }
 
     .nav-link {
-        padding: 1rem 1rem;
+        display: flex;
+        align-items: center;
+        padding: 0 1rem;
         border-radius: 0;
         border-bottom: 2px solid transparent;
         font-size: 0.875rem;
+        height: 100%;
     }
 
     .nav-link-active {
