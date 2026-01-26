@@ -83,14 +83,14 @@
                             id="promoCode"
                             [(ngModel)]="promoInput"
                             placeholder="Enter code"
-                            [ disabled ]="promoApplied"
+                            [disabled]="promoApplied"
                             (keyup.enter)="applyPromoCode()"
                         />
 
                         <button
                             class="apply-promo"
                             (click)="applyPromoCode()"
-                            [ disabled ]="promoApplied || !promoInput.trim()"
+                            [disabled]="promoApplied || !promoInput.trim()"
                         >
                             {{ promoApplied ? 'Applied ' : 'Apply' }}
                         </button>
