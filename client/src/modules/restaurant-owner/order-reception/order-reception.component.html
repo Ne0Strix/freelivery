@@ -1,11 +1,11 @@
 <div class="order-reception">
     <header class="page-header">
-        <div class="header-left">
-            <h1>Order Reception</h1>
-            <span class="order-count"
-                >{{ actionableCount() }} active orders</span
-            >
-        </div>
+        <a mat-button routerLink="/restaurant">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+        <h1>Order Reception</h1>
+        <span class="order-count">{{ actionableCount() }} active orders</span>
         <div class="header-actions">
             <span class="countdown">
                 <i class="fa-solid fa-clock"></i>

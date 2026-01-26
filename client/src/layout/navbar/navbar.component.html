@@ -17,23 +17,27 @@
 
         <div class="navbar-menu" [class.menu-open]="menuOpen()">
             <div class="nav-links">
-                <a
-                    routerLink="/customer"
-                    routerLinkActive="nav-link-active"
-                    [routerLinkActiveOptions]="{ exact: true }"
-                    class="nav-link"
-                    (click)="closeMenu()"
-                >
-                    Customer
-                </a>
-                <a
-                    routerLink="/restaurant"
-                    routerLinkActive="nav-link-active"
-                    class="nav-link"
-                    (click)="closeMenu()"
-                >
-                    Restaurant
-                </a>
+                @if (isCustomer()) {
+                    <a
+                        routerLink="/customer"
+                        routerLinkActive="nav-link-active"
+                        [routerLinkActiveOptions]="{ exact: true }"
+                        class="nav-link"
+                        (click)="closeMenu()"
+                    >
+                        Customer
+                    </a>
+                }
+                @if (isRestaurantOwner()) {
+                    <a
+                        routerLink="/restaurant"
+                        routerLinkActive="nav-link-active"
+                        class="nav-link"
+                        (click)="closeMenu()"
+                    >
+                        Restaurant
+                    </a>
+                }
                 @if (isAdmin()) {
                     <a
                         routerLink="/site-manager"
@@ -50,7 +54,7 @@
                 @if (!isLoggedIn()) {
                     <button
                         type="button"
-                        class="btn-signin"
+                        class="btn-signin nav-action"
                         routerLink="/login"
                         (click)="closeMenu()"
                     >
@@ -59,7 +63,7 @@
                 } @else {
                     <a
                         routerLink="/profile"
-                        class="profile-link"
+                        class="profile-link nav-action"
                         title="Profile"
                         (click)="closeMenu()"
                     >
@@ -68,7 +72,7 @@
                     </a>
                     <button
                         type="button"
-                        class="btn-signout"
+                        class="btn-signout nav-action"
                         (click)="signOut(); closeMenu()"
                     >
                         Sign Out

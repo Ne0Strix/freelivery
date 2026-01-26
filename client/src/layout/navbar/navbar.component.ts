@@ -21,6 +21,10 @@ export class NavbarComponent {
 
     isLoggedIn = this.authService.isLoggedIn;
     isAdmin = computed(() => this.authService.hasAnyRole(['admin']));
+    isRestaurantOwner = computed(() =>
+        this.authService.hasAnyRole(['restaurant_owner'])
+    );
+    isCustomer = computed(() => this.authService.hasAnyRole(['customer']));
     menuOpen = signal(false);
 
     toggleMenu(): void {

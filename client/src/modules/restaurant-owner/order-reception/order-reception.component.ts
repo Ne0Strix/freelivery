@@ -12,6 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { RouterModule } from '@angular/router';
 import { OrderStatusLabelPipe } from '../../../commons/pipes/order-status-label.pipe';
 import {
     OrderStatus,
@@ -39,6 +40,7 @@ const REFRESH_INTERVAL = 30;
         MatSnackBarModule,
         MatProgressSpinnerModule,
         OrderStatusLabelPipe,
+        RouterModule,
     ],
     templateUrl: './order-reception.component.html',
     styleUrl: './order-reception.component.css',
