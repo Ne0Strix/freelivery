@@ -30,6 +30,12 @@
     flex-wrap: wrap;
 }
 
+.description {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    min-height: 40px;
+}
 .categories button {
     padding: 10px 20px;
     border: 2px solid #ddd;
