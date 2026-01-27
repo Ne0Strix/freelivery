@@ -1,8 +1,7 @@
 <div class="customer-dashboard">
-
     <header class="dashboard-header">
-        <h1> Customer Dashboard</h1>
-        <p> Ally you need to place an order</p>
+        <h1>Customer Dashboard</h1>
+        <p>Ally you need to place an order</p>
     </header>
 
     <div class="dashboard-cards">
@@ -11,29 +10,40 @@
                 <div class="card-icon">
                     <i class="fa-solid fa-store"></i>
                 </div>
-                <mat-card-title> Browse Restaurants</mat-card-title>
+                <mat-card-title> Browse Restaurants </mat-card-title>
             </mat-card-header>
             <mat-card-content>
-                <a mat-flat-button class="navigate-button" routerLink="/customer/menu">
+                <p>Browse restaurants and explore delicious dishes</p>
+            </mat-card-content>
+            <mat-card-actions>
+                <a
+                    mat-flat-button
+                    class="navigate-button"
+                    routerLink="/customer/menu"
+                >
                     <i class="fa-solid fa-arrow-right"></i>
                     View All Menus
                 </a>
-            </mat-card-content>
+            </mat-card-actions>
         </mat-card>
 
         <mat-card>
             <mat-card-header>
-            <div class="card-icon">
+                <div class="card-icon">
                     <i class="fa-solid fa-cart-shopping"></i>
                 </div>
                 <mat-card-title> Your Cart</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-                <p> Checkout items, modify your order, and procees to payment</p>
+                <p>Checkout items, modify your order, and procees to payment</p>
             </mat-card-content>
             <mat-card-actions>
-                <a mat-flat-button class="navigation-button" routerLink="/customer/cart">
-                    <i class="fa-solid fa-arrow-right"></i> 
+                <a
+                    mat-flat-button
+                    class="navigation-button"
+                    routerLink="/customer/cart"
+                >
+                    <i class="fa-solid fa-arrow-right"></i>
                     View cart items
                 </a>
             </mat-card-actions>
@@ -47,10 +57,17 @@
                 <mat-card-title> Feedback</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-                <p> Tell us more about your experience and help us improve our service</p>
+                <p>
+                    Tell us more about your experience and help us improve our
+                    service
+                </p>
             </mat-card-content>
             <mat-card-actions>
-                <a mat-flat-button class="navigate-button" routerLink="/customer/feedback">
+                <a
+                    mat-flat-button
+                    class="navigate-button"
+                    routerLink="/customer/feedback"
+                >
                     <i class="fa-solid fa-arrow-right"></i>
                     Send us your feedback
                 </a>
@@ -60,23 +77,31 @@
 
     <div class="restaurant-section">
         <div class="section-header">
-            <h2> Restaurant List</h2>
+            <h2>Restaurant List</h2>
             <div class="filter-section">
                 <mat-form-field appearance="outline" class="search-field">
                     <mat-label> Search restaurants</mat-label>
-                    <input 
-                    matInput 
-                    placeholder="Search by restaurant name"
-                    (input)="onSearchChange($event)"/>
+                    <input
+                        matInput
+                        placeholder="Search by restaurant name"
+                        (input)="onSearchChange($event)"
+                    />
                     <mat-icon matSuffix> search </mat-icon>
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="filter-field">
                     <mat-label> Cuisine</mat-label>
-                    <mat-select (selectionChange)="onCuisineChange($event)" value="all">
-                        <mat-option value="all"> List of all cuisines</mat-option>
-                        @for(cuisine of getCuisineTypes(); track cuisine) {
-                            <mat-option [value]="cuisine"> {{ cuisine }}</mat-option>
+                    <mat-select
+                        (selectionChange)="onCuisineChange($event)"
+                        value="all"
+                    >
+                        <mat-option value="all">
+                            List of all cuisines</mat-option
+                        >
+                        @for (cuisine of getCuisineTypes(); track cuisine) {
+                            <mat-option [value]="cuisine">
+                                {{ cuisine }}</mat-option
+                            >
                         }
                     </mat-select>
                 </mat-form-field>
@@ -86,54 +111,70 @@
         @if (loading()) {
             <div class="loading-container">
                 <mat-spinner diameter="40"></mat-spinner>
-                <p> Loading restaurants..</p>
+                <p>Loading restaurants..</p>
             </div>
-        } else {
+        } @else {
             <div class="restaurant-grid">
-                @for(restaurant of filteredRestaurants(); track restaurant.restaurantId) {
+                @for (
+                    restaurant of filteredRestaurants();
+                    track restaurant.restaurantId
+                ) {
                     <mat-card class="restaurant-card">
                         <mat-card-header>
-                            <mat-card-title> {{ restaurant.name }} </mat-card-title>
+                            <mat-card-title>
+                                {{ restaurant.name }}
+                            </mat-card-title>
                             <mat-card-subtitle>
-                                <span class="cuisine-badge"> {{ restaurant.cuisineType }}</span>
-                            @if (restaurant.isOpen) {
-                                <span class="status-badge open"> Open </span>
-
-                            } @else {
-                                <span class="status-badge closed"> Closed</span>
-                            }
+                                <span class="cuisine-badge">
+                                    {{ restaurant.cuisineType }}</span
+                                >
+                                @if (restaurant.isOpen) {
+                                    <span class="status-badge open">
+                                        Open
+                                    </span>
+                                } @else {
+                                    <span class="status-badge closed">
+                                        Closed</span
+                                    >
+                                }
                             </mat-card-subtitle>
                         </mat-card-header>
 
                         <mat-card-content>
                             <p class="address">
-                                <i class="fa-solid fa-location-dot"></i> {{ restaurant.address }}
+                                <i class="fa-solid fa-location-dot"></i>
+                                {{ restaurant.address }}
                             </p>
 
-                            <div class="restaurant-stats">
-                                <span class="stats">
+                            <div class="restaurant-stat">
+                                <span class="stat">
                                     <i class="fa-solid fa-star"></i>
-                                        {{ restaurant.rating }}/5
-                                    
+                                    {{ restaurant.rating }}/5
                                 </span>
                                 <span class="stat">
-                                    <i class="fa-solid fa-clock"></i> {{ restaurant.deliveryTime }}
+                                    <i class="fa-solid fa-clock"></i>
+                                    {{ restaurant.deliveryTime }}
                                 </span>
                             </div>
                         </mat-card-content>
 
                         <mat-card-actions>
-                            <button mat-stroked-button class="view-menu">
+                            <button
+                                mat-stroked-button
+                                class="view-menu"
+                                [routerLink]="[
+                                    '/customer/menu',
+                                    restaurant.restaurantId,
+                                ]"
+                            >
                                 <i class="fa-solid fa-utensils"></i> View Menu
                             </button>
                         </mat-card-actions>
                     </mat-card>
-
-                } @empty{
+                } @empty {
                     <div class="empty-state">
                         <i class="fa-solid fa-store-slash empty-icon"></i>
-                        <h3> No restaurant found</h3>
-                        
+                        <h3>No restaurant found</h3>
                     </div>
                 }
             </div>

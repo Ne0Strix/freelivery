@@ -2,6 +2,20 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        'Open Sans',
+        'Helvetica Neue',
+        sans-serif;
+    background-color: #f9fafb;
+    min-height: 100vh;
 }
 
 .dashboard-header {
@@ -11,59 +25,99 @@
 
 .dashboard-header h1 {
     font-size: 2.5rem;
-    font-weight: 600;
-    margin: 0;
-    color: #333;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: #111827;
 }
 
 .dashboard-header p {
-    font-size: 1.2rem;
+    font-size: 1.125rem;
     margin: 0;
-    color: #333;
+    color: #6b7280;
 }
 
 .dashboard-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
+    gap: 2rem;
     margin-bottom: 3rem;
 }
 
+.dashboard-cards mat-card {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background: white;
+}
+
+.dashboard-cards mat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-cards ::ng-deep .mat-mdc-card-header {
+    padding: 1.5rem 1.5rem 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
 .card-icon {
-    width: 40px;
-    height: 40px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
-    background: #4caf50;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 1rem;
+    margin-right: 0;
+    font-size: 1.5rem;
 }
 
-mat-card {
-    border-radius: 10px;
-    overflow: hidden;
+.dashboard-cards ::ng-deep .mat-mdc-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
 }
 
-mat-card-header {
+.dashboard-cards ::ng-deep -mat-mdc-card-content {
+    padding: 1rem 1.5rem;
+}
+
+.dashboard-cards mat-card-content p {
+    color: #6b7280;
+    line-height: 1.6;
+    margin: 0;
+    font-size: 0.9375rem;
+}
+.dashboard-cards ::ng-deep .mat-mdc-card-actions {
+    padding: 0 1.5rem 1.5rem;
+}
+
+.navigate-button,
+.navigate-button {
+    width: 100%;
+    height: 44px;
+    font-weight: 600;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-}
-
-mat-card-title {
-    font-size: 1.2rem;
-}
-mat-card-content {
-    color: #666;
-    line-height: 1.5;
-}
-
-.navigation-button {
-    width: 100%;
-    background: #2196f3;
+    justify-content: center;
+    gap: 0.5rem;
+    background: #4f46e5;
     color: white;
-    border-radius: 6px;
+}
+
+.navigate-button:hover,
+.navigation-button:hover {
+    background: #4338ca;
+}
+
+.navigate-button i,
+.navigation-button i {
+    font-size: 1rem;
 }
 
 .restaurant-section {
@@ -71,8 +125,10 @@ mat-card-content {
 }
 
 .section-header h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+    font-size: 1.875rem;
+    margin-bottom: 0 0 1.5rem 0;
+    color: #111827;
+    font-weight: 700;
 }
 
 .filter-section {
@@ -83,9 +139,12 @@ mat-card-content {
 }
 
 .search-field,
--filter-field {
+.filter-field {
     flex: 1;
     min-width: 250px;
+}
+::ng-deep .mat-mdc-form-field {
+    width: 100%;
 }
 
 .restaurant-grid {
@@ -95,9 +154,33 @@ mat-card-content {
 }
 
 .restaurant-card {
-    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    border-radius: 12px;
 }
 
+.restaurant-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.restaurant-card ::ng-deep .mat-mdc-card-header {
+    padding: 1.5rem 1.5rem 0;
+}
+
+.restaurant-card ::ng-deep .mat-mdc-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.restaurant-card ::ng-deep .mat-mdc-card-subtitle {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
 .cuisine-bagde {
     background: #f5f5f5;
     padding: 0.25rem 0.75rem;
@@ -106,28 +189,39 @@ mat-card-content {
     color: #666;
 }
 
-.status-badge.open {
-    background: #4caf50;
-    color: white;
+.status-badge {
     padding: 0.25rem 0.75rem;
     border-radius: 12px;
     font-size: 0.8rem;
+    letter-spacing: 0.025rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.status-badge {
+    background: #d1fae5;
+    color: white;
 }
 
 .status-badge.closed {
-    background: #f44336;
+    background: #ce626a;
     color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.8rem;
 }
 
 .address {
-    color: #666;
+    color: #6b7280;
     margin: 0.5rem 0;
+    font-size: 0.9375rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.restaurant-stats {
+.address i {
+    color: #9ca3af;
+}
+
+.restaurant-stat {
     display: flex;
     gap: 1rem;
     margin-top: 1rem;
@@ -135,7 +229,7 @@ mat-card-content {
     border-top: 1px solid #eee;
 }
 
-.stats {
+.stat {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -143,20 +237,59 @@ mat-card-content {
     font-size: 0.9rem;
 }
 
+.stat i {
+    color: #fbbf24;
+}
+
+.stat:last-child i {
+    color: #9ca3af;
+}
+
 .view-menu {
     width: 100%;
+    height: 44px;
+    font-weight: 600;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 2px solid #4f46e5;
+    color: #4f46e5;
+}
+
+.view-menu:hover {
+    background: #4f46e5;
+    color: white;
 }
 
 .loading-container {
     text-align: center;
-    padding: 3rem;
-    color: #666;
+    padding: 4rem 2rem;
+    color: #6b7280;
+}
+
+.loading-container p {
+    margin-top: 1rem;
+    font-size: 1rem;
+}
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
 }
 
 .empty-state {
+    grid-column: 1/-1;
     text-align: center;
-    padding: 3rem;
-    color: #888;
+    padding: 2rem 2rem;
+    color: #9ca3af;
+}
+
+.empty-state h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin: 0;
 }
 
 @media (max-width: 768px) {

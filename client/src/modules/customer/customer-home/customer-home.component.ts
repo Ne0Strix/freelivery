@@ -8,8 +8,10 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 
 import { RouterLink } from '@angular/router';
 import { Restaurant } from '../customer.model';
@@ -25,6 +27,8 @@ import { CustomerService } from '../customer.service';
         MatFormFieldModule,
         MatInputModule,
         MatSelectModule,
+        MatProgressSpinner,
+        MatIconModule,
     ],
     templateUrl: './customer-home.component.html',
     styleUrl: './customer-home.component.css',
@@ -81,9 +85,8 @@ export class CustomerHomeComponent implements OnInit {
         this.filterRestaurants();
     }
 
-    onCuisineChange(event: Event): void {
-        const select = event.target as HTMLSelectElement;
-        this.selectedCuisine.set(select.value);
+    onCuisineChange(event: MatSelectChange): void {
+        this.selectedCuisine.set(event.value);
         this.filterRestaurants();
     }
 
