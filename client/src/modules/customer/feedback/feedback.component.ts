@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -18,6 +19,7 @@ import { Router } from '@angular/router';
         MatCardModule,
         MatFormFieldModule,
         MatInputModule,
+        MatIconModule,
     ],
     templateUrl: './feedback.component.html',
     styleUrls: ['./feedback.component.css'],
@@ -25,15 +27,17 @@ import { Router } from '@angular/router';
 export class FeedbackComponent {
     ratingSelected: number = 0;
     comment: string = '';
-    message: string = '';
+    showSuccessMessage: boolean = false;
+
+    ratingEmojis = ['😡', '😣', '🙂', '😃', '🤩'];
 
     ratingValues = [
         'Select rating',
-        'Poor',
-        'Fair',
-        'Good',
-        'Very Good',
-        'Excellent',
+        'Very Bad',
+        'Bad',
+        'Good!',
+        'Very Good!!',
+        'Excellent!!!',
     ];
 
     constructor(
@@ -41,7 +45,7 @@ export class FeedbackComponent {
         private snackBar: MatSnackBar
     ) {}
 
-    get ratingMessage(): string {
+    getRatingText(): string {
         return this.ratingValues[this.ratingSelected];
     }
 
@@ -51,24 +55,32 @@ export class FeedbackComponent {
 
     submitFeedback(): void {
         if (this.ratingSelected === 0) {
-            this.snackBar.open('Select a rating', 'Close', { duration: 3000 });
+            this.snackBar.open('Select a rating', 'Close', {
+                duration: 3000,
+                panelClass: ['snackbar-error'],
+            });
             return;
         }
 
         console.log('Feedback:', {
             rating: this.ratingSelected,
             comment: this.comment,
+            timestamp: new Date().toISOString(),
         });
+
+        this.showSuccessMessage = true;
 
         this.snackBar.open('Thank you for the feedback!', 'Close', {
             duration: 3000,
         });
-        this.message = 'Thank you for the feedback!';
+    }
 
+    resetFeedback(): void {
         this.ratingSelected = 0;
         this.comment = '';
+        this.showSuccessMessage = false;
     }
     goBack(): void {
-        this.router.navigate(['/customer/tracking']);
+        this.router.navigate(['/customer']);
     }
 }
