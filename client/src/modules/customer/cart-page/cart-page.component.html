@@ -59,7 +59,7 @@
                         <div class="items-list">
                             @for (
                                 item of itemsInCart;
-                                let i = index;
+                                let i = $index;
                                 track item.dishId
                             ) {
                                 <div class="cart-item">
@@ -204,8 +204,10 @@
                                 ></mat-spinner>
                                 Processing...
                             } @else {
-                                <mat-icon>lock</mat-icon>
-                                Proceed to payment
+                                <ng-container>
+                                    <mat-icon>lock</mat-icon>
+                                    Proceed to payment
+                                </ng-container>
                             }
                         </button>
 

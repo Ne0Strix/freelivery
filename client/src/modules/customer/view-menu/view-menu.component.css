@@ -1,7 +1,21 @@
 .menu-management {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 1.5rem;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        'Open Sans',
+        'Helvetica Neue',
+        sans-serif;
+    background-color: #f9fafb;
+    min-height: 100vh;
 }
 
 .page-header {
@@ -9,16 +23,55 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .page-header h1 {
-    color: #333;
+    color: #111827;
     font-size: 1.8rem;
     margin: 0;
+    font-weight: 700;
+}
+
+.page-header a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.cart-info {
+    display: flex;
+    gap: 0.5rem;
 }
 
 .category-filter {
     margin-bottom: 2rem;
+}
+
+::ng-deep .mat-mdc-chip-listbox {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+::ng-deep .mat-mdc-chip-option {
+    border-radius: 20px;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    border: 2px solid #e5e7eb;
+    background: white;
+}
+
+::ng-deep .mat-mdc-chip-option:hover {
+    border-color: #4f46e5;
+    background: #eef2ff;
+}
+
+::ng-deep .mat-mdc-chip-selected {
+    background: #4f46e5;
+    color: white;
+    border-color: #4f46e5;
 }
 
 .menu-grid {
@@ -29,47 +82,92 @@
 
 .menu-card {
     border: 1px solid #f0f0f0;
+    background: white;
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.menu-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .dish-image {
     text-align: center;
     padding: 1.5rem;
-    background: #f9f9f9;
+    background: linear-gradient(135deg, #667eea14 0%, #764ba215 100%);
+    border-bottom: 1px solid #f3f4f6;
 }
 
 .image-placeholder {
     font-size: 3rem;
 }
 
-mat-card-header {
-    padding: 1rem 1rem 0;
+.menu-card ::ng-deep .mat-mdc-card-header {
+    padding: 1.5rem 1.5rem 0;
+}
+
+.menu-card ::ng-deep .mat-mdc-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.menu-card ::ng-deep .mat-mdc-card-subtitle {
+    margin-top: 0.5rem;
 }
 
 .category-badge {
-    background: #f5f5f5;
+    background: #f3f4f6;
     padding: 0.25rem 0.75rem;
     border-radius: 12px;
     font-size: 0.8rem;
     color: #666;
 }
 
+.menu-card ::ng-deep .mat-mdc-card-content {
+    padding: 1rem 1.5rem;
+}
+
 .description {
-    color: #666;
+    color: #6b7280;
     font-size: 0.9rem;
-    margin-bottom: 10px;
+    margin-bottom: 0 0 1rem 0;
     min-height: 40px;
 }
 
+.price-section {
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
+}
+
 .price {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-weight: bold;
-    color: #4caf50;
+    color: #4f46e5;
+    display: inline-block;
 }
 
-mat-card-actions {
-    padding: 0 1rem 1rem;
+.menu-card ::ng-deep .mat-mdc-card-actions {
+    padding: 0 1.5rem 1.5rem;
 }
 
+.menu-card button {
+    width: 100%;
+    height: 44px;
+    font-weight: 600;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+.menu-card button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79, 70 229, 0.3);
+}
 .empty-menu {
     text-align: center;
     grid-column: 1 / -1;
@@ -82,6 +180,13 @@ mat-card-actions {
     font-size: 3rem;
     margin-bottom: 1rem;
     opacity: 0.5;
+}
+
+.empty-menu h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin: 0;
 }
 
 @media (max-width: 768px) {

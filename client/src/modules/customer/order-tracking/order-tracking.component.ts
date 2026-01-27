@@ -1,4 +1,4 @@
-import { CommonModule, TitleCasePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -12,7 +12,6 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
     standalone: true,
     imports: [
         CommonModule,
-        TitleCasePipe,
         RouterLink,
         MatCardModule,
         MatButtonModule,
