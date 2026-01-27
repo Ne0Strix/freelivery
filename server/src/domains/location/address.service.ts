@@ -1,4 +1,10 @@
-import { AddressRepository, type AddressRow } from './address.repository.js';
+import { ForbiddenError, ValidationError } from '../commons/errors.js';
+import {
+    getAddressRepository,
+    getRestaurantRepository,
+    getUserRepository,
+} from '../commons/repository-registry.js';
+import type { AddressRow } from './address.repository.js';
 
 export interface Address {
     addressId: number;
@@ -15,7 +21,6 @@ export interface Address {
     updatedAt: Date;
 }
 
-/** DTO for creating a new address */
 export interface CreateAddress {
     label?: string;
     streetName: string;
@@ -28,7 +33,6 @@ export interface CreateAddress {
     gridY?: number;
 }
 
-/** DTO for updating an address */
 export interface UpdateAddress {
     label?: string;
     streetName?: string;
@@ -41,7 +45,6 @@ export interface UpdateAddress {
     gridY?: number;
 }
 
-/** Grid coordinates for delivery calculations */
 export interface GridCoordinates {
     gridX: number;
     gridY: number;
@@ -74,9 +77,10 @@ export function calculateDeliveryMinutes(
 }
 
 export class AddressService {
-    constructor(private repository: AddressRepository) {}
+    private repository = getAddressRepository();
+    private userRepository = getUserRepository();
+    private restaurantRepository = getRestaurantRepository();
 
-    /** Create a new address and return its ID */
     async createAddress(dto: CreateAddress): Promise<number> {
         const row = await this.repository.create({
             label: dto.label,
@@ -92,8 +96,20 @@ export class AddressService {
         return row.address_id;
     }
 
-    /** Update an existing address */
-    async updateAddress(addressId: number, dto: UpdateAddress): Promise<void> {
+    /** Update an existing address - checks ownership before updating */
+    async updateAddress(
+        userId: number,
+        addressId: number,
+        dto: UpdateAddress
+    ): Promise<void> {
+        // Check if user owns this address (directly or via restaurant)
+        const canAccess = await this.userCanAccessAddress(userId, addressId);
+        if (!canAccess) {
+            throw new ForbiddenError(
+                'You do not have permission to update this address'
+            );
+        }
+
         await this.repository.update(addressId, {
             label: dto.label,
             street_name: dto.streetName,
@@ -107,7 +123,6 @@ export class AddressService {
         });
     }
 
-    /** Get address by ID */
     async getById(addressId: number): Promise<Address | null> {
         const row = await this.repository.getById(addressId);
         if (!row) return null;
@@ -135,5 +150,64 @@ export class AddressService {
             createdAt: new Date(row.created_at),
             updatedAt: new Date(row.updated_at),
         };
+    }
+
+    public validateGridCoordinate(
+        value: unknown,
+        fieldName: string
+    ): number | undefined {
+        if (value === undefined || value === null || value === '') {
+            return undefined;
+        }
+        const num = Number(value);
+        if (!Number.isInteger(num) || num < -10 || num > 10) {
+            throw new ValidationError(
+                `${fieldName} must be an integer between -10 and 10`
+            );
+        }
+        return num;
+    }
+
+    /** Delete an address - unlinks from all users then removes the address record */
+    async deleteAddress(userId: number, addressId: number): Promise<void> {
+        // Check if user owns this address
+        const ownsAddress = await this.userRepository.userOwnsAddress(
+            userId,
+            addressId
+        );
+        if (!ownsAddress) {
+            throw new ForbiddenError(
+                'You do not have permission to delete this address'
+            );
+        }
+
+        // Unlink address from user
+        await this.userRepository.unlinkUserAddress(userId, addressId);
+
+        // Delete the address itself
+        await this.repository.deleteById(addressId);
+    }
+
+    /**
+     * Check if user owns an address - either directly (user_address link)
+     * or via restaurant ownership
+     */
+    private async userCanAccessAddress(
+        userId: number,
+        addressId: number
+    ): Promise<boolean> {
+        // Check direct ownership via user_address
+        const ownsDirectly = await this.userRepository.userOwnsAddress(
+            userId,
+            addressId
+        );
+        if (ownsDirectly) return true;
+
+        // Check ownership via restaurant
+        const restaurant =
+            await this.restaurantRepository.findByOwnerId(userId);
+        if (restaurant && restaurant.address_id === addressId) return true;
+
+        return false;
     }
 }

@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { RestaurantRepository } from '../domains/restaurant/restaurant.repository.js';
 import {
     RestaurantService,
     UpdateRestaurantData,
@@ -12,7 +11,7 @@ import { asyncHandler } from '../middleware/async-handler.js';
 
 const router = Router();
 const userService = new UserService();
-const restaurantService = new RestaurantService(new RestaurantRepository());
+const restaurantService = new RestaurantService();
 
 /** GET /api/profile - Get current user's profile */
 router.get(

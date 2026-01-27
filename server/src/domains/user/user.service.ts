@@ -1,26 +1,20 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { ConflictError, ValidationError } from '../commons/errors.js';
-import { AddressRepository } from '../location/address.repository.js';
+import { getUserRepository } from '../commons/repository-registry.js';
 import {
     AddressService,
     type CreateAddress,
 } from '../location/address.service.js';
-import { RestaurantRepository } from '../restaurant/restaurant.repository.js';
 import {
     CuisineType,
     RestaurantService,
 } from '../restaurant/restaurant.service.js';
-import {
-    UserRepository,
-    type UserRow,
-    type UserWithRoles,
-} from './user.repository.js';
+import type { UserRow, UserWithRoles } from './user.repository.js';
 
 const SALT_ROUNDS = 10;
 const RESET_TOKEN_EXPIRY = '15m';
 
-/** DTO for customer signup data */
 export interface CustomerSignupData {
     phoneNumber?: string;
     address?: CreateAddress;
@@ -37,15 +31,9 @@ export interface RestaurantSignupData {
 }
 
 export class UserService {
-    private userRepository = new UserRepository();
-    private addressService = new AddressService(new AddressRepository());
-    private restaurantService = new RestaurantService(
-        new RestaurantRepository()
-    );
-
-    async userExists(email: string, username: string): Promise<boolean> {
-        return this.userRepository.existsByEmailOrUsername(email, username);
-    }
+    private userRepository = getUserRepository();
+    private addressService = new AddressService();
+    private restaurantService = new RestaurantService();
 
     async findUserIncludingInactive(
         identifier: string,
@@ -88,10 +76,11 @@ export class UserService {
         customerData?: CustomerSignupData,
         restaurantData?: RestaurantSignupData
     ): Promise<{ userId: number }> {
-        // Check if user already exists
+        const trimmed_email = this.validateAndTrimEmail(email);
+        const trimmed_username = this.validateAndTrimUsername(username);
         const exists = await this.userRepository.existsByEmailOrUsername(
-            email,
-            username
+            trimmed_email,
+            trimmed_username
         );
         if (exists) {
             throw new ConflictError(
@@ -99,13 +88,12 @@ export class UserService {
             );
         }
 
-        // Hash password
         const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
         // Create user
         const user = await this.userRepository.createUser(
-            username,
-            email,
+            trimmed_username,
+            trimmed_email,
             passwordHash
         );
 
@@ -116,8 +104,7 @@ export class UserService {
         }
         await this.userRepository.assignRole(user.user_id, roleId);
 
-        // Create empty user_data record
-        await this.userRepository.createUserData(user.user_id);
+        await this.userRepository.createEmptyUserData(user.user_id);
 
         // Handle customer-specific data
         if (customerData) {
@@ -166,7 +153,32 @@ export class UserService {
         return { userId: user.user_id };
     }
 
-    /** Get user profile with user_data */
+    // https://www.xjavascript.com/blog/email-validation-regex-typescript/
+    validateAndTrimEmail(email: string): string {
+        const emailRegex: RegExp =
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i;
+
+        const trimmedEmail = email.trim();
+
+        if (!emailRegex.test(trimmedEmail)) {
+            throw new ValidationError('Invalid email format');
+        }
+        return trimmedEmail;
+    }
+
+    validateAndTrimUsername(username: string): string {
+        const usernameRegex: RegExp = /^[a-zA-Z0-9_]{3,20}$/;
+
+        const trimmedUsername = username.trim();
+
+        if (!usernameRegex.test(trimmedUsername)) {
+            throw new ValidationError(
+                'Username must be 3-20 characters long and can only contain letters, numbers, and underscores'
+            );
+        }
+        return trimmedUsername;
+    }
+
     async getProfile(userId: number): Promise<UserProfile> {
         const user = await this.userRepository.getByIdOrThrow(userId, {
             message: 'User not found',
@@ -187,7 +199,6 @@ export class UserService {
         };
     }
 
-    /** Update user profile */
     async updateProfile(
         userId: number,
         data: UpdateProfileData
@@ -214,7 +225,6 @@ export class UserService {
         });
     }
 
-    /** Change user password */
     async changePassword(
         userId: number,
         currentPassword: string,
@@ -255,7 +265,6 @@ export class UserService {
 
         await this.userRepository.setResetToken(user.user_id, token);
 
-        // Log reset link to console
         const resetLink = `http://localhost:4200/reset-password/${token}`;
         console.log(`\n🔐 Password Reset Link for ${email}:\n${resetLink}\n`);
     }
@@ -263,7 +272,6 @@ export class UserService {
     async resetPassword(token: string, newPassword: string): Promise<void> {
         const secret = process.env.JWT_SECRET || 'dev-secret';
 
-        // Verify JWT token
         let decoded: { sub: number };
         try {
             decoded = jwt.verify(token, secret) as { sub: number };
@@ -297,7 +305,6 @@ export interface UserProfile {
     dateOfBirth: Date | null;
 }
 
-/** DTO for updating profile */
 export interface UpdateProfileData {
     email?: string;
     firstName?: string;

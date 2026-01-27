@@ -1,8 +1,10 @@
 import { ForbiddenError, ValidationError } from '../commons/errors.js';
-import { RestaurantRepository } from '../restaurant/restaurant.repository.js';
+import {
+    getOrderRepository,
+    getRestaurantRepository,
+} from '../commons/repository-registry.js';
 import { OrderStatus } from './order.model.js';
 import {
-    OrderRepository,
     type DailyOrderCountRow,
     type OrderItemRow,
     type RestaurantOrderRow,
@@ -90,10 +92,8 @@ function isValidTransition(
 // =====================
 
 export class OrderService {
-    constructor(
-        private orderRepository: OrderRepository,
-        private restaurantRepository: RestaurantRepository
-    ) {}
+    private orderRepository = getOrderRepository();
+    private restaurantRepository = getRestaurantRepository();
 
     /**
      * Get all orders for the restaurant owned by the given user

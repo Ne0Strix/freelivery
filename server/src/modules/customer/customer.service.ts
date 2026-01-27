@@ -1,4 +1,5 @@
-import { CustomerRepository, type MenuItemRow } from './customer.repository.js';
+import { getCustomerRepository } from '../../domains/commons/repository-registry.js';
+import type { MenuItemRow } from './customer.repository.js';
 
 export interface MenuItem {
     dishId: number;
@@ -11,7 +12,7 @@ export interface MenuItem {
 }
 
 export class CustomerService {
-    private repository = new CustomerRepository();
+    private repository = getCustomerRepository();
 
     async getMenuItemsByRestaurant(restaurantId: number): Promise<MenuItem[]> {
         const rows =

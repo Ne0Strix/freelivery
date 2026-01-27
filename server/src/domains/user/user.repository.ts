@@ -92,7 +92,7 @@ export class UserRepository extends Repository<UserRow> {
         return result.rows.map((row) => row.name);
     }
 
-    async createUserData(userId: number): Promise<void> {
+    async createEmptyUserData(userId: number): Promise<void> {
         await this.query('INSERT INTO user_data (user_id) VALUES ($1)', [
             userId,
         ]);

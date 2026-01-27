@@ -1,54 +1,18 @@
 import express, { Request, Response } from 'express';
-import { ForbiddenError, ValidationError } from '../domains/commons/errors.js';
-import { AddressRepository } from '../domains/location/address.repository.js';
+import { NotFoundError, ValidationError } from '../domains/commons/errors.js';
+import {
+    getRestaurantRepository,
+    getUserRepository,
+} from '../domains/commons/repository-registry.js';
 import {
     AddressService,
     CreateAddress,
     UpdateAddress,
 } from '../domains/location/address.service.js';
-import { RestaurantRepository } from '../domains/restaurant/restaurant.repository.js';
-import { UserRepository } from '../domains/user/user.repository.js';
 import { asyncHandler } from '../middleware/async-handler.js';
 
 const router = express.Router();
-
-/** Validate grid coordinate is within -10 to +10 range */
-function validateGridCoordinate(
-    value: unknown,
-    fieldName: string
-): number | undefined {
-    if (value === undefined || value === null || value === '') {
-        return undefined;
-    }
-    const num = Number(value);
-    if (!Number.isInteger(num) || num < -10 || num > 10) {
-        throw new ValidationError(
-            `${fieldName} must be an integer between -10 and 10`
-        );
-    }
-    return num;
-}
-
-/**
- * Check if user owns an address - either directly (user_address link)
- * or via restaurant ownership
- */
-async function userCanAccessAddress(
-    userId: number,
-    addressId: number,
-    userRepo: UserRepository,
-    restaurantRepo: RestaurantRepository
-): Promise<boolean> {
-    // Check direct ownership via user_address
-    const ownsDirectly = await userRepo.userOwnsAddress(userId, addressId);
-    if (ownsDirectly) return true;
-
-    // Check ownership via restaurant
-    const restaurant = await restaurantRepo.findByOwnerId(userId);
-    if (restaurant && restaurant.address_id === addressId) return true;
-
-    return false;
-}
+const addressService = new AddressService();
 
 // GET /user/:userId - returns all addresses for a given user id
 router.get(
@@ -61,8 +25,7 @@ router.get(
             throw new ValidationError('Invalid userId parameter');
         }
 
-        const service = new AddressService(new AddressRepository());
-        const addresses = await service.getAllForUser(userId);
+        const addresses = await addressService.getAllForUser(userId);
         return res.json({ status: 'ok', data: addresses });
     })
 );
@@ -83,8 +46,14 @@ router.post(
         }
 
         // Validate grid coordinates
-        const gridX = validateGridCoordinate(req.body.gridX, 'gridX');
-        const gridY = validateGridCoordinate(req.body.gridY, 'gridY');
+        const gridX = addressService.validateGridCoordinate(
+            req.body.gridX,
+            'gridX'
+        );
+        const gridY = addressService.validateGridCoordinate(
+            req.body.gridY,
+            'gridY'
+        );
 
         const dto: CreateAddress = {
             label: req.body.label,
@@ -98,11 +67,9 @@ router.post(
             gridY,
         };
 
-        const addressRepo = new AddressRepository();
-        const userRepo = new UserRepository();
-        const service = new AddressService(addressRepo);
+        const userRepo = getUserRepository();
 
-        const addressId = await service.createAddress(dto);
+        const addressId = await addressService.createAddress(dto);
 
         // Link address to user
         await userRepo.linkUserAddress(userId, addressId);
@@ -120,24 +87,17 @@ router.get(
     '/restaurant',
     asyncHandler(async (req: Request, res: Response) => {
         const userId = (req as any).user.sub;
-        const restaurantRepo = new RestaurantRepository();
+        const restaurantRepo = getRestaurantRepository();
         const restaurant = await restaurantRepo.findByOwnerId(userId);
 
         if (!restaurant) {
-            return res.status(404).json({
-                status: 'error',
-                error: 'No restaurant found for this user',
-            });
+            throw new NotFoundError('No restaurant found for this user');
         }
 
-        const service = new AddressService(new AddressRepository());
-        const address = await service.getById(restaurant.address_id);
+        const address = await addressService.getById(restaurant.address_id);
 
         if (!address) {
-            return res.status(404).json({
-                status: 'error',
-                error: 'Restaurant address not found',
-            });
+            throw new NotFoundError('Restaurant address not found');
         }
 
         return res.json({ status: 'ok', data: address });
@@ -149,19 +109,22 @@ router.put(
     '/restaurant',
     asyncHandler(async (req: Request, res: Response) => {
         const userId = (req as any).user.sub;
-        const restaurantRepo = new RestaurantRepository();
+        const restaurantRepo = getRestaurantRepository();
         const restaurant = await restaurantRepo.findByOwnerId(userId);
 
         if (!restaurant) {
-            return res.status(404).json({
-                status: 'error',
-                error: 'No restaurant found for this user',
-            });
+            throw new NotFoundError('No restaurant found for this user');
         }
 
         // Validate grid coordinates if provided
-        const gridX = validateGridCoordinate(req.body.gridX, 'gridX');
-        const gridY = validateGridCoordinate(req.body.gridY, 'gridY');
+        const gridX = addressService.validateGridCoordinate(
+            req.body.gridX,
+            'gridX'
+        );
+        const gridY = addressService.validateGridCoordinate(
+            req.body.gridY,
+            'gridY'
+        );
 
         const dto: UpdateAddress = {
             label: req.body.label,
@@ -175,8 +138,7 @@ router.put(
             gridY,
         };
 
-        const service = new AddressService(new AddressRepository());
-        await service.updateAddress(restaurant.address_id, dto);
+        await addressService.updateAddress(userId, restaurant.address_id, dto);
 
         return res.json({
             status: 'ok',
@@ -196,25 +158,15 @@ router.put(
             throw new ValidationError('Invalid addressId parameter');
         }
 
-        const userRepo = new UserRepository();
-        const restaurantRepo = new RestaurantRepository();
-
-        // Check if user owns this address (directly or via restaurant)
-        const canAccess = await userCanAccessAddress(
-            userId,
-            addressId,
-            userRepo,
-            restaurantRepo
-        );
-        if (!canAccess) {
-            throw new ForbiddenError(
-                'You do not have permission to update this address'
-            );
-        }
-
         // Validate grid coordinates if provided
-        const gridX = validateGridCoordinate(req.body.gridX, 'gridX');
-        const gridY = validateGridCoordinate(req.body.gridY, 'gridY');
+        const gridX = addressService.validateGridCoordinate(
+            req.body.gridX,
+            'gridX'
+        );
+        const gridY = addressService.validateGridCoordinate(
+            req.body.gridY,
+            'gridY'
+        );
 
         const dto: UpdateAddress = {
             label: req.body.label,
@@ -228,8 +180,7 @@ router.put(
             gridY,
         };
 
-        const service = new AddressService(new AddressRepository());
-        await service.updateAddress(addressId, dto);
+        await addressService.updateAddress(userId, addressId, dto);
 
         return res.json({
             status: 'ok',
@@ -249,22 +200,7 @@ router.delete(
             throw new ValidationError('Invalid addressId parameter');
         }
 
-        const userRepo = new UserRepository();
-        const addressRepo = new AddressRepository();
-
-        // Check if user owns this address
-        const ownsAddress = await userRepo.userOwnsAddress(userId, addressId);
-        if (!ownsAddress) {
-            throw new ForbiddenError(
-                'You do not have permission to delete this address'
-            );
-        }
-
-        // Unlink address from user
-        await userRepo.unlinkUserAddress(userId, addressId);
-
-        // Delete the address itself
-        await addressRepo.deleteById(addressId);
+        await addressService.deleteAddress(userId, addressId);
 
         return res.json({
             status: 'ok',

@@ -1,32 +1,19 @@
-import { StatisticsRepository } from '../../domains/commons/statistics.repository.js';
-import {
-    DashboardStatistics,
-    StatisticsService,
-} from '../../domains/commons/statistics.service.js';
-import { RestaurantRepository } from '../../domains/restaurant/restaurant.repository.js';
+import { getStatisticsRepository } from '../../domains/commons/repository-registry.js';
+import type { DashboardStatistics } from '../../domains/commons/statistics.service.js';
+import { StatisticsService } from '../../domains/commons/statistics.service.js';
 import {
     PendingRestaurant,
     RestaurantService,
 } from '../../domains/restaurant/restaurant.service.js';
-import {
-    UserService,
-    type UserWithRoles,
-} from '../../domains/user/user.service.js';
+import type { UserWithRoles } from '../../domains/user/user.repository.js';
+import { UserService } from '../../domains/user/user.service.js';
 
 export class SiteManagerService {
-    private statisticsService: StatisticsService;
-    private restaurantService: RestaurantService;
-    private userService: UserService;
-
-    constructor() {
-        this.statisticsService = new StatisticsService(
-            new StatisticsRepository()
-        );
-        this.restaurantService = new RestaurantService(
-            new RestaurantRepository()
-        );
-        this.userService = new UserService();
-    }
+    private statisticsService = new StatisticsService(
+        getStatisticsRepository()
+    );
+    private restaurantService = new RestaurantService();
+    private userService = new UserService();
 
     async getDashboardStatistics(): Promise<DashboardStatistics> {
         return this.statisticsService.getDashboardStatistics();

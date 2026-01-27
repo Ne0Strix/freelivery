@@ -1,6 +1,7 @@
-import { Pool, type QueryResult, type QueryResultRow } from 'pg';
+import type { QueryResultRow } from 'pg';
+import { Repository } from '../../domains/commons/abstract-repository.js';
 
-export interface MenuItemRow {
+export interface MenuItemRow extends QueryResultRow {
     dish_id: number;
     category_id: number;
     category_name: string;
@@ -10,26 +11,9 @@ export interface MenuItemRow {
     is_available: boolean;
 }
 
-export class CustomerRepository {
-    private pool: Pool;
-
+export class CustomerRepository extends Repository<MenuItemRow> {
     constructor() {
-        this.pool = new Pool({
-            user: process.env.POSTGRES_USER,
-            host: process.env.POSTGRES_HOST ?? 'db',
-            database: process.env.POSTGRES_DB,
-            password: process.env.POSTGRES_PASSWORD,
-            port: Number(
-                process.env.POSTGRES_PORT ?? process.env.DB_PORT ?? 5432
-            ),
-        });
-    }
-
-    protected query<T extends QueryResultRow>(
-        text: string,
-        params?: unknown[]
-    ): Promise<QueryResult<T>> {
-        return this.pool.query<T>(text, params);
+        super('', '');
     }
 
     async getMenuItemsByRestaurant(
@@ -51,5 +35,13 @@ export class CustomerRepository {
         `;
         const result = await this.query<MenuItemRow>(query, [restaurantId]);
         return result.rows;
+    }
+
+    create(): Promise<MenuItemRow> {
+        throw new Error('Not implemented for CustomerRepository');
+    }
+
+    update(): Promise<MenuItemRow> {
+        throw new Error('Not implemented for CustomerRepository');
     }
 }

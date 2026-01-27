@@ -5,6 +5,8 @@ import path from 'path';
 
 const UPLOADS_DIR = './uploads/dishes';
 
+// source: https://dev.to/hexshift/a-complete-guide-to-handling-file-uploads-with-multer-in-nodejs-4iig
+
 // Ensure upload directory exists on module load
 if (!fs.existsSync(UPLOADS_DIR)) {
     fs.mkdirSync(UPLOADS_DIR, { recursive: true });
@@ -24,18 +26,18 @@ const storage = multer.diskStorage({
 const fileFilter = (
     _req: Request,
     file: Express.Multer.File,
-    cb: FileFilterCallback
+    fileFilterCallback: FileFilterCallback
 ) => {
     const allowedTypes = /jpeg|jpg|png|webp/;
-    const extValid = allowedTypes.test(
+    const isExtensionValid = allowedTypes.test(
         path.extname(file.originalname).toLowerCase()
     );
     const mimeValid = allowedTypes.test(file.mimetype.split('/')[1]);
 
-    if (extValid && mimeValid) {
-        cb(null, true);
+    if (isExtensionValid && mimeValid) {
+        fileFilterCallback(null, true);
     } else {
-        cb(null, false);
+        fileFilterCallback(null, false);
     }
 };
 
