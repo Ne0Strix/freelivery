@@ -10,7 +10,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 
 import { RouterLink } from '@angular/router';
@@ -27,7 +26,6 @@ import { CustomerService } from '../customer.service';
         MatFormFieldModule,
         MatInputModule,
         MatSelectModule,
-        MatProgressSpinner,
         MatIconModule,
     ],
     templateUrl: './customer-home.component.html',
