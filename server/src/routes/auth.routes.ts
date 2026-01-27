@@ -5,7 +5,6 @@ import {
     UnauthorizedError,
     ValidationError,
 } from '../domains/commons/errors.js';
-import { RestaurantRepository } from '../domains/restaurant/restaurant.repository.js';
 import {
     RestaurantService,
     RestaurantStatus,
@@ -16,7 +15,7 @@ import { ALL_ROLES, UserRole } from '../middleware/auth.js';
 
 const router = Router();
 const userService = new UserService();
-const restaurantService = new RestaurantService(new RestaurantRepository());
+const restaurantService = new RestaurantService();
 
 // Source: https://medium.com/@kevinpatrickboylan/using-jwt-authentication-and-bcrypt-net-with-angular-and-net-core-web-api-51aab1153778
 

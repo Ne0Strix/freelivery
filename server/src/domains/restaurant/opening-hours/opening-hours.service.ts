@@ -2,12 +2,12 @@ import {
     ConflictError,
     ForbiddenError,
     NotFoundError,
-} from '../commons/errors.js';
+} from '../../commons/errors.js';
 import {
-    OpeningHoursRepository,
-    OpeningHoursRow,
-} from './opening-hours.repository.js';
-import { RestaurantRepository } from './restaurant.repository.js';
+    getOpeningHoursRepository,
+    getRestaurantRepository,
+} from '../../commons/repository-registry.js';
+import { OpeningHoursRow } from './opening-hours.repository.js';
 
 // =====================
 // Opening Hours DTO
@@ -65,10 +65,8 @@ function timesOverlap(
 // =====================
 
 export class OpeningHoursService {
-    constructor(
-        private openingHoursRepository: OpeningHoursRepository,
-        private restaurantRepository: RestaurantRepository
-    ) {}
+    private openingHoursRepository = getOpeningHoursRepository();
+    private restaurantRepository = getRestaurantRepository();
 
     /** Get restaurant by owner, throws if not found */
     async getOwnerRestaurant(ownerUserId: number) {

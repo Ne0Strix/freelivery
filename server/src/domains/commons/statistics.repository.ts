@@ -1,26 +1,16 @@
-import { Pool, type QueryResult, type QueryResultRow } from 'pg';
-import { toAppError } from './errors.js';
+import type { QueryResultRow } from 'pg';
+import { Repository } from './abstract-repository.js';
 
-export interface PlatformStatisticsRow {
+export interface PlatformStatisticsRow extends QueryResultRow {
     total_orders: string;
     total_revenue: string;
     total_users: string;
     active_users: string;
 }
 
-export class StatisticsRepository {
-    private pool: Pool;
-
+export class StatisticsRepository extends Repository<PlatformStatisticsRow> {
     constructor() {
-        this.pool = new Pool({
-            user: process.env.POSTGRES_USER,
-            host: process.env.POSTGRES_HOST ?? 'db',
-            database: process.env.POSTGRES_DB,
-            password: process.env.POSTGRES_PASSWORD,
-            port: Number(
-                process.env.POSTGRES_PORT ?? process.env.DB_PORT ?? 5432
-            ),
-        });
+        super('', '');
     }
 
     async getPlatformStatistics(): Promise<PlatformStatisticsRow> {
@@ -36,14 +26,11 @@ export class StatisticsRepository {
         return result.rows[0];
     }
 
-    private async query<R extends QueryResultRow = any>(
-        text: string,
-        values?: unknown[]
-    ): Promise<QueryResult<R>> {
-        try {
-            return await this.pool.query<R>(text, values as any);
-        } catch (err) {
-            throw toAppError(err);
-        }
+    create(): Promise<PlatformStatisticsRow> {
+        throw new Error('Not implemented for StatisticsRepository');
+    }
+
+    update(): Promise<PlatformStatisticsRow> {
+        throw new Error('Not implemented for StatisticsRepository');
     }
 }

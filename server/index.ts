@@ -23,20 +23,7 @@ app.use(express.json());
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
-// Logging middleware
 app.use(requestLogger);
-
-// Test endpoint
-app.get('/api/test', (_req: Request, res: Response) => {
-    res.json({
-        status: 'ok',
-        data: {
-            message: 'Server is working!!! Yay!',
-            timestamp: new Date().toISOString(),
-            environment: process.env.NODE_ENV || 'development',
-        },
-    });
-});
 
 // Health check endpoint
 app.get('/health', (_req: Request, res: Response) => {

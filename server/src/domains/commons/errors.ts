@@ -75,7 +75,7 @@ export class InternalError extends AppError {
  * If the error is already an AppError, it is returned as is.
  * Otherwise, it is wrapped in an {@link InternalError}.
  *
- * Needed so that the `expressErrorHandler` can handle all errors uniformly.
+ * Needed so that the {@link expressErrorHandler} can handle all errors uniformly.
  *
  * @param err - Any error
  * @returns The error as an AppError; if it's not already one, wraps it in an InternalError.

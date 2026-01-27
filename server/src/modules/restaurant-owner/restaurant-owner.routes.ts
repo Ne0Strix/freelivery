@@ -2,38 +2,17 @@ import type { Request } from 'express';
 import express, { Response } from 'express';
 import { ValidationError } from '../../domains/commons/errors.js';
 import { OrderStatus } from '../../domains/order/order.model.js';
-import { OrderRepository } from '../../domains/order/order.repository.js';
 import { OrderService } from '../../domains/order/order.service.js';
-import {
-    CategoryRepository,
-    DishRepository,
-} from '../../domains/restaurant/menu.repository.js';
-import { MenuService } from '../../domains/restaurant/menu.service.js';
-import { OpeningHoursRepository } from '../../domains/restaurant/opening-hours.repository.js';
-import { OpeningHoursService } from '../../domains/restaurant/opening-hours.service.js';
-import { RestaurantRepository } from '../../domains/restaurant/restaurant.repository.js';
+import { MenuService } from '../../domains/restaurant/menu/menu.service.js';
+import { OpeningHoursService } from '../../domains/restaurant/opening-hours/opening-hours.service.js';
 import { asyncHandler } from '../../middleware/async-handler.js';
 import { getImageUrl, uploadDishPhoto } from '../../middleware/upload.js';
 
 const router = express.Router();
 
-const restaurantRepository = new RestaurantRepository();
-
-const menuService = new MenuService(
-    new CategoryRepository(),
-    new DishRepository(),
-    restaurantRepository
-);
-
-const orderService = new OrderService(
-    new OrderRepository(),
-    restaurantRepository
-);
-
-const openingHoursService = new OpeningHoursService(
-    new OpeningHoursRepository(),
-    restaurantRepository
-);
+const menuService = new MenuService();
+const orderService = new OrderService();
+const openingHoursService = new OpeningHoursService();
 
 // Helper to get owner user id from authenticated request
 function getOwnerUserId(req: Request): number {

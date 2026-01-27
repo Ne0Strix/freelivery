@@ -1,9 +1,9 @@
+import { getRestaurantRepository } from '../commons/repository-registry.js';
 import {
     calculateDeliveryMinutes,
     calculateManhattanDistance,
     GridCoordinates,
 } from '../location/address.service.js';
-import { RestaurantRepository } from './restaurant.repository.js';
 
 export interface Restaurant {
     restaurantId: number;
@@ -79,7 +79,7 @@ export enum CuisineType {
 }
 
 export class RestaurantService {
-    constructor(private repository: RestaurantRepository) {}
+    private repository = getRestaurantRepository();
 
     /** Create a new restaurant with NEW status (pending approval) */
     async createRestaurant(dto: CreateRestaurant): Promise<number> {

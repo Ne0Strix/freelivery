@@ -1,4 +1,4 @@
-import { Repository } from '../commons/abstract-repository.js';
+import { Repository } from '../../commons/abstract-repository.js';
 
 export interface OpeningHoursRow {
     opening_hours_id: number;
