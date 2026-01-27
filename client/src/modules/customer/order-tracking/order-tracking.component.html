@@ -21,26 +21,28 @@
             </div>
 
             <div class="progress-tracker">
-                <div class="progress-line"></div>
+                <div class="progress">
+                    <div class="progress-line"></div>
 
-                <div class="progress-step" [class.active]="currentStep(1)">
-                    <div class="step-circle">1</div>
-                    <span class="step-label">Ordered</span>
-                </div>
+                    <div class="progress-step" [class.active]="currentStep(1)">
+                        <div class="step-circle">1</div>
+                        <span class="step-label">Ordered</span>
+                    </div>
 
-                <div class="progress-step" [class.active]="currentStep(2)">
-                    <div class="step-circle">2</div>
-                    <span class="step-label"> Preparing</span>
-                </div>
+                    <div class="progress-step" [class.active]="currentStep(2)">
+                        <div class="step-circle">2</div>
+                        <span class="step-label"> Preparing</span>
+                    </div>
 
-                <div class="progress-step" [class.active]="currentStep(3)">
-                    <div class="step-circle">3</div>
-                    <span class="step-label"> Ready</span>
-                </div>
+                    <div class="progress-step" [class.active]="currentStep(3)">
+                        <div class="step-circle">3</div>
+                        <span class="step-label"> Ready</span>
+                    </div>
 
-                <div class="progress-step" [class.active]="currentStep(4)">
-                    <div class="step-circle">4</div>
-                    <span class="step-label"> Delivered</span>
+                    <div class="progress-step" [class.active]="currentStep(4)">
+                        <div class="step-circle">4</div>
+                        <span class="step-label"> Delivered</span>
+                    </div>
                 </div>
             </div>
 
