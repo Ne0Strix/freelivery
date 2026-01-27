@@ -59,19 +59,19 @@ export class MenuManagementComponent implements OnInit {
     // Computed: group dishes by category
     dishesByCategory = computed(() => {
         const allDishes = this.dishes();
-        const grouped = new Map<number, Dish[]>();
+        const categoryMap = new Map<number, Dish[]>();
 
         for (const category of this.categories()) {
-            grouped.set(category.categoryId, []);
+            categoryMap.set(category.categoryId, []);
         }
 
         for (const dish of allDishes) {
-            const categoryDishes = grouped.get(dish.categoryId) || [];
+            const categoryDishes = categoryMap.get(dish.categoryId) || [];
             categoryDishes.push(dish);
-            grouped.set(dish.categoryId, categoryDishes);
+            categoryMap.set(dish.categoryId, categoryDishes);
         }
 
-        return grouped;
+        return categoryMap;
     });
 
     ngOnInit(): void {
@@ -81,11 +81,9 @@ export class MenuManagementComponent implements OnInit {
     private async loadData(): Promise<void> {
         this.loading.set(true);
         try {
-            // First get the owner's restaurant ID
             const myRestaurant = await this.ownerService.getMyRestaurant();
             this.restaurantId.set(myRestaurant.restaurantId);
 
-            // Then load menu data using the restaurant ID
             const [categories, dishes] = await Promise.all([
                 this.restaurantService.getCategories(myRestaurant.restaurantId),
                 this.restaurantService.getDishes(myRestaurant.restaurantId),

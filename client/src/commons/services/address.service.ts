@@ -3,7 +3,6 @@ import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ApiResponse } from '../model/api.model';
 
-/** Grid coordinate bounds (-10 to +10) */
 export const GRID_MIN = -10;
 export const GRID_MAX = 10;
 
@@ -21,7 +20,6 @@ export interface Address {
     gridY: number;
 }
 
-/** DTO for creating a new address */
 export interface CreateAddress {
     label?: string;
     streetName: string;
@@ -34,7 +32,6 @@ export interface CreateAddress {
     gridY: number;
 }
 
-/** DTO for updating an existing address */
 export interface UpdateAddress {
     label?: string;
     streetName?: string;
@@ -52,7 +49,6 @@ export class AddressService {
     private http = inject(HttpClient);
     private baseUrl = 'http://localhost:3000/api/addresses';
 
-    /** Get all addresses for a specific user */
     async getUserAddresses(userId: number): Promise<Address[]> {
         const response = await firstValueFrom(
             this.http.get<ApiResponse<Address[]>>(
@@ -73,7 +69,6 @@ export class AddressService {
         return response.data;
     }
 
-    /** Update an existing address */
     async updateAddress(addressId: number, data: UpdateAddress): Promise<void> {
         await firstValueFrom(
             this.http.put<ApiResponse<{ message: string }>>(
@@ -83,7 +78,6 @@ export class AddressService {
         );
     }
 
-    /** Delete an address */
     async deleteAddress(addressId: number): Promise<void> {
         await firstValueFrom(
             this.http.delete<ApiResponse<{ message: string }>>(

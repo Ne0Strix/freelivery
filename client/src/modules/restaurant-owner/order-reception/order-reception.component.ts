@@ -1,4 +1,4 @@
-import { LowerCasePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, LowerCasePipe } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -35,6 +35,8 @@ const REFRESH_INTERVAL = 30;
     selector: 'app-order-reception',
     imports: [
         LowerCasePipe,
+        DatePipe,
+        CurrencyPipe,
         MatExpansionModule,
         MatButtonModule,
         MatSnackBarModule,
@@ -195,13 +197,5 @@ export class OrderReceptionComponent implements OnInit, OnDestroy {
 
     private resetCountdown(): void {
         this.countdown.set(REFRESH_INTERVAL);
-    }
-
-    formatDate(date: Date): string {
-        return new Date(date).toLocaleString();
-    }
-
-    formatCurrency(amount: number): string {
-        return `€${amount.toFixed(2)}`;
     }
 }
