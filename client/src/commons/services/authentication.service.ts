@@ -37,7 +37,6 @@ export class AuthenticationService {
     // Token key used in localStorage
     // ideally we would use HttpOnly cookies, but for simplicity we use localStorage here
     private readonly tokenKey = 'jwt_token';
-    // Use direct backend URL in dev; proxy is optional
     private readonly apiBase = 'http://localhost:3000/api';
 
     private _isLoggedIn = signal(false);

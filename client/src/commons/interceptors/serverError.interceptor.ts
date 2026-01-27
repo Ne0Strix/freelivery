@@ -7,7 +7,9 @@ import {
 } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
+import { AuthenticationService } from '../services/authentication.service';
 // source: https://dev.to/cezar-plescan/error-handling-with-angular-interceptors-2548
 
 class HttpResponseFormatError extends Error {
@@ -18,6 +20,8 @@ class HttpResponseFormatError extends Error {
 
 export const serverErrorInterceptor: HttpInterceptorFn = (req, next) => {
     const snackbar = inject(MatSnackBar);
+    const authService = inject(AuthenticationService);
+    const router = inject(Router);
 
     return next(req).pipe(
         tap((httpEvent) => {
@@ -37,6 +41,20 @@ export const serverErrorInterceptor: HttpInterceptorFn = (req, next) => {
             }
 
             if (err instanceof HttpErrorResponse) {
+                // Session expired - logout and redirect
+                if (err.status === 401) {
+                    authService.logout();
+                    router.navigate(['/login']);
+                    snackbar.open(
+                        'Session expired. Please log in again.',
+                        'Close',
+                        {
+                            duration: 5000,
+                        }
+                    );
+                    return throwError(() => err);
+                }
+
                 console.error(err);
                 const message =
                     err?.error?.error?.message ?? 'An error occurred';
