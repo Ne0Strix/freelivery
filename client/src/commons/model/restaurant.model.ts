@@ -25,7 +25,6 @@ export interface ActiveRestaurant {
     minOrderAmount: number;
 }
 
-/** DTO for creating a new restaurant during signup */
 export interface CreateRestaurant {
     name: string;
     description?: string;
@@ -35,13 +34,11 @@ export interface CreateRestaurant {
     address: CreateAddress;
 }
 
-/** DTO for customer signup data */
 export interface CustomerSignup {
     phoneNumber: string;
     address: CreateAddress;
 }
 
-/** Owner's restaurant DTO */
 export interface OwnerRestaurant {
     restaurantId: number;
     name: string;
@@ -54,7 +51,6 @@ export interface OwnerRestaurant {
     minOrderAmount: number;
 }
 
-/** DTO for updating restaurant details */
 export interface UpdateRestaurant {
     name?: string;
     description?: string;
@@ -64,7 +60,6 @@ export interface UpdateRestaurant {
     minOrderAmount?: number;
 }
 
-/** DTO for restaurant owner signup data */
 export interface RestaurantOwnerSignup {
     restaurant: CreateRestaurant;
 }
