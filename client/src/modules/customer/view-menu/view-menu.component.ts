@@ -60,20 +60,30 @@ export class ViewMenuComponent {
                 await this.RestaurantService.getRestaurantWithMenu(
                     this.restaurantId()
                 );
+
+            console.log(' Menu Data Loaded;', {
+                restaurant,
+                menuItemsCount: menu?.length || 0,
+                menuItems: menu,
+                categoriesCount: categories?.length || 0,
+                categories,
+            });
+
             this.restaurant.set(restaurant || null);
             this.menuItems.set(menu || []);
-            const categoriesId =
+
+            const categoriesList =
                 categories && categories.length > 0
-                    ? [
-                          ...new Set(
-                              categories.filter(
-                                  (cat) => cat && cat.trim() !== ''
-                              )
-                          ),
-                      ]
+                    ? categories.filter((cat) => cat && cat.trim() !== '')
                     : [];
 
-            this.categories.set(['All', ...categoriesId]);
+            this.categories.set(['All', ...categoriesList]);
+
+            console.log(' Final State:', {
+                menuItems: this.menuItems().length,
+                categories: this.categories(),
+                selectedCategory: this.selectedCategory(),
+            });
         } catch (error) {
             console.error('Error loading menu data:', error);
             this.snackBar.open('Failed to load menu', 'Close', {
@@ -90,17 +100,34 @@ export class ViewMenuComponent {
         const items = this.menuItems();
         const selectedCategory = this.selectedCategory();
 
+        console.log(' Filtering: ', {
+            totalItems: items.length,
+            selectedCategory,
+            allItems: items,
+        });
+
         if (!items || items.length === 0) return [];
 
         if (selectedCategory == 'All') {
-            return items.filter((item) => item?.isAvailable !== false);
+            const filtered = items.filter(
+                (item) => item?.isAvailable !== false
+            );
+            console.log('Filtered (All):', filtered.length, 'items');
+            return filtered;
         }
 
-        return items.filter(
+        const filtered = items.filter(
             (item) =>
                 item?.category === selectedCategory &&
                 item?.isAvailable !== false
         );
+
+        console.log(
+            'Filtered (' + selectedCategory + '):',
+            filtered.length,
+            'items'
+        );
+        return filtered;
     }
 
     async addToCart(item: MenuItem) {
@@ -184,6 +211,7 @@ export class ViewMenuComponent {
     }
 
     updateSelectedCategory(category: string) {
+        console.log('Category changed to:', category);
         this.selectedCategory.set(category);
     }
 

@@ -21,7 +21,7 @@
 
         <div class="filter-chips">
             <button
-                *ngFOr="let cuisine of ['All', ...availableCuisines()]"
+                *ngFor="let cuisine of ['All', ...availableCuisines()]"
                 class="chip-button"
                 [class.active]="selectedCuisine() === cuisine"
                 (click)="updateSelectedCuisine(cuisine)"
@@ -42,7 +42,7 @@
         </div>
     </div>
 
-    <div class="results-info" *nfIf="filteredRestaurants().length > 0">
+    <div class="results-info" *ngIf="filteredRestaurants().length > 0">
         Showing {{ filteredRestaurants().length }} of {{ restaurants().length }}
         restaurants
     </div>
@@ -71,7 +71,7 @@
 
                 <div class="rating-badge">
                     <i class="fa-solid fa-star"></i>
-                    {{ restaurant.rating?.toFixed(1) || '4.0' }}
+                    {{ restaurant.rating.toFixed(1) || '4.0' }}
                 </div>
             </div>
 
