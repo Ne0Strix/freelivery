@@ -6,19 +6,6 @@
 
 The repository-root contains three folders containing the Angular frontend (`client`), the database migrations (`db`) and the backend (`server`). The Customer uses the frontend to communicate with the server. Data on the database is exclusively accessed via the server.
 
-```mermaid
-architecture-beta
-
-group proj[freelivery]
-
-service db(mdi:storage)[Database] in proj
-service client(mdi:accounts)[Frontend] in proj
-service server(mdi:server)[Server] in proj
-
-client:T -- B:server
-server:R -- L:db
-```
-
 ### Frontend
 
 ```
@@ -105,6 +92,48 @@ Restaurant-owner:
 │   └── routes
 └── uploads
 ```
+
+#### Domains
+
+- `commons` contains general-purpose classes and services shared across different modules
+    - `abstract-repository` defines an abstract singleton class which manages the database connection
+    - `errors`
+        - provides the `expressErrorHandler` which converts any generic errors into `AppError`s
+        - generate HTTP error responses from `AppError`
+        - provides pre-defined errors which can be thrown in the code together with a error-message for the client
+    - `repository-registry` provides methods to get the corresponding repositories
+    - `statistics-repository` + `stastics-service` for shared statistics
+- `location`, `order`, `restaurant`, `user` group shared and domain-specific models and functionalities like repositories and services
+
+#### Middleware
+
+- `middleware` defines all middleware for …
+    - authentication
+    - logging
+    - file-upload
+    - not-found handling
+
+#### Routing
+
+Routing is split into multiple parts:
+
+- some generally available entities provide routes for authenticated users
+    - `restaurant` domain exposes all categories and dishes for a restaurant and all active restaurants
+    - authentication is verified via a `requireAuth` middleware
+- anything requiring a specific `role` is only available to users with that given role
+    - this is realised using a `requireRole` middleware
+    - routes are defined in that modules's folder
+
+#### Site Manager
+
+The site manager backend module provides only basic functionality like …
+
+- suspending users and
+- approving and rejecting restaurants.
+
+#### Restaurant Owner
+
+#### Customer
 
 ### Database
 
