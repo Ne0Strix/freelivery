@@ -1,0 +1,355 @@
+.restaurant-browsing-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.page-header {
+    margin-bottom: 32px;
+}
+
+.page-header button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #4f46e5;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.page-header h1 {
+    margin: 0 0 8px 0;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.page-header p {
+    margin: 0;
+    color: #666;
+}
+
+.filter-section {
+    margin-bottom: 2rem;
+    background: white;
+    border: var(--border-c) 2px solid;
+    border-radius: 16px;
+    padding: 1.5rem;
+}
+
+.search-bar {
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 12px 45px 12px 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.sort-bar input:focus {
+    border-color: var(--border-c);
+}
+
+.search-bar i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    color: #6b7280;
+    transform: translateY(-50%);
+}
+
+.filter-chips {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.chip-button {
+    padding: 0.5rem 1rem;
+    border: 2px solid #e5e7eb;
+    background: white;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.chip-button:hover {
+    border-color: var(--border-c);
+    background: #f3f4f6;
+}
+
+.chip-button.active {
+    background: var(--border-c);
+    border-color: var(--border-c);
+}
+
+.sort-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.sort-bar label {
+    font-weight: 600;
+    color: #374151;
+}
+.sort-bar select {
+    padding: 0.5rem 2rem 0.5rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    cursor: pointer;
+}
+
+.sort-bar select:focus {
+    border-color: var(--border-c);
+}
+
+.results-info {
+    margin-bottom: 1rem;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.restaurant-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.restaurant-card {
+    border-color: var(--border-c);
+    background: white;
+    border-radius: 16px;
+    cursor: pointer;
+}
+
+.restaurant-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-c, #4f46e5);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.restaurant-image {
+    height: 180px;
+    position: relative;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    color: white;
+    font-size: 2.5rem;
+}
+
+.closed-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.delivery-badge {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 12px;
+    gap: 0.25rem;
+}
+
+.rating-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #f59e0b;
+    display: flex;
+    align-items: center;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    gap: 0.25rem;
+    padding: 0.35rem 0.75rem;
+}
+
+.restaurant-info h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.restaurant-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+}
+
+.cuisine-badge {
+    background: var(--border-c);
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.min-order {
+    color: #6b7280;
+    font-size: 0.8rem;
+}
+
+.description {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.restaurant-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.location {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #6b7280;
+    flex: 1;
+}
+
+.loaction span {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.view-menu-button {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: var(--border-c) 2px solid;
+    border-radius: 50%;
+}
+
+.view-menu-button:hover {
+    background: var(--border-c);
+    color: white;
+}
+
+.empty-state {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-color: var(--border-c) 2px solid;
+    border-radius: 16px;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #9ca3af;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.empty-state p {
+    margin: 0 0 1.5rem 0;
+    color: #6b7280;
+}
+
+.loading-state {
+    text-align: center;
+    padding: 3rem;
+    color: #6b7280;
+}
+
+.loading-state p {
+    margin-top: 1rem;
+    color: #6b7280;
+}
+
+.loading-state i {
+    font-size: 3rem;
+    color: var(--border-c);
+    margin-bottom: 1rem;
+}
+
+.clear-filters-button {
+    border-color: var(--border-c) 2px solid;
+    background: white;
+    color: black;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.clear-filters-button:hover {
+    background: color-mix(in srgb, var(--border-c) 40%, white);
+}
+@media (max-width: 768px) {
+    .restaurant-browsing-container {
+        padding: 1rem;
+    }
+
+    .restaurant-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-chips {
+        justify-content: center;
+    }
+
+    .sort-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .sort-bar select {
+        width: 100%;
+    }
+}
