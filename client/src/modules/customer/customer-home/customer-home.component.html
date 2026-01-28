@@ -1,68 +1,99 @@
-<div class="customer-home">
-    <h1 class="page-title">Browse Restaurants</h1>
+<div class="customer-dashboard">
+    <header class="dashboard-header">
+        <h1>Customer Dashboard</h1>
+        <p>Place an order by freelivery and start your journey with us!</p>
+    </header>
 
-    @if (loading()) {
-        <p class="loading-text">Loading restaurants...</p>
-    } @else {
-        <div class="filter-section">
-            <div class="search-box">
-                <input
-                    type="text"
-                    placeholder="Search restaurants..."
-                    (input)="onSearchChange($event)"
-                    class="search-input"
-                />
-            </div>
-
-            <div class="filter-box">
-                <label for="cuisine-filter" class="filter-label"
-                    >Cuisine:</label
-                >
-                <select
-                    id="cuisine-filter"
-                    (change)="onCuisineChange($event)"
-                    class="filter-select"
-                >
-                    <option value="all">All cuisines</option>
-                    @for (cuisine of getCuisineTypes(); track cuisine) {
-                        <option [value]="cuisine">{{ cuisine }}</option>
-                    }
-                </select>
-            </div>
-        </div>
-
-        <div class="restaurant-grid">
-            @for (
-                restaurant of filteredRestaurants();
-                track restaurant.restaurantId
-            ) {
-                <div class="restaurant-card">
-                    <div class="restaurant-header">
-                        <h3 class="restaurant-name">{{ restaurant.name }}</h3>
-                        @if (!restaurant.isOpen) {
-                            <span class="status-closed">Closed</span>
-                        } @else {
-                            <span class="status-open">Open</span>
-                        }
-                    </div>
-
-                    <div class="restaurant-info">
-                        <p class="cuisine-type">{{ restaurant.cuisineType }}</p>
-                        <p class="address">{{ restaurant.address }}</p>
-                    </div>
-
-                    <div class="restaurant-stats">
-                        <span class="stat">⭐ {{ restaurant.rating }}/5 </span>
-                        <span class="stat"
-                            >🕒 {{ restaurant.deliveryTime }}
-                        </span>
-                    </div>
-
-                    <button class="view-menu">View Menu</button>
+    <div class="dashboard-cards">
+        <mat-card>
+            <mat-card-header>
+                <div class="card-icon">
+                    <i class="fa-solid fa-store"></i>
                 </div>
-            } @empty {
-                <p class="empty-message">No such restaurant found</p>
-            }
-        </div>
-    }
+                <mat-card-title> Browse Restaurants </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p>Browse restaurants and explore delicious dishes</p>
+            </mat-card-content>
+            <mat-card-actions>
+                <a
+                    mat-flat-button
+                    class="navigate-button"
+                    routerLink="/customer/menu"
+                >
+                    <i class="fa-solid fa-arrow-right"></i>
+                    View All Menus
+                </a>
+            </mat-card-actions>
+        </mat-card>
+
+        <mat-card>
+            <mat-card-header>
+                <div class="card-icon">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+                <mat-card-title> Your Cart</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p>Checkout items, modify your order, and procees to payment</p>
+            </mat-card-content>
+            <mat-card-actions>
+                <a
+                    mat-flat-button
+                    class="navigate-button"
+                    routerLink="/customer/cart"
+                >
+                    <i class="fa-solid fa-arrow-right"></i>
+                    View cart items
+                </a>
+            </mat-card-actions>
+        </mat-card>
+
+        <mat-card>
+            <mat-card-header>
+                <div class="card-icon">
+                    <i class="fa-solid fa-truck-fast"></i>
+                </div>
+                <mat-card-title> Track Orders</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p>Track your order in real time!</p>
+            </mat-card-content>
+            <mat-card-actions>
+                <a
+                    mat-flat-button
+                    class="navigate-button"
+                    routerLink="/customer/order-tracking"
+                >
+                    <i class="fa-solid fa-arrow-right"></i>
+                    Track My Orders
+                </a>
+            </mat-card-actions>
+        </mat-card>
+
+        <mat-card>
+            <mat-card-header>
+                <div class="card-icon">
+                    <i class="fa-solid fa-comment"></i>
+                </div>
+                <mat-card-title> Feedback</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p>
+                    Tell us more about your experience and help us improve our
+                    service
+                </p>
+            </mat-card-content>
+            <mat-card-actions>
+                <a
+                    mat-flat-button
+                    class="navigate-button"
+                    routerLink="/customer/feedback"
+                >
+                    <i class="fa-solid fa-arrow-right"></i>
+                    Send us your feedback
+                </a>
+            </mat-card-actions>
+        </mat-card>
+    </div>
 </div>

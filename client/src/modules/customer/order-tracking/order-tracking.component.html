@@ -1,0 +1,95 @@
+<div class="order-tracking-container">
+    <header class="tracking-header">
+        <button mat-button type="button" routerLink="/customer/home">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Dashboard
+        </button>
+        <h1>Order #{{ orderId }}</h1>
+        <p>Status: {{ currentStatus }}</p>
+    </header>
+
+    <mat-card class="tracking-card">
+        <mat-card-content>
+            <div class="delivery-info">
+                <i class="fa-solid fa-clock"></i>
+                <div>
+                    <h3>Estimated Delivery</h3>
+                    <p>{{ deliveryTime }} minutes</p>
+                </div>
+            </div>
+
+            <div class="progress-wrapper">
+                <div class="progress-tracker">
+                    <div class="progress-line"></div>
+
+                    <div class="progress-step" [class.active]="currentStep(1)">
+                        <div class="step-circle">1</div>
+                        <span class="step-label">Ordered</span>
+                    </div>
+
+                    <div class="progress-step" [class.active]="currentStep(2)">
+                        <div class="step-circle">2</div>
+                        <span class="step-label">Preparing</span>
+                    </div>
+
+                    <div class="progress-step" [class.active]="currentStep(3)">
+                        <div class="step-circle">3</div>
+                        <span class="step-label">Ready</span>
+                    </div>
+
+                    <div class="progress-step" [class.active]="currentStep(4)">
+                        <div class="step-circle">4</div>
+                        <span class="step-label"> Delivered</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-items">
+                <h3>Order Details</h3>
+                <div class="items-list">
+                    <div *ngFor="let item of sampleItems" class="item-row">
+                        <div class="item-info">
+                            <span class="item-name">{{ item.name }}</span>
+                            <span class="item-quantity"
+                                >x{{ item.quantity }}</span
+                            >
+                        </div>
+                        <span class="item-price"
+                            >€{{
+                                (item.price * item.quantity).toFixed(2)
+                            }}</span
+                        >
+                    </div>
+                </div>
+
+                <div class="order-total">
+                    <span> Total: </span>
+                    <span class="total-amount"
+                        >€ {{ totalPrice.toFixed(2) }}</span
+                    >
+                </div>
+            </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+            <button
+                *ngIf="currentStatus !== 'delivered'"
+                mat-button
+                class="refresh-button"
+                (click)="refreshStatus()"
+            >
+                <i class="fa-solid fa-rotate"></i>
+                Update order status
+            </button>
+            <button
+                *ngIf="currentStatus === 'delivered'"
+                mat-button
+                class="feedback-button"
+                routerLink="/customer/feedback"
+            >
+                <i class="fa solid fa-comment"></i>
+                Rate our service by leaving a feedback
+            </button>
+        </mat-card-actions>
+    </mat-card>
+</div>

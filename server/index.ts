@@ -1,4 +1,5 @@
 import cors from 'cors';
+import 'dotenv/config';
 import express, { Request, Response } from 'express';
 import path from 'path';
 import { expressErrorHandler } from './src/domains/commons/errors.js';

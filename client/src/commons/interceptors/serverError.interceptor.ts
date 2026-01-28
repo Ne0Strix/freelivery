@@ -32,6 +32,7 @@ export const serverErrorInterceptor: HttpInterceptorFn = (req, next) => {
             }
         }),
         catchError((err) => {
+            // If we've already surfaced a format error above, just rethrow.
             if (err instanceof HttpResponseFormatError) {
                 return throwError(() => err);
             }

@@ -8,10 +8,8 @@ import {
     PendingRestaurant,
     RestaurantService,
 } from '../../domains/restaurant/restaurant.service.js';
-import {
-    UserService,
-    type UserWithRoles,
-} from '../../domains/user/user.service.js';
+import type { UserWithRoles } from '../../domains/user/user.repository.js';
+import { UserService } from '../../domains/user/user.service.js';
 
 export class SiteManagerService {
     private statisticsService: StatisticsService;

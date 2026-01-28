@@ -18,7 +18,7 @@ export const routes: Routes = [
     {
         path: 'customer',
         loadChildren: () => import('../modules/customer/customer.routes'),
-        canActivate: [authGuard],
+        //canActivate: [authGuard],
         data: { roles: [UserRole.CUSTOMER] },
         title: 'Customer Home',
     },
