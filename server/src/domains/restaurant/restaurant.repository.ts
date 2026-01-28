@@ -139,6 +139,121 @@ export class RestaurantRepository extends Repository<RestaurantRow> {
         return result.rows[0] ?? null;
     }
 
+    async findById(restaurantId: number): Promise<any | null> {
+        const query = `
+            SELECT
+            r.restaurant_id as "restaurantId",
+            r.name,
+            r.status,
+            r.description,
+            r.cuisine_type as "cuisineType",
+            r.contact_email as "contactEmail",
+            r.contact_phone as "contactPhone",
+            r.service_fee_percent as "serviceFeePercent",
+            r.min_order_amount as "minOrderAmount",
+            r.max_delivery_distance as "maxDeliveryDistance",
+            r.created_at as "createdAt",
+            r.updated_at as "updatedAt",
+            r.address_id as "addressId",
+            a.street_name as "streetName",
+            a.house_number as "houseNumber",
+            a.city_name as "cityName",
+            a.zip_code as "zipCode",
+            a.country
+
+            FROM restaurant r
+            LEFT JOIN address a ON r.address_id = a.address_id
+            WHERE r.restaurant_id =$1
+            `;
+
+        const result = await this.query(query, [restaurantId]);
+
+        if (result.rows.length === 0) {
+            return null;
+        }
+
+        const row = result.rows[0];
+
+        const address = row.streetName
+            ? `${row.streetName} ${row.houseNumber}, ${row.zipCode} ${row.cityName}, ${row.country}`
+            : 'Address not available';
+
+        return {
+            restaurantId: row.restaurantId,
+            name: row.name,
+            status: row.status,
+            description: row.description,
+            cuisineType: row.cuisineType,
+            contactEmail: row.contactEmail,
+            contactPhone: row.contactPhone,
+            serviceFeePercent: parseFloat(row.serviceFeePercent || '0'),
+            minOrderAmount: parseFloat(row.minOrderAmount || '0'),
+            maxDeliveryDistance: row.maxDeliveryDistance,
+            address: address,
+            addressId: row.addressId,
+            rating: 4.5,
+            deliveryTime: '30-45 min',
+            isOpen: row.status === 'ACTIVE',
+            createdAt: row.createdAt,
+            updatedAt: row.updatedAt,
+        };
+    }
+
+    async findAllActive(): Promise<any[]> {
+        const query = `
+            SELECT
+            r.restaurant_id as "restaurantId",
+            r.name,
+            r.status,
+            r.description,
+            r.cuisine_type as "cuisineType",
+            r.contact_email as "contactEmail",
+            r.contact_phone as "contactPhone",
+            r.service_fee_percent as "serviceFeePercent",
+            r.min_order_amount as "minOrderAmount",
+            r.max_delivery_distance as "maxDeliveryDistance",
+            r.created_at as "createdAt",
+            r.updated_at as "updatedAt",
+            r.address_id as "addressId",
+            a.street_name as "streetName",
+            a.house_number as "houseNumber",
+            a.city_name as "cityName",
+            a.zip_code as "zipCode",
+            a.country
+
+            FROM restaurant r
+            LEFT JOIN address a ON r.address_id = a.address_id
+            WHERE r.status='ACTIVE'
+            ORDER BY r.name
+            `;
+
+        const result = await this.query(query);
+
+        return result.rows.map((row) => {
+            const address = row.streetName
+                ? `${row.streetName} ${row.houseNumber}, ${row.zipCode} ${row.cityName}, ${row.country}`
+                : 'Address not available';
+
+            return {
+                restaurantId: row.restaurantId,
+                name: row.name,
+                status: row.status,
+                description: row.description,
+                cuisineType: row.cuisineType,
+                contactEmail: row.contactEmail,
+                contactPhone: row.contactPhone,
+                serviceFeePercent: parseFloat(row.serviceFeePercent || '0'),
+                minOrderAmount: parseFloat(row.minOrderAmount || '0'),
+                maxDeliveryDistance: row.maxDeliveryDistance,
+                address: address,
+                addressId: row.addressId,
+                rating: 4.5,
+                deliveryTime: '30-45 min',
+                isOpen: true,
+            };
+        });
+    }
+
     /** Update restaurant contact details */
     async updateDetails(
         restaurantId: number,
