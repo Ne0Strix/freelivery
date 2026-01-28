@@ -1,27 +1,25 @@
-<div class="order-tracking">
-    <mat-card>
-        <mat-card-header>
-            <mat-card-title> Order #{{ orderId }} </mat-card-title>
-            <mat-card-subtitle>
-                <mat-chip color="primary">
-                    Status: {{ currentStatus }}
-                </mat-chip>
-            </mat-card-subtitle>
-        </mat-card-header>
+<div class="order-tracking-container">
+    <header class="tracking-header">
+        <button mat-button type="button" routerLink="/customer/home">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Dashboard
+        </button>
+        <h1>Order #{{ orderId }}</h1>
+        <p>Status: {{ currentStatus }}</p>
+    </header>
 
+    <mat-card class="tracking-card">
         <mat-card-content>
             <div class="delivery-info">
-                <div class="info-row">
-                    <mat-icon>schedule</mat-icon>
-                    <div>
-                        <h3>Estimated Delivery</h3>
-                        <p>{{ deliveryTime }} minutes</p>
-                    </div>
+                <i class="fa-solid fa-clock"></i>
+                <div>
+                    <h3>Estimated Delivery</h3>
+                    <p>{{ deliveryTime }} minutes</p>
                 </div>
             </div>
 
-            <div class="progress-tracker">
-                <div class="progress">
+            <div class="progress-wrapper">
+                <div class="progress-tracker">
                     <div class="progress-line"></div>
 
                     <div class="progress-step" [class.active]="currentStep(1)">
@@ -31,12 +29,12 @@
 
                     <div class="progress-step" [class.active]="currentStep(2)">
                         <div class="step-circle">2</div>
-                        <span class="step-label"> Preparing</span>
+                        <span class="step-label">Preparing</span>
                     </div>
 
                     <div class="progress-step" [class.active]="currentStep(3)">
                         <div class="step-circle">3</div>
-                        <span class="step-label"> Ready</span>
+                        <span class="step-label">Ready</span>
                     </div>
 
                     <div class="progress-step" [class.active]="currentStep(4)">
@@ -52,13 +50,14 @@
                     <div *ngFor="let item of sampleItems" class="item-row">
                         <div class="item-info">
                             <span class="item-name">{{ item.name }}</span>
-                            <span class="item-quantity">
-                                x {{ item.quantity }}</span
+                            <span class="item-quantity"
+                                >x{{ item.quantity }}</span
                             >
                         </div>
                         <span class="item-price"
-                            >€
-                            {{ (item.price * item.quantity).toFixed(2) }}</span
+                            >€{{
+                                (item.price * item.quantity).toFixed(2)
+                            }}</span
                         >
                     </div>
                 </div>
@@ -72,29 +71,24 @@
             </div>
         </mat-card-content>
 
-        <mat-card-actions align="end">
+        <mat-card-actions>
             <button
                 *ngIf="currentStatus !== 'delivered'"
-                mat-flat-button
-                color="primary"
+                mat-button
+                class="refresh-button"
                 (click)="refreshStatus()"
-                class="refresh"
             >
-                <mat-icon> refresh </mat-icon> Update order status
+                <i class="fa-solid fa-rotate"></i>
+                Update order status
             </button>
             <button
                 *ngIf="currentStatus === 'delivered'"
-                mat-flat-button
-                color="accent"
-                (click)="goToFeedback()"
-                class="feedback"
+                mat-button
+                class="feedback-button"
+                routerLink="/customer/feedback"
             >
-                <mat-icon> feedback </mat-icon> Rate our service by leaving a
-                feedback
-            </button>
-
-            <button mat-stroked-button routerLink="/customer/home">
-                Back to home page
+                <i class="fa solid fa-comment"></i>
+                Rate our service by leaving a feedback
             </button>
         </mat-card-actions>
     </mat-card>
