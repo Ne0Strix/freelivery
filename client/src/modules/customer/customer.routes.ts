@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { ProfileComponent } from '../profile/profile.component';
 import { CartPageComponent } from './cart-page/cart-page.component';
 import { CustomerHomeComponent } from './customer-home/customer-home.component';
 import { FeedbackComponent } from './feedback/feedback.component';
 import { OrderTrackingComponent } from './order-tracking/order-tracking.component';
+import { RestaurantBrowsingComponent } from './restaurant-browsing/restaurant-browsing.component';
 import { ViewMenuComponent } from './view-menu/view-menu.component';
 
 export default [
@@ -16,7 +16,7 @@ export default [
         component: CustomerHomeComponent,
     },
     {
-        path: 'menu',
+        path: 'menu/:restaurantId',
         component: ViewMenuComponent,
     },
     {
@@ -32,7 +32,7 @@ export default [
         component: FeedbackComponent,
     },
     {
-        path: 'profile',
-        component: ProfileComponent,
+        path: 'restaurants',
+        component: RestaurantBrowsingComponent,
     },
 ] satisfies Routes;
