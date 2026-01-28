@@ -49,6 +49,8 @@ INSERT INTO user_role (user_id, role_id) VALUES
   (6, 2),
   (6, 3);
 
+
+
 -- Restaurant (owned by Bob, user_id=2) - Austrian cuisine, active
 INSERT INTO restaurant (
   restaurant_id, name, status, description, cuisine_type, contact_email, contact_phone,
@@ -538,6 +540,184 @@ INSERT INTO order_item (order_item_id, order_id, dish_id, dish_name_snapshot, un
   (75, 33, 34, 'Stelze', 16.90, 1),
   (76, 33, 40, 'Mohnnudeln', 9.90, 1),
   (77, 34, 34, 'Stelze', 16.90, 2);
+
+
+
+
+
+-- ===========================
+-- ADDITIONAL RESTAURANT DATA
+-- ===========================
+
+INSERT INTO address(address_id, label, street_name, house_number, additional_info, city_name, zip_code,country, grid_x, grid_y) VALUES
+(7, 'Pizzeria Piccola Napoli', 'Neutilusweg', '25', NULL, 'Klagenfurt', '9020', 'Austria', -1,3),
+(8, 'Chicago Burger Shop', 'Friedensgasse', '48', NULL, 'Klagenfurt', '9020', 'Austria', 3,-2),
+(9, 'Shangai Palace', 'Kramergasse', '2', NULL, 'Klagenfurt', '9020', 'Austria', 2,5);
+
+
+INSERT INTO user_address (user_id, address_id, is_default) VALUES
+(4,7, false),
+(4,8, false),
+(4,9,false);
+
+
+-- ==========================
+-- PIZZERIA PICCOLA NAPOLI
+-- ==========================
+
+INSERT INTO restaurant(
+  restaurant_id, name, status, description, cuisine_type, contact_email, contact_phone,
+  address_id, owner_user_id, service_fee_percent, min_order_amount, max_delivery_distance
+) VALUES 
+(5, 'Pizzeria Piccola Napoli', 'ACTIVE', 'Delicious and authentic italian cuisine',
+'ITALIAN', 'info@bella-italia.at', '+43 463 789456',
+7, 4, 2.00, 10.00, 25);
+
+-- ==========================
+-- CHICAGO BURGER SHOP
+-- ==========================
+
+INSERT INTO restaurant(
+  restaurant_id, name, status, description, cuisine_type, contact_email, contact_phone,
+  address_id, owner_user_id, service_fee_percent, min_order_amount, max_delivery_distance
+) VALUES 
+(6, 'Chicago Burger Shop', 'ACTIVE', 'Classic american burger shop',
+'AMERICAN', 'info@chicago-burger.at', '+43 463 667882',
+8, 4, 3.00, 10.00, 50);
+
+
+-- ==========================
+-- SHANGAI PALACE
+-- ==========================
+
+INSERT INTO restaurant(
+  restaurant_id, name, status, description, cuisine_type, contact_email, contact_phone,
+  address_id, owner_user_id, service_fee_percent, min_order_amount, max_delivery_distance
+) VALUES 
+(7, 'Shangai Palace', 'ACTIVE', 'Authentic Japanese dishes',
+'JAPANESE', 'info@shangai-palace.at', '+43 463 333672',
+9, 4, 3.00, 12.00, 40);
+
+-- ==================================
+-- CATEGORIES- Pizzeria Piccola Napoli
+-- ==================================
+
+INSERT INTO category (category_id, restaurant_id, name, description) VALUES
+(10, 5, 'Pizza', 'Delicious italian pizzas made in a wood oven'),
+(11, 5, 'Pasta', 'Typical italian pasta dishes'),
+(12, 5, 'Desserts', 'Delicious italian sweet treats'),
+(13, 5, 'Drinks', 'Fresh drinks and juices');
+
+
+-- ==================================
+-- DISHES- Pizzeria Piccola Napoli
+-- ==================================
+INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+(45, 5, 10, 'Pizza Margherita', 'Pizza with fresh tomato sauce, mozzarella and basil', 8.50, NULL, true),
+(46, 5, 10, 'Pizza Tonno e Cipolla', 'Pizza with fresh tomato sauce, mozzarella, tuna and onions', 9.50, NULL, true),
+(47, 5, 10, 'Pizza Salame', 'Pizza with fresh tomato sauce, mozzarella and salami', 10.50, NULL, true),
+(48, 5, 10, 'Pizza con Patatine Fritte', 'Pizza with fresh tomato sauce, mozzarella and fried potatoes', 10.50, NULL, true),
+(49, 5, 10, 'Pizza Buffala', 'Pizza with fresh tomato sauce, buffala mozzarella and basil', 10.50, NULL, true);
+
+INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+(50, 5, 11, 'Pasta al pomodoro', 'Homemade pasta with fresh tomato sauce and basil', 8.50, NULL, true),
+(51, 5, 11, 'Pasta al Ragu', 'Homemade pasta with ragu', 13.50, NULL, true),
+(52, 5, 11, 'Pasta in Forno', 'Homemade pasta cooked in the wood oven, with fresh tomato sauce, mozzarella and basil', 15.50, NULL, true),
+(53, 5, 11,'Pasta aglio olio e peperoncino', 'Homemade pasta with garlic,oil and chili peppers', 13.50, NULL, true),
+
+
+INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+(54, 5, 12, 'Tiramisu', 'Authentic italian tiramisu with mascarpone and coffee flavours savoiardi', 5.70, NULL, true),
+(55, 5, 12,'Cannoli siciliani', 'Homemade cannoli with creame cheese', 6.50, NULL, true),
+(56, 5, 12,'Piccola napoli special gelato ', 'Homemade mango flavoured gelato with peanuts and cashew on top', 4.00, NULL, true),
+
+INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+(57, 5, 13,'Acqua naturale', 'Natural water (0.5l)', 2.70, NULL, true),
+(58, 5, 13,'Acqua Frizzante', 'Sparkling water (0.5l)', 2.70, NULL, true),
+(59, 5, 13,'Orange juice ', 'Fresh orange juice', 3.00, NULL, true),
+(60, 5, 13,'Strawberry-mango juice ', 'Fresh strawberry-mango juice', 3.00, NULL, true),
+
+
+
+-- =======================================
+-- CATEGORIES- DISHES- CHICAGO BURGER SHOP
+-- =======================================
+
+INSERT INTO category (category_id, restaurant_id, name, description) VALUES
+(14, 6, 'Burgers', 'Fresh & Authentic American burgers'),
+(15, 6, 'Side dishes', 'Classic American side dishes'),
+(16, 6, 'Milkshakes and Drinks', 'Classic American milkshakes and drinks');
+
+
+-- ==================================
+-- DISHES- CHICAGO BURGER SHOP 
+-- ==================================
+INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+(61, 6, 14,'Classic Chicago Burger', 'Fresh beef patty, cheese, lettuce, tomato, pickles and chicago style sauce ', 11.50, NULL, true),
+(62, 6, 14,'Double Beef Burger', 'Two fresh beef patties, cheese, lettuce, tomato, pickles,egg and chicago style sauce ', 13.50, NULL, true),
+(63, 6, 14,'Chicken Burger', 'Fried chicken, tomatoes, pickles, lettuce, BBQ and mayo sauce', 10.50, NULL, true),
+(64, 6, 14,'Spicy Chicken Burger', 'Spicy flavoured fried chicken, tomatoes, pickles and spicy mayo sauce', 12.50, NULL, true),
+(65, 6, 14,'Veggie Burger', 'Potato based patty, tomato, pickles, lettuce, caramelized onions and mayo', 15.50, NULL, true);
+
+INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+(66, 6, 15,'Crispy french fries', 'Delicious french fries', 5.30, NULL, true),
+(67, 6, 15,'Mexican style potatoes', 'Potatoes with spicy chilly peppers', 7.50, NULL, true),
+(68, 6, 15,'Fried onion Rings', 'Fried onion rings', 5.30, NULL, true),
+(69, 6, 15,'Nachos & guacamole', 'Nachos with homemade guacamole sauce', 8.00, NULL, true);
+
+
+INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+(70, 6, 16, 'Classic oreo Milkshake', 'Classic oreo Milksahke with heavy cream on top', 5.70, NULL, true),
+(71, 6, 16, 'Mixed Berries Milkshake', 'Fresh mixed berries milkshake', 6.40, NULL, true),
+(72, 6, 16, 'Vanilla Milkshake', 'Classic Vanilla milkshake', 4.50, NULL, true),
+(73, 6, 16, 'Fanta (0.2l)', 'Classic Fanta', 2.50, NULL, true),
+(74, 6, 16, 'Sparkling Water (0.5l)', 'Sparkling Water', 3.50, NULL, true);
+
+
+
+
+-- =======================================
+-- CATEGORIES- SHANGAI PALACE
+-- =======================================
+
+INSERT INTO category (category_id, restaurant_id, name, description) VALUES
+(17, 7, 'Classic maki rolls', 'Fresh & maki rolls'),
+(18, 7, 'Udon noodles', 'Classic udon noodles'),
+(19, 7, 'Noodle Soups', 'Classic noodle soups'),
+(20, 7, 'Japanese Mochi', 'Classic japanese dessert');
+
+
+-- ==================================
+-- DISHES- SHANGAI PALACE
+-- ==================================
+INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+(75, 7, 17,'Crispy chicken Roll', 'Fried chicken, avocado, spicy mayo, sea weed (10 pieces)', 10.00, NULL, true),
+(76, 7, 17,'Salmon Roll', 'Fresh raw salmon, avocado, cucumber, teriyaki sauce(10 pieces)', 11.00, NULL, true),
+(77, 7, 17,'Crab Roll', 'Cooked crab, lettuce, cucumber, dark soya sauce (10 pieces)', 10.50, NULL, true),
+(78, 7, 17,'Veggie Roll', 'Avocado, cucumber, zucchini, carrots (10 pieces)', 10.50, NULL, true);
+
+
+INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+(79, 7, 18,'Classic udon noodles', 'Udon noodles with eggs, shrimps, zucchini, cabbage and carrots', 8.30, NULL, true),
+(80, 7, 18,'Spicy udon noodles', 'Udon noodles with sliced beef meat, egg, caramelized onions and dragon pepper', 9.50, NULL, true),
+(81, 7, 18,'Classic udon noodles without shrimps', 'Udon noodles with eggs, cabbage, zucchini and carrots', 7.80, NULL, true);
+
+
+
+INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url,is_Available) VALUES
+(82, 7, 19, 'Spicy udon noodles soup', 'Udon noodles soup with sliced beef meat, boiled egg, caramelized onions and dragon pepper', 9.70, NULL, true),
+(83, 7, 19, 'Classic udon noodles soup', 'Udon noodle soup with boiled egg, mushroom, cabbage, tofu', 9.40, NULL, true),
+(84, 7, 19, 'Chicken udon noodles soup', 'Udon noodle soup with chicken, tomato sauce, onions', 7.50, NULL, true),
+(85, 7, 19, 'Fanta (0.2l)', 'Classic Fanta', 2.50, NULL, true),
+(86, 7, 19, 'Sparkling Water (0.5l)', 'Sparkling Water', 3.50, NULL, true),
+
+
+INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url,is_Available) VALUES
+(87, 7, 20,'Chocholate mochi', 'Chocholate flavoured mochi with chocolate ice cream', 8.30, NULL, true),
+(88, 7, 20,'Pistachio mochi', 'Pistachio flavoured mochi with pistachio ice cream', 9.50, NULL, true),
+(89, 7, 20, 'Mango mochi', 'Mango flavoured mochi with Mango ice cream', 7.80, NULL, true);
+
+
 
 -- Reset sequences to continue after test data IDs
 SELECT setval('user_user_id_seq', (SELECT MAX(user_id) FROM "user"));
