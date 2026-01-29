@@ -6,36 +6,53 @@ import { NotFoundError, toAppError } from './errors.js';
 //
 
 export abstract class Repository<T> {
-    protected pool: Pool;
+    private static pool: Pool | null = null;
 
     constructor(
         protected tableName: string,
         protected primaryKey: string
-    ) {
-        this.pool = new Pool({
-            user:
-                process.env.POSTGRES_USER || process.env.DB_USER || 'postgres',
-            host:
-                process.env.POSTGRES_HOST || process.env.DB_HOST || 'localhost',
-            database:
-                process.env.POSTGRES_DB || process.env.DB_NAME || 'freelivery',
-            password:
-                process.env.POSTGRES_PASSWORD ||
-                process.env.DB_PASSWORD ||
-                'postgres',
-            port: Number(
-                process.env.POSTGRES_PORT || process.env.DB_PORT || 5432
-            ),
-        });
+    ) {}
 
-        this.pool
-            .connect()
-            .then(() => {
-                console.log('Connected to the database');
-            })
-            .catch((err) => {
-                console.error('Database connection error:', err);
+    /**
+     * Returns the singleton database connection pool.
+     * Lazily initializes the pool on first access.
+     */
+    protected static getPool(): Pool {
+        if (!Repository.pool) {
+            const requiredEnvVars = [
+                'POSTGRES_USER',
+                'POSTGRES_DB',
+                'POSTGRES_PASSWORD',
+            ];
+            const missing = requiredEnvVars.filter((v) => !process.env[v]);
+            if (missing.length > 0) {
+                throw new Error(
+                    `Missing required environment variables: ${missing.join(', ')}`
+                );
+            }
+
+            Repository.pool = new Pool({
+                user: process.env.POSTGRES_USER,
+                host: process.env.POSTGRES_HOST ?? 'db',
+                database: process.env.POSTGRES_DB,
+                password: process.env.POSTGRES_PASSWORD,
+                port: Number(
+                    process.env.POSTGRES_PORT ?? process.env.DB_PORT ?? 5432
+                ),
             });
+
+            Repository.pool
+                .connect()
+                .then((client) => {
+                    console.log('Connected to the database');
+                    client.release();
+                })
+                .catch((err) => {
+                    console.error('Database connection error:', err);
+                });
+        }
+
+        return Repository.pool;
     }
 
     getById(id: number): Promise<T> {
@@ -89,7 +106,7 @@ export abstract class Repository<T> {
         values?: unknown[]
     ): Promise<QueryResult<R>> {
         try {
-            return await this.pool.query<R>(text, values as any);
+            return await Repository.getPool().query<R>(text, values as any);
         } catch (err) {
             throw toAppError(err);
         }
