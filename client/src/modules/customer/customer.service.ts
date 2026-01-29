@@ -55,8 +55,8 @@ export class CustomerService {
                         ? item.price
                         : parseFloat(item.price || '0'),
                 category: item.categoryName || 'Uncategorized',
-                imageUrl: item.imageUrl || null,
-                photo: item.imageUrl || null,
+                imageUrl: item.imageUrl || item.image_url || null,
+                photo: item.imageUrl || item.image_url || null,
                 isAvailable: item.isAvailable !== false,
                 restaurantId: restaurantId,
             }));
