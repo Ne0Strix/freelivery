@@ -3,6 +3,7 @@ import { asyncHandler } from '../../middleware/async-handler.js';
 import { CustomerService } from '../../modules/customer/customer.service.js';
 import { ValidationError } from '../commons/errors.js';
 import { MenuService } from './menu/menu.service.js';
+import { RestaurantRepository } from './restaurant.repository.js';
 import { RestaurantService } from './restaurant.service.js';
 
 const router = express.Router();
