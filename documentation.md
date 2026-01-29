@@ -124,6 +124,20 @@ Routing is split into multiple parts:
     - this is realised using a `requireRole` middleware
     - routes are defined in that modules's folder
 
+#### Repositories
+
+All repositories extend `Repository<T>` from `abstract-repository.ts`:
+
+- manages a **static singleton** `Pool` for database connections (lazily initialized)
+- provides generic CRUD helpers: `findById`, `findAll`, `create`, `update`, `delete`
+- wraps errors into `AppError` via `toAppError()`
+
+`repository-registry.ts` provides getter functions for each repository:
+
+- `getUserRepository()`, `getAddressRepository()`, `getRestaurantRepository()`, etc.
+- lazily instantiates and caches singletons
+- ensures all services share the same repository instances
+
 #### Site Manager
 
 The site manager backend module provides only basic functionality like …
@@ -131,7 +145,63 @@ The site manager backend module provides only basic functionality like …
 - suspending users and
 - approving and rejecting restaurants.
 
+```mermaid
+flowchart TD
+    subgraph SiteManagerModule["Site Manager Module"]
+        SMS[SiteManagerService]
+    end
+
+    subgraph CommonsDomain["Commons Domain"]
+        SS[StatisticsService]
+        RR[repository-registry]
+    end
+
+    subgraph RestaurantDomain["Restaurant Domain"]
+        RS[RestaurantService]
+    end
+
+    subgraph UserDomain["User Domain"]
+        US[UserService]
+    end
+
+    SMS --> SS
+    SMS --> RS
+    SMS --> US
+    SMS --> RR
+```
+
 #### Restaurant Owner
+
+The restaurant owner provides feature-complete functionality for restaurant owners and provides the following endpoints through the `restaurant-owner.routes.ts`:
+
+- get the accounts owned restaurant
+- CRUD endpoints for
+    - dishes and categories
+    - opening hours
+- restaurant-owner specific order routes
+    - getting all orders
+    - updating the status
+- analytics for the resautarnt
+
+```mermaid
+flowchart TD
+    subgraph RestaurantOwnerModule["Restaurant Owner Module"]
+        ROR[restaurant-owner.routes.ts]
+    end
+
+    subgraph RestaurantDomain["Restaurant Domain"]
+        MS[MenuService]
+        OHS[OpeningHoursService]
+    end
+
+    subgraph OrderDomain["Order Domain"]
+        OS[OrderService]
+    end
+
+    ROR --> MS
+    ROR --> OHS
+    ROR --> OS
+```
 
 #### Customer
 
@@ -392,30 +462,149 @@ sequenceDiagram
     Frontend ->> Router: activates route
 ```
 
+#### Generic Request Flow
+
+_Note_: this is the idealised architecture we aimed for. However, not all parts of the example below are implemented in this exact manner.
+
+```mermaid
+sequenceDiagram
+
+    actor User
+    box Frontend
+    participant Component
+    participant ModuleService as <module>.service.ts
+    participant HttpClient
+    participant Interceptors
+    end
+    box Backend
+    participant Router as index.ts
+    participant Middleware as auth.ts
+    participant Routes as <module>.routes.ts
+    participant Service as <domain>.service.ts
+    participant Repository as <domain>.repository.ts
+    participant Database as PostgreSQL
+    end
+
+    User ->> Component: triggers action
+    activate Component
+    Component ->> ModuleService: calls service method
+    activate ModuleService
+    ModuleService ->> HttpClient: HTTP request
+    activate HttpClient
+    HttpClient ->> Interceptors: passes through interceptor chain
+    activate Interceptors
+    Note over Interceptors: authenticatorInterceptor<br/>sets Authorization header
+    Interceptors ->> Router: sends request to backend
+    deactivate Interceptors
+    activate Router
+
+    Router ->> Middleware: requireAuth / requireRole
+    activate Middleware
+    Note over Middleware: validates JWT token<br/>& checks user role
+    Middleware ->> Routes: forwards to route handler
+    deactivate Middleware
+    activate Routes
+
+    Routes ->> Service: calls domain service
+    activate Service
+    Service ->> Repository: database operation
+    activate Repository
+    Repository ->> Database: SQL query
+    activate Database
+    Database ->> Repository: query result
+    deactivate Database
+    Repository ->> Service: mapped entity
+    deactivate Repository
+    Service ->> Routes: processed data / DTO
+    deactivate Service
+    Routes ->> Router: JSON response
+    deactivate Routes
+    Router ->> Interceptors: HTTP response
+    deactivate Router
+    activate Interceptors
+    Note over Interceptors: serverErrorInterceptor<br/>validates & handles errors
+    Interceptors ->> HttpClient: forwards response
+    deactivate Interceptors
+    HttpClient ->> ModuleService: parsed response
+    deactivate HttpClient
+    ModuleService ->> Component: returns data
+    deactivate ModuleService
+    Component ->> User: updates view
+    deactivate Component
+```
+
 ### Profile Management
 
+Related code-parts:
+
+- `client/src/modules/profile/*`
+    - Angular components for viewing and editing user profile
+    - delegates address operations to `AddressService`
+- `server/src/routes/profile.routes.ts`
+    - GET/PUT `/api/profile` for user profile data
+    - PUT `/api/profile/password` for password changes
+    - GET/PUT `/api/profile/restaurant` for restaurant owners
+
 ### Responsive UI
+
+All components use CSS media queries with a 640px breakpoint:
+
+- `@media (max-width: 640px)` for mobile-specific styles
+- navbar collapses into a hamburger menu
+- form fields stack vertically on small screens
+- tables/lists adapt to narrower viewports
 
 ### Error Handling
 
 Related code-parts:
 
-- `server/src/middleware/not-found.ts`
 - `server/src/domains/commons/errors.ts`
+    - defines a central `AppError` which contains central information for the error handler
+        - the HTTP `statusCode`
+        - the unique `appErrorCode` identifier
+        - whether or not to `expose` the provided error message on the client
+        - the error-`message` to display on the client
+    - provides the middleware for express to map from the `AppError` to an HTTP-request and return it
 - `client/src/commons/interceptors/serverError.interceptor.ts`
+    - verifies the overall format of the response
+    - logs out when the token is expired (on error `401`)
+    - catches the error message and displays in in a snackbar
+- `server/src/middleware/not-found.ts`
+    - the last route to match before the error handler
+    - throws a `NotFoundError` handled by the error handler
 
 ### Async Handler
 
 Related code-parts:
 
 - `server/src/middleware/async-handler.ts`
+    - wraps async route handlers to automatically catch errors
+    - passes caught errors to the Express error middleware (see Error Handling)
+    - eliminates the need for try-catch blocks in every async route
 
 ### Navigation & Routing
 
+Related code-parts:
+
 - `client/src/layout/navbar/*`
+    - displays navigation links based on user roles
+    - uses Angular signals for reactive state management
+    - handles menu toggle and logout functionality
 - `server/index.ts`
+    - entrypoint for the Express application
+    - mounts all route handlers and middleware
 
 ### Distance Simulation
+
+Related code-parts:
+
+- `server/src/domains/location/address.service.ts`
+    - simulates delivery distance using a 21x21 grid (`grid_x`, `grid_y` from -10 to 10)
+    - calculates Manhattan distance: `|x1 - x2| + |y1 - y2|`
+    - estimates delivery time: 5 minutes per grid step
+- `db/init-scripts/01-tables.sql`
+    - stores `grid_x` and `grid_y` on addresses
+    - stores `max_delivery_distance` on restaurants
 
 # Extra Tasks
 
