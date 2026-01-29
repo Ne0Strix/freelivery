@@ -11,6 +11,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { CartService } from '../cart-page/cart.service';
 import { MenuItem, Restaurant } from '../customer.model';
 import { RestaurantService } from '../restaurant-browsing/restaurant-browsing.service';
 
@@ -36,6 +37,7 @@ export class ViewMenuComponent {
     private route = inject(ActivatedRoute);
     private RestaurantService = inject(RestaurantService);
     private CustomerService = inject(CustomerService);
+    private cartService = inject(CartService);
     private snackBar = inject(MatSnackBar);
 
     restaurantId = signal<number>(0);
@@ -138,47 +140,16 @@ export class ViewMenuComponent {
             quantity: 1,
             restaurantId: this.restaurantId(),
         };
+
         try {
-            await this.CustomerService.addToCart(cartItem);
+            this.cartService.addToCart(cartItem);
             this.snackBar.open(`Added ${item.name}`, 'Close', {
                 duration: 3000,
             });
             await this.loadCartCount();
         } catch (error) {
             console.error('Error adding item to cart:', error);
-
-            await this.addToCartLocalStorage(item);
-        }
-    }
-
-    private async addToCartLocalStorage(item: MenuItem) {
-        try {
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-            const itemEx = cart.find(
-                (cartItem: any) => cartItem.dishId === item.dishId
-            );
-
-            if (itemEx) {
-                itemEx.quantity += 1;
-            } else {
-                cart.push({
-                    dishId: item.dishId,
-                    name: item.name,
-                    price: item.price,
-                    quantity: 1,
-                    restaurantId: this.restaurantId(),
-                });
-            }
-
-            localStorage.setItem('cart', JSON.stringify(cart));
             this.snackBar.open(`Added ${item.name}`, 'Close', {
-                duration: 3000,
-            });
-            this.cartCount.update((count) => count + 1);
-        } catch (error) {
-            console.error('Error occured', error);
-            this.snackBar.open('Failed to add item to cart', 'Close', {
                 duration: 3000,
             });
         }
@@ -186,27 +157,12 @@ export class ViewMenuComponent {
 
     async loadCartCount() {
         try {
-            const cart = await this.CustomerService.getCart();
+            const cart = this.cartService.getCustomerCart();
             this.cartCount.set(
                 cart.reduce((sum: number, item: any) => sum + item.quantity, 0)
             );
         } catch (error) {
             console.error('Error loading cart:', error);
-
-            try {
-                const cartS = localStorage.getItem('cart');
-                if (cartS) {
-                    const cart = JSON.parse(cartS);
-                    this.cartCount.set(
-                        cart.reduce(
-                            (sum: number, item: any) => sum + item.quantity,
-                            0
-                        )
-                    );
-                }
-            } catch (error) {
-                console.error(' Error occured:', error);
-            }
         }
     }
 
