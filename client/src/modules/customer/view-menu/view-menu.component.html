@@ -36,7 +36,13 @@
             class="menu-card"
         >
             <div class="dish-image">
-                <div class="image-icon">
+                <img
+                    *ngIf="item.imageUrl"
+                    [src]="itme.imageUrl"
+                    [alt]="item.name"
+                    class="dish-photo"
+                />
+                <div *ngIf="!item.imageUrl" class="image-icon">
                     {{ item.photo || '🍽️' }}
                 </div>
             </div>
