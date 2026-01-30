@@ -1,0 +1,60 @@
+<div class="feedback-container">
+    <header class="feedback-header">
+        <button mat-button type="button" (click)="goBack()">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Dashboard
+        </button>
+        <h1>Feedback</h1>
+        <p>Your feedback helps us improve our service</p>
+    </header>
+
+    <mat-card class="feedback-card">
+        <mat-card-content>
+            <div class="rating-section">
+                <p class="rating-label">How would you rate your experience?</p>
+                <div class="emoji-container">
+                    <button
+                        *ngFor="let emoji of ratingEmojis; let i = index"
+                        type="button"
+                        (click)="setRating(i + 1)"
+                        class="emoji-button"
+                        [class.active]="ratingSelected === i + 1"
+                    >
+                        {{ emoji }}
+                    </button>
+                </div>
+                <p class="rating-text">{{ getRatingText() }}</p>
+            </div>
+
+            <div class="comment-section">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label> Add a comment </mat-label>
+                    <textarea
+                        matInput
+                        [(ngModel)]="comment"
+                        placeholder="Tell us more about your experience.."
+                        rows="4"
+                    ></textarea>
+                </mat-form-field>
+            </div>
+
+            <div *ngIf="showSuccessMessage" class="success-message">
+                Thank you for your feedback!
+            </div>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+            <button mat-stroked-button class="cancel-button" (click)="goBack()">
+                Cancel
+            </button>
+            <button
+                mat-stroked-button
+                class="submit-button"
+                (click)="submitFeedback()"
+                [disabled]="ratingSelected === 0"
+            >
+                Submit Feedback
+            </button>
+        </mat-card-actions>
+    </mat-card>
+</div>

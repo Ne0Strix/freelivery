@@ -1,0 +1,119 @@
+<div class="restaurant-browsing-container">
+    <header class="page-header">
+        <button mat-button type="button" routerLink="/customer/home">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Dashboard
+        </button>
+        <h1>Browse our Restaurants List</h1>
+        <p>Discover delicious dishes</p>
+    </header>
+
+    <div class="filter-section">
+        <div class="search-bar">
+            <input
+                type="text"
+                placeholder="Search restaurants..."
+                [value]="searchTerm()"
+                (input)="updateSearchTerm($any($event.target).value)"
+            />
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+
+        <div class="filter-chips">
+            <button
+                *ngFor="let cuisine of ['All', ...availableCuisines()]"
+                class="chip-button"
+                [class.active]="selectedCuisine() === cuisine"
+                (click)="updateSelectedCuisine(cuisine)"
+            >
+                {{ cuisine }}
+            </button>
+        </div>
+
+        <div class="sort-bar">
+            <label>Sort by:</label>
+            <select
+                [value]="sortBy()"
+                (change)="updateSortBy($any($event.target).value)"
+            >
+                <option value="rating">Highest rating</option>
+                <option value="deliveryTime">Fastest delivery</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="results-info" *ngIf="filteredRestaurants().length > 0">
+        Showing {{ filteredRestaurants().length }} of {{ restaurants().length }}
+        restaurants
+    </div>
+
+    <div class="restaurant-grid" *ngIf="!loading()">
+        <div
+            *ngFor="
+                let restaurant of filteredRestaurants();
+                trackBy: trackByRestaurantId
+            "
+            class="restaurant-card"
+            (click)="viewRestaurantMenu(restaurant)"
+        >
+            <div class="restaurant-image">
+                <div class="image-placeholder">
+                    <i class="fa-solid fa-utensils"></i>
+                </div>
+                <div class="closed-overlay" *ngIf="!restaurant.isOpen">
+                    <span>CLOSED</span>
+                </div>
+
+                <div class="delivery-badge" *ngIf="restaurant.isOpen">
+                    <i class="fa-solid fa-clock"></i>
+                    {{ restaurant.deliveryTime }}
+                </div>
+
+                <div class="rating-badge">
+                    <i class="fa-solid fa-star"></i>
+                    {{ restaurant.rating.toFixed(1) || '4.0' }}
+                </div>
+            </div>
+
+            <div class="restaurant-info">
+                <h3>{{ restaurant.name }}</h3>
+                <div class="restaurant-meta">
+                    <span class="cuisine-badge">{{
+                        restaurant.cuisineType
+                    }}</span>
+                    <span class="min-order" *ngIf="restaurant.minOrderAmount">
+                        Min. €{{ restaurant.minOrderAmount }}
+                    </span>
+                </div>
+                <p class="description">{{ restaurant.description }}</p>
+                <div class="restaurant-footer">
+                    <div class="location">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>{{ restaurant.address }}</span>
+                    </div>
+                    <button
+                        class="view-menu-button"
+                        (click)="viewRestaurantMenu(restaurant, $event)"
+                    >
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty-state" *ngIf="filteredRestaurants().length === 0">
+            <i class="fa-solid fa-store-slash"></i>
+            <h3>No Restaurant found</h3>
+            <p>Try adjusting your search or filters</p>
+            <button class="clear-filters-button" (click)="clearFilters()">
+                <i class="fa-solid fa-filter-circle-xmark"></i>
+                Clear Filters
+            </button>
+        </div>
+    </div>
+
+    <div class="loading-state" *ngIf="loading()">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <p>Loading restaurants...</p>
+    </div>
+</div>

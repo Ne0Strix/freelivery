@@ -1,0 +1,95 @@
+.payment-method-card {
+    margin: 1rem 0;
+}
+
+mat-card-header h3 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 1.25rem;
+    gap: 0.5rem;
+}
+
+mat-card-header h3 i {
+    color: #4caf50;
+}
+
+.payment-methods {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 1px solid #e0e0e0;
+}
+
+.payment-option:hover {
+    border-color: #4caf50;
+}
+
+.payment-option.selected {
+    border-color: #4caf50;
+}
+
+.payment-radio {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.payment-icon {
+    font-size: 2rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+}
+
+.payment-option.selected .payment-icon {
+    color: #4caf50;
+}
+
+.payment-info {
+    flex: 1;
+}
+
+.payment-info h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #666;
+}
+
+.payment-info p {
+    margin: 0;
+    color: #666;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .payment-option {
+        padding: 0.75rem;
+    }
+
+    .payment-icon {
+        font-size: 1.5rem;
+        width: 40px;
+    }
+
+    .payment-info h4 {
+        font-size: 0.9rem;
+    }
+
+    .payment-info p {
+        font-size: 0.8rem;
+    }
+}

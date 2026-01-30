@@ -1,14 +1,36 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    OnInit,
+    signal,
+} from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 
+import { RouterLink } from '@angular/router';
 import { Restaurant } from '../customer.model';
 import { CustomerService } from '../customer.service';
 
 @Component({
-    selector: 'app-customer-home.component',
-    imports: [MatProgressSpinnerModule],
+    selector: 'app-customer-home',
+    standalone: true,
+    imports: [
+        RouterLink,
+        MatButtonModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        MatIconModule,
+    ],
     templateUrl: './customer-home.component.html',
     styleUrl: './customer-home.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomerHomeComponent implements OnInit {
     private customerService = inject(CustomerService);
@@ -25,10 +47,15 @@ export class CustomerHomeComponent implements OnInit {
 
     private async loadRestaurants(): Promise<void> {
         this.loading.set(true);
-        const restaurants = await this.customerService.getRestaurants();
-        this.restaurants.set(restaurants);
-        this.filteredRestaurants.set(restaurants);
-        this.loading.set(false);
+        try {
+            const restaurants = await this.customerService.getRestaurants();
+            this.restaurants.set(restaurants);
+            this.filteredRestaurants.set(restaurants);
+        } catch (error) {
+            console.error('Failed to load restaurants', error);
+        } finally {
+            this.loading.set(false);
+        }
     }
 
     filterRestaurants(): void {
@@ -56,9 +83,8 @@ export class CustomerHomeComponent implements OnInit {
         this.filterRestaurants();
     }
 
-    onCuisineChange(event: Event): void {
-        const select = event.target as HTMLSelectElement;
-        this.selectedCuisine.set(select.value);
+    onCuisineChange(event: MatSelectChange): void {
+        this.selectedCuisine.set(event.value);
         this.filterRestaurants();
     }
 

@@ -1,0 +1,84 @@
+<div class="view-menu-container">
+    <header class="menu-header">
+        <button mat-button type="button" routerLink="/customer/restaurants">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Restaurant Browsing
+        </button>
+        <div class="header-conter">
+            <h1>{{ restaurant()?.name || 'Restaurant Menu' }}</h1>
+            <p *ngIf="restaurant()">
+                {{ restaurant()?.cuisineType }} •
+                {{ restaurant()?.deliveryTime }}
+            </p>
+        </div>
+        <button class="cart-button" routerLink="/customer/cart">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="cart-count" *ngIf="cartCount() > 0">
+                {{ cartCount() }}</span
+            >
+        </button>
+    </header>
+
+    <div class="category-filter" *ngIf="categories().length > 1">
+        <button
+            *ngFor="let category of categories()"
+            class="category-button"
+            [class.active]="selectedCategory() === category"
+            (click)="updateSelectedCategory(category)"
+        >
+            {{ category }}
+        </button>
+    </div>
+
+    <div class="menu-grid" *ngIf="!loading()">
+        <div
+            *ngFor="let item of filteredItems; trackBy: trackByDishId"
+            class="menu-card"
+        >
+            <div class="dish-image">
+                <img
+                    *ngIf="item.imageUrl"
+                    [src]="item.imageUrl"
+                    [alt]="item.name"
+                    class="dish-photo"
+                />
+                <div *ngIf="!item.imageUrl" class="image-icon">
+                    {{ item.photo || '🍽️' }}
+                </div>
+            </div>
+
+            <div class="dish-info">
+                <h3>{{ item.name }}</h3>
+                <span class="category-tag">{{ item.category }}</span>
+
+                <p class="description">
+                    {{ item.description || 'Delicious dishes' }}
+                </p>
+
+                <div class="dish-footer">
+                    <span class="price">€{{ item.price.toFixed(2) }}</span>
+                    <button
+                        class="add-to-cart-button"
+                        (click)="addToCart(item)"
+                    >
+                        <i class="fa-solid fa-cart-plus"></i>
+                        Add
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="empty-menu" *ngIf="filteredItems.length === 0">
+            <i class="fa-solid fa-utensils-slash"></i>
+            <h3>No items available</h3>
+            <p>
+                {{ selectedCategory() === 'All' ? 'This restaurant has no menu
+                items yet' : 'No items in' + selectedCategory() + 'category'
+            </p>
+        </div>
+    </div>
+
+    <div class="loading-state" *ngIf="loading()">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <p>Loading menu...</p>
+    </div>
+</div>
