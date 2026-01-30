@@ -28,7 +28,14 @@
         <div class="cart-content">
             <mat-card class="cart-items-card">
                 <mat-card-header>
-                    <h3>Cart items ({{ itemsInCart.length }})</h3>
+                    <div class="cart-header-content">
+                        <h3>Cart items ({{ itemsInCart.length }})</h3>
+                        <p class="restaurant-name" *ngIf="restaurantName">
+                            <i class="fa-solid fa-store"></i>
+                            {{ restaurantName }}
+                        </p>
+                    </div>
+
                     <button
                         mat-button
                         class="clear-button"
@@ -46,8 +53,23 @@
                         track item.dishId
                     ) {
                         <div class="cart-item">
+                            <div class="item-image" *ngIf="item.imageUrl">
+                                <img [src]="item.imageUrl" [alt]="item.name" />
+                            </div>
+                            <div
+                                class="item-image-placeholder"
+                                *ngIf="!item.imageUrl"
+                            >
+                                <i class="fa-solid fa-utensils"></i>
+                            </div>
                             <div class="item-info">
                                 <h3>{{ item.name }}</h3>
+                                <p
+                                    class="item-description"
+                                    *ngIf="item.description"
+                                >
+                                    {{ item.description }}
+                                </p>
                                 <p class="unit-price">
                                     €{{ item.price.toFixed(2) }} each
                                 </p>
@@ -96,87 +118,98 @@
                 </mat-card-content>
             </mat-card>
 
-            <mat-card class="order-summary">
-                <mat-card-header>
-                    <h3>Order Summary</h3>
-                </mat-card-header>
+            <div class="sidebar">
+                <app-payment-method
+                    [selectedMethod]="selectedPaymentMethod"
+                    (methodChange)="onPaymentMethodChange($event)"
+                ></app-payment-method>
+                <mat-card class="order-summary">
+                    <mat-card-header>
+                        <h3>Order Summary</h3>
+                    </mat-card-header>
 
-                <mat-card-content>
-                    <div class="promo-section">
-                        <mat-form-field appearance="outline" class="full-width">
-                            <mat-label> Promo Code</mat-label>
-                            <input
-                                matInput
-                                [(ngModel)]="promoInput"
-                                placeholder="Enter promo code"
-                                [disabled]="promoApplied"
-                            />
-                        </mat-form-field>
+                    <mat-card-content>
+                        <div class="promo-section">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width"
+                            >
+                                <mat-label> Promo Code</mat-label>
+                                <input
+                                    matInput
+                                    [(ngModel)]="promoInput"
+                                    placeholder="Enter promo code"
+                                    [disabled]="promoApplied"
+                                />
+                            </mat-form-field>
+                            <button
+                                mat-button
+                                class="apply-promo-button"
+                                (click)="applyPromoCode()"
+                                [disabled]="promoApplied || !promoInput.trim()"
+                            >
+                                <i class="fa-solid fa-tag"></i>
+                            </button>
+
+                            @if (promoApplied) {
+                                <div class="promo-success">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    <span>
+                                        Promo Applied! You saved €
+                                        {{ discountValue.toFixed(2) }}</span
+                                    >
+                                </div>
+                            }
+                        </div>
+
+                        <div class="price-breakdown">
+                            <div class="price-row">
+                                <span> Subtotal</span>
+                                <span> € {{ subtotal.toFixed(2) }}</span>
+                            </div>
+
+                            @if (promoApplied) {
+                                <div class="price-row discount">
+                                    <span> Discount</span>
+                                    <span>
+                                        -€ {{ discountValue.toFixed(2) }}</span
+                                    >
+                                </div>
+                            }
+
+                            <div class="price-row total">
+                                <span> Total</span>
+                                <span> € {{ totalPrice.toFixed(2) }}</span>
+                            </div>
+                        </div>
+
+                        @if (errorMessage) {
+                            <div class="error-message">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                                {{ errorMessage }}
+                            </div>
+                        }
                         <button
                             mat-button
-                            class="apply-promo-button"
-                            (click)="applyPromoCode()"
-                            [disabled]="promoApplied || !promoInput.trim()"
+                            class="checkout-button"
+                            (click)="confirmOrder()"
+                            [disabled]="isProcessingOrder"
                         >
-                            <i class="fa-solid fa-tag"></i>
+                            @if (isProcessingOrder) {
+                                Processing...
+                            } @else {
+                                <i class="fa-solid fa-lock"></i>
+                                Proceed to payment
+                            }
                         </button>
 
-                        @if (promoApplied) {
-                            <div class="promo-success">
-                                <i class="fa-solid fa-circle-check"></i>
-                                <span>
-                                    Promo Applied! You saved €
-                                    {{ discountValue.toFixed(2) }}</span
-                                >
-                            </div>
-                        }
-                    </div>
-
-                    <div class="price-breakdown">
-                        <div class="price-row">
-                            <span> Subtotal</span>
-                            <span> € {{ subtotal.toFixed(2) }}</span>
-                        </div>
-
-                        @if (promoApplied) {
-                            <div class="price-row discount">
-                                <span> Discount</span>
-                                <span> -€ {{ discountValue.toFixed(2) }}</span>
-                            </div>
-                        }
-
-                        <div class="price-row total">
-                            <span> Total</span>
-                            <span> € {{ totalPrice.toFixed(2) }}</span>
-                        </div>
-                    </div>
-
-                    @if (errorMessage) {
-                        <div class="error-message">
-                            <i class="fa-solid fa-circle-exclamation"></i>
-                            {{ errorMessage }}
-                        </div>
-                    }
-                    <button
-                        mat-button
-                        class="checkout-button"
-                        (click)="confirmOrder()"
-                        [disabled]="isProcessingOrder"
-                    >
-                        @if (isProcessingOrder) {
-                            Processing...
-                        } @else {
-                            <i class="fa-solid fa-lock"></i>
-                            Proceed to payment
-                        }
-                    </button>
-
-                    <p class="checkout-note">
-                        <i class="fa-solid fa-info-circle"></i>
-                        Redirecting you to order tracking
-                    </p>
-                </mat-card-content>
-            </mat-card>
+                        <p class="checkout-note">
+                            <i class="fa-solid fa-info-circle"></i>
+                            Redirecting you to order tracking
+                        </p>
+                    </mat-card-content>
+                </mat-card>
+            </div>
         </div>
     }
 </div>
