@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { PaymentMethodComponent } from '../payment-method/payment-method.component';
 import { CartItem, CartService } from './cart.service';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -26,6 +27,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         MatInputModule,
         MatProgressSpinnerModule,
         RouterLink,
+        PaymentMethodComponent,
     ],
     templateUrl: './cart-page.component.html',
     styleUrls: ['./cart-page.component.css'],
@@ -39,6 +41,9 @@ export class CartPageComponent implements OnInit {
     discountValue: number = 0;
     isProcessingOrder: boolean = false;
     errorMessage: string = '';
+    selectedPaymentMethod: string = 'card';
+    restaurantId?: number;
+    restaurantName?: string;
 
     constructor(
         private cartService: CartService,
@@ -51,18 +56,10 @@ export class CartPageComponent implements OnInit {
     }
 
     loadCartData(): void {
-        this.itemsInCart = this.cartService.getCustomerCart();
-    }
-
-    addItems(): void {
-        const sampleItems: CartItem[] = [
-            { dishId: 1, name: 'Pasta al pomodoro', price: 10.5, quantity: 1 },
-            { dishId: 2, name: 'Pizza Margherita', price: 8.5, quantity: 1 },
-            { dishId: 3, name: 'Sparkling Water', price: 1.5, quantity: 2 },
-        ];
-        this.itemsInCart = sampleItems;
-        this.cartService.saveCartToLocal(sampleItems);
-        this.updateTotal();
+        const cartData = this.cartService.getCartData();
+        this.itemsInCart = cartData.items;
+        this.restaurantId = cartData.restaurantId;
+        this.restaurantName = cartData.restaurantName;
     }
 
     updateTotal(): void {
@@ -82,7 +79,11 @@ export class CartPageComponent implements OnInit {
             this.itemsInCart.splice(itemIndex, 1);
         } else {
             item.quantity = newQuantity;
-            this.cartService.saveCartToLocal(this.itemsInCart);
+            this.cartService.saveCartToLocal(
+                this.itemsInCart,
+                this.restaurantId,
+                this.restaurantName
+            );
         }
         this.updateTotal();
     }
@@ -118,44 +119,60 @@ export class CartPageComponent implements OnInit {
     clearCart(): void {
         if (confirm('Clear all items?')) {
             this.itemsInCart = [];
-            localStorage.removeItem('user_cart_items');
+            this.cartService.clearCart();
             this.promoApplied = false;
             this.discountValue = 0;
+            this.restaurantId = undefined;
+            this.restaurantName = undefined;
             this.updateTotal();
         }
     }
 
+    onPaymentMethodChange(method: string): void {
+        this.selectedPaymentMethod = method;
+    }
+
     async confirmOrder(): Promise<void> {
         if (this.itemsInCart.length === 0) {
-            this.errorMessage = ' Cart is empty!';
+            this.errorMessage = 'Cart is empty!';
             return;
         }
+
+        if (!this.restaurantId) {
+            this.errorMessage = 'Restaurant information is not given';
+            return;
+        }
+
+        if (!this.selectedPaymentMethod) {
+            this.errorMessage = 'Please select a payment method';
+            return;
+        }
+
         this.isProcessingOrder = true;
         this.errorMessage = '';
 
         try {
             const result = await this.cartService.submitOrderToServer(
-                1,
+                this.restaurantId,
                 this.itemsInCart,
-                this.promoApplied ? 'PROMO26' : undefined
+                this.promoApplied ? 'PROMO26' : undefined,
+                this.selectedPaymentMethod
             );
 
-            alert(`Order #${result.order_number} is placed`);
+            this.cartService.clearCart();
+
+            alert(`Order #${result.order_number} is placed!`);
 
             this.router.navigate(['/customer/track', result.order_number]);
         } catch (error) {
             console.error('Order unsuccessful: ', error);
             this.errorMessage = 'Order failed. Place a new order, please!';
-
-            const notOrderId = Math.floor(Math.random() * 10000);
-            alert(`Demo: Order #${notOrderId}`);
-            this.router.navigate(['/customer/track', notOrderId]);
         } finally {
             this.isProcessingOrder = false;
         }
     }
 
     goToRestaurant(): void {
-        this.router.navigate(['/customer']);
+        this.router.navigate(['/customer/restaurants']);
     }
 }
