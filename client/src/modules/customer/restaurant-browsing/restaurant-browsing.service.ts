@@ -5,7 +5,7 @@ import { CustomerService } from '../customer.service';
 @Injectable({
     providedIn: 'root',
 })
-export class RestaurantService {
+export class RestaurantBrowsingService {
     private CustomerService = inject(CustomerService);
 
     async getRestaurants(): Promise<Restaurant[]> {
