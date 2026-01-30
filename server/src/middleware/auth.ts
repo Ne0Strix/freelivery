@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import {
     ForbiddenError,
+    TokenExpiredError,
     UnauthorizedError,
 } from '../domains/commons/errors.js';
 
@@ -37,8 +38,13 @@ export const requireAuth = (
         const decoded = jwt.verify(token, secret);
         (req as any).user = decoded;
         return next();
-    } catch {
-        throw new UnauthorizedError('Invalid or expired token');
+    } catch (err) {
+        // jsonwebtoken throws TokenExpiredError specifically for expired tokens
+        if (err instanceof jwt.TokenExpiredError) {
+            throw new TokenExpiredError();
+        }
+        // Other errors (invalid signature, malformed token, etc.)
+        throw new UnauthorizedError('Invalid token');
     }
 };
 

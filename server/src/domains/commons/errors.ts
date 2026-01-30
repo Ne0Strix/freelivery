@@ -3,6 +3,7 @@ import type { ErrorRequestHandler } from 'express';
 export type AppErrorCode =
     | 'VALIDATION_ERROR'
     | 'UNAUTHORIZED'
+    | 'TOKEN_EXPIRED'
     | 'FORBIDDEN'
     | 'NOT_FOUND'
     | 'CONFLICT'
@@ -33,6 +34,12 @@ export class ValidationError extends AppError {
 export class UnauthorizedError extends AppError {
     constructor(message = 'Unauthorized') {
         super(message, 401, 'UNAUTHORIZED');
+    }
+}
+
+export class TokenExpiredError extends AppError {
+    constructor(message = 'Session expired. Please log in again.') {
+        super(message, 401, 'TOKEN_EXPIRED');
     }
 }
 

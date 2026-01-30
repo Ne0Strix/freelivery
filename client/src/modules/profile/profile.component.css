@@ -153,6 +153,10 @@ mat-hint {
     padding: 2rem;
 }
 
+mat-error {
+    color: var(--warning-red);
+}
+
 @media (max-width: 640px) {
     .profile-container {
         padding: 1rem;

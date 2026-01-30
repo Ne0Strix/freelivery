@@ -1,8 +1,4 @@
-# Project Overview
-
-## Platform Description
-
-## System Architecture
+# System Architecture
 
 The repository-root contains three folders containing the Angular frontend (`client`), the database migrations (`db`) and the backend (`server`). The Customer uses the frontend to communicate with the server. Data on the database is exclusively accessed via the server.
 
@@ -12,7 +8,56 @@ The repository-root contains three folders containing the Angular frontend (`cli
 | Restaurant Owner | Armin              |
 | Customer (User)  | Miriam             |
 
-### Frontend
+## Feature Descriptions
+
+### Shared Features
+
+During user registration users
+
+- have to provide required data and
+- can choose which role they want to have.
+    - additional information for restaurants has to be provided if "Restaurant Owner" is chosen
+
+Profile management allows users to
+
+- update their personal data,
+- manage multiple addresses and
+- changing their password.
+
+### Site-Admin
+
+The `site-admin@freelivery.com` user provides all testdata for the given functionality. It can:
+
+- get an overview of some core statistics
+- see all active restaurants and set a service-fee for each
+- see pending erstaurant requests and approve/decline them
+- check user details and suspend them
+
+### Restaurant-Owner
+
+The `restaurant-owner@freelivery.com` user provides all testdata for the given functionality. It can:
+
+- manage the menu by
+    - creating and editing categories including
+        - a category name and
+        - a category description
+    - creating and editing dishes including
+        - an image,
+        - a dish name,
+        - optional description and
+        - price.
+    - setting dishes as unavailable
+    - deleting dishes and categories
+- manage orders by
+    - accepting or rejecting them and
+    - updating their status throughout the process.
+- manage their opening hours
+- get basic analytics for their restaurant like
+    - weekly orders and revenue,
+    - a daily breakdown of the last weeks
+    - identifying most ordered dishes.
+
+## Frontend
 
 ```
 .
@@ -32,7 +77,7 @@ The repository-root contains three folders containing the Angular frontend (`cli
 │       └── site-manager
 ```
 
-#### Navigation & Network
+### Navigation & Network
 
 `app.routes.ts`
 
@@ -65,9 +110,9 @@ The repository-root contains three folders containing the Angular frontend (`cli
 
 - `provideHttpClient(withInterceptors([…,…]))` provides the interceptors as `HttpHandler` to the `HttpClient` in the given order
 
-#### Modules
+### Modules
 
-Site-manager:
+#### Site-manager
 
 - all functionality is contained in the `site-manager-home`
 - `site-manager.models.ts` contains site-manager specific models for
@@ -75,7 +120,7 @@ Site-manager:
     - user management and
     - dashboard statistics
 
-Restaurant-owner:
+#### Restaurant-owner
 
 - `restaurant-owner.routes.ts`
     - defines lazy-loded routes used in `app.routes.ts`
@@ -87,7 +132,7 @@ Restaurant-owner:
 - other folders in the module
     - contain form-elements and other reusable components
 
-### Backend
+## Backend
 
 ```
 .
@@ -107,7 +152,7 @@ Restaurant-owner:
 └── uploads
 ```
 
-#### Domains
+### Domains
 
 - `commons` contains general-purpose classes and services shared across different modules
     - `abstract-repository` defines an abstract singleton class which manages the database connection
@@ -119,7 +164,7 @@ Restaurant-owner:
     - `statistics-repository` + `stastics-service` for shared statistics
 - `location`, `order`, `restaurant`, `user` group shared and domain-specific models and functionalities like repositories and services
 
-#### Middleware
+### Middleware
 
 - `middleware` defines all middleware for …
     - authentication
@@ -127,7 +172,7 @@ Restaurant-owner:
     - file-upload
     - not-found handling
 
-#### Routing
+### Routing
 
 Routing is split into multiple parts:
 
@@ -154,13 +199,19 @@ Routing is split into multiple parts:
         - profile management (updating password & address)
         - restaurant management
 - _authenticated & restricted_ endpoints: only users with given role can access
+    - `/api/site-manager`
+        - displaying all users
+        - getting site statistics
+        - suspending users
+        - approving and rejecting restaurant
+        - updating service-fee for restaurants
     - `/api/restaurant-owner`
         - CRUD endpoints for managing the menu
         - accessing orders and updating their status
         - managing opening hours
         - accessing analytics
 
-#### Repositories
+### Repositories
 
 All repositories extend `Repository<T>` from `abstract-repository.ts`:
 
@@ -174,12 +225,13 @@ All repositories extend `Repository<T>` from `abstract-repository.ts`:
 - lazily instantiates and caches singletons
 - ensures all services share the same repository instances
 
-#### Site Manager
+### Site Manager
 
 The site manager backend module provides only basic functionality like …
 
-- suspending users and
-- approving and rejecting restaurants.
+- suspending users,
+- approving and rejecting restaurants and
+- setting a service fee per restaurant.
 
 ```mermaid
 flowchart TD
@@ -206,7 +258,7 @@ flowchart TD
     SMS --> RR
 ```
 
-#### Restaurant Owner
+### Restaurant Owner
 
 The restaurant owner provides feature-complete functionality for restaurant owners and provides the following endpoints through the `restaurant-owner.routes.ts`:
 
@@ -239,13 +291,13 @@ flowchart TD
     ROR --> OS
 ```
 
-#### Customer
+### Customer
 
-### Database
+## Database
 
 Note: the datatypes given in the diagram are the ones used in the backend; `DECIMAL` and `TIME` types are parsed as strings.
 
-#### User
+### User
 
 Table descriptions:
 
@@ -266,6 +318,11 @@ available users in the testdatamigration are:
 | `deus`             | `deus@freelivery.com`             | `deus`       | admin, restaurant_owner, customer |
 | `alice`            | `alice@example.com`               | `passhash1`  | customer                          |
 | `bob`              | `bob@example.com`                 | `passhash2`  | restaurant_owner                  |
+
+Seed data for the site-manager contains
+
+- active and pending restaurant requests for approval/rejection
+- list of all users
 
 ```mermaid
 classDiagram
@@ -322,7 +379,7 @@ classDiagram
     }
 ```
 
-#### Restaurant
+### Restaurant
 
 Table descriptions:
 
@@ -390,7 +447,7 @@ classDiagram
     }
 ```
 
-#### Order
+### Order
 
 Table descriptions:
 
@@ -454,9 +511,9 @@ classDiagram
 
 ```
 
-## Shared Components and Backend Services
+# Shared Components and Backend Services
 
-### Generic Request Flow
+## Generic Request Flow
 
 _Note_: this is the idealised architecture we aimed for. However, not all parts of the example below are implemented in this exact manner.
 
@@ -527,7 +584,7 @@ sequenceDiagram
     deactivate Component
 ```
 
-### User Registration & Authentication
+## User Registration & Authentication
 
 implemented by: Armin Lachini
 
@@ -541,7 +598,7 @@ Related code-parts:
 - `client/src/layout/login/*`
 - `client/src/layout/signup/*`
 
-#### Login
+### Login
 
 ```mermaid
 sequenceDiagram
@@ -586,7 +643,7 @@ sequenceDiagram
     Frontend ->> Router: activates route
 ```
 
-### Profile Management
+## Profile Management
 
 implemented by: Armin Lachini
 
@@ -600,7 +657,7 @@ Related code-parts:
     - PUT `/api/profile/password` for password changes
     - GET/PUT `/api/profile/restaurant` for restaurant owners
 
-### Responsive UI
+## Responsive UI
 
 implemented by: Armin Lachini
 
@@ -611,7 +668,7 @@ All components use CSS media queries with a 640px breakpoint:
 - form fields stack vertically on small screens
 - tables/lists adapt to narrower viewports
 
-### Error Handling
+## Error Handling
 
 implemented by: Armin Lachini
 
@@ -626,13 +683,13 @@ Related code-parts:
     - provides the middleware for express to map from the `AppError` to an HTTP-request and return it
 - `client/src/commons/interceptors/serverError.interceptor.ts`
     - verifies the overall format of the response
-    - logs out when the token is expired (on error `401`)
-    - catches the error message and displays in in a snackbar
+    - logs out when the token is expired
+    - catches the error message and displays it in a snackbar
 - `server/src/middleware/not-found.ts`
     - the last route to match before the error handler
     - throws a `NotFoundError` handled by the error handler
 
-### Async Handler
+## Async Handler
 
 implemented by: Armin Lachini
 
@@ -643,7 +700,7 @@ Related code-parts:
     - passes caught errors to the Express error middleware (see Error Handling)
     - eliminates the need for try-catch blocks in every async route
 
-### Navigation & Routing
+## Navigation & Routing
 
 implemented by: Armin Lachini
 
@@ -657,7 +714,7 @@ Related code-parts:
     - entrypoint for the Express application
     - mounts all route handlers and middleware
 
-### Distance Simulation
+## Distance Simulation
 
 implemented by: Armin Lachini
 
@@ -677,7 +734,7 @@ Related code-parts:
 
 - open the project using the `freelivery.workspace` file
 - install the recommended extensions
-- run `npm i` in the project root, the `postinstall` will take care of the nested folders
+- run `npm i` in the project root
 - set the environment variables (`sample.env`) as you need in a `.env`-file
 - the complete development setup can be started using the `Full Stack: Debug Client + Server` task in VS-Code
     - if you're in a different IDE you can start the project using `docker compose up -d`

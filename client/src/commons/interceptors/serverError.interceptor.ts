@@ -41,18 +41,10 @@ export const serverErrorInterceptor: HttpInterceptorFn = (req, next) => {
             }
 
             if (err instanceof HttpErrorResponse) {
-                // Session expired - logout and redirect
-                if (err.status === 401) {
+                // Token expired - logout and redirect
+                if (err.error?.error?.code === 'TOKEN_EXPIRED') {
                     authService.logout();
                     router.navigate(['/login']);
-                    snackbar.open(
-                        'Session expired. Please log in again.',
-                        'Close',
-                        {
-                            duration: 5000,
-                        }
-                    );
-                    return throwError(() => err);
                 }
 
                 console.error(err);
