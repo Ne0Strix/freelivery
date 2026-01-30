@@ -175,6 +175,14 @@ INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price,
   (43, 2, 9, 'Sturm', 'Frischer Traubenmost (saisonal, 0.25l)', 3.50, NULL, true),
   (44, 2, 9, 'Spritzer', 'Weißwein gespritzt (0.5l)', 4.20, NULL, true);
 
+INSERT INTO opening_hours (opening_hours_id, restaurant_id, day_of_week, open_time, close_time) VALUES
+  (1, 2, 0, '11:00', '22:00'),  -- Monday
+  (2, 2, 1, '11:00', '22:00'),  -- Tuesday
+  (3, 2, 2, '11:00', '22:00'),  -- Wednesday
+  (4, 2, 3, '11:00', '23:00'),  -- Thursday
+  (5, 2, 4, '11:00', '23:30'),  -- Friday
+  (6, 2, 5, '10:00', '23:30');  -- Saturday (closed Sunday)
+
 -- Cart for Alice
 INSERT INTO cart (cart_id, user_id, restaurant_id) VALUES
   (1, 1, 1);
@@ -551,5 +559,6 @@ SELECT setval('cart_cart_id_seq', (SELECT MAX(cart_id) FROM cart));
 SELECT setval('cart_item_cart_item_id_seq', (SELECT MAX(cart_item_id) FROM cart_item));
 SELECT setval('order_order_id_seq', (SELECT COALESCE(MAX(order_id), 1) FROM "order"));
 SELECT setval('order_item_order_item_id_seq', (SELECT COALESCE(MAX(order_item_id), 1) FROM order_item));
+SELECT setval('opening_hours_opening_hours_id_seq', (SELECT COALESCE(MAX(opening_hours_id), 1) FROM opening_hours));
 
 -- End of test data

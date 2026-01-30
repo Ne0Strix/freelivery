@@ -15,7 +15,7 @@
 | Topic            | Responsible Person |
 | :--------------- | :----------------- |
 | Site Manager     | Armin              |
-| Restaurant Owner | Katharina          |
+| Restaurant Owner | Armin              |
 | Customer (User)  | Miriam             |
 
 ## General Notes

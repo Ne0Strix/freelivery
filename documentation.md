@@ -2,9 +2,15 @@
 
 ## Platform Description
 
-## System Architecture Diagram
+## System Architecture
 
 The repository-root contains three folders containing the Angular frontend (`client`), the database migrations (`db`) and the backend (`server`). The Customer uses the frontend to communicate with the server. Data on the database is exclusively accessed via the server.
+
+| Topic            | Responsible Person |
+| :--------------- | :----------------- |
+| Site Manager     | Armin              |
+| Restaurant Owner | Armin              |
+| Customer (User)  | Miriam             |
 
 ### Frontend
 
@@ -39,12 +45,12 @@ The repository-root contains three folders containing the Angular frontend (`cli
         - site-manager
         - profile
 - where necessary, routes are protected via `canActivate` using `authGuard`
-    - for modules roles are defined in a route's data
+    - module-specific routes are defined in their respective routes-file
 
 `auth.guard.ts`
 
 - uses the `authentication.service.ts` to verify whether a user is logged in and
-- verify that the logged in user posseses the given role.
+- verifies that the logged in user posseses the role required for a given route
 
 `authenticator.interceptor.ts`
 
@@ -52,7 +58,7 @@ The repository-root contains three folders containing the Angular frontend (`cli
 
 `serverError.interceptor.ts`
 
-- taps into responses and verifies its format and
+- taps into responses and verifies their format and
 - catches any HttpErrors and surfaces them in a dismissible snackbar
 
 `app.config.ts`
@@ -60,6 +66,14 @@ The repository-root contains three folders containing the Angular frontend (`cli
 - `provideHttpClient(withInterceptors([…,…]))` provides the interceptors as `HttpHandler` to the `HttpClient` in the given order
 
 #### Modules
+
+Site-manager:
+
+- all functionality is contained in the `site-manager-home`
+- `site-manager.models.ts` contains site-manager specific models for
+    - pending restaurant registrations
+    - user management and
+    - dashboard statistics
 
 Restaurant-owner:
 
@@ -71,7 +85,7 @@ Restaurant-owner:
         - all calls to `/api/restaurant-owner` require the `restaurant-owner` role (see backend section)
         - manipulating restaurant-owner specific entities
 - other folders in the module
-    - contain form-elements and target components
+    - contain form-elements and other reusable components
 
 ### Backend
 
@@ -124,6 +138,28 @@ Routing is split into multiple parts:
     - this is realised using a `requireRole` middleware
     - routes are defined in that modules's folder
 
+`index.ts`
+
+- entrypoint for HTTP requests
+- `/uploads` served statically for image hosting
+- _public_ endpoints:
+    - `/api/auth` to authenticate users
+- _authenticated_ endpoints: any logged in user can access them
+    - `/api/addresses`
+        - CRUD endpoints for addresses
+    - `/api/restaurants`
+        - get active restaurants and
+        - their categories/dishes
+    - `/api/profile`
+        - profile management (updating password & address)
+        - restaurant management
+- _authenticated & restricted_ endpoints: only users with given role can access
+    - `/api/restaurant-owner`
+        - CRUD endpoints for managing the menu
+        - accessing orders and updating their status
+        - managing opening hours
+        - accessing analytics
+
 #### Repositories
 
 All repositories extend `Repository<T>` from `abstract-repository.ts`:
@@ -174,7 +210,7 @@ flowchart TD
 
 The restaurant owner provides feature-complete functionality for restaurant owners and provides the following endpoints through the `restaurant-owner.routes.ts`:
 
-- get the accounts owned restaurant
+- get the current signed in user's owned restaurant
 - CRUD endpoints for
     - dishes and categories
     - opening hours
@@ -210,6 +246,26 @@ flowchart TD
 Note: the datatypes given in the diagram are the ones used in the backend; `DECIMAL` and `TIME` types are parsed as strings.
 
 #### User
+
+Table descriptions:
+
+- `user` contains the core data for authentication
+- `user_data` extends the user data by central fields
+- `address` stores address-details
+- `role` contains all available roles
+- `user_address` assigns addresses to users
+- `user_role` assigns roles to users
+
+available users in the testdatamigration are:
+
+| Username           | Email                             | Password     | Role(s)                           |
+| :----------------- | :-------------------------------- | :----------- | :-------------------------------- |
+| `customer`         | `customer@freelivery.com`         | `customer`   | customer                          |
+| `restaurant-owner` | `restaurant-owner@freelivery.com` | `restaurant` | restaurant_owner                  |
+| `site-admin`       | `site-admin@freelivery.com`       | `site-admin` | admin                             |
+| `deus`             | `deus@freelivery.com`             | `deus`       | admin, restaurant_owner, customer |
+| `alice`            | `alice@example.com`               | `passhash1`  | customer                          |
+| `bob`              | `bob@example.com`                 | `passhash2`  | restaurant_owner                  |
 
 ```mermaid
 classDiagram
@@ -268,7 +324,19 @@ classDiagram
 
 #### Restaurant
 
-Order data contains redundant data for historic reasons.
+Table descriptions:
+
+- `restaurant` stores restaurant details, fees, and links to owner and address
+- `category` groups dishes within a restaurant's menu
+- `dish` contains individual menu items with pricing and availability
+- `opening_hours` defines business hours per day of week
+
+Seed data:
+
+- user `restaurant-owner` has data for …
+    - a complete menu (excluding any pictures)
+    - existing orders in all available states
+    - opening hours
 
 ```mermaid
 classDiagram
@@ -321,6 +389,17 @@ classDiagram
         date: updated_at
     }
 ```
+
+#### Order
+
+Table descriptions:
+
+- `order` tracks customer orders with pricing, status, and delivery info
+- `order_item` stores individual items within an order with snapshot data for historic information
+
+Seed data:
+
+- contains historic orders for `restaurant-owner@freelivery.com`
 
 ```mermaid
 classDiagram
@@ -375,94 +454,9 @@ classDiagram
 
 ```
 
-# Module Responsibilities
-
-## Restaurant Owner
-
-### REST API
-
-`index.ts`
-
-- entrypoint for HTTP requests
-- `/uploads` served statically for image hosting
-- _public_ endpoints:
-    - `/api/auth` to authenticate users
-- _authenticated_ endpoints: any logged in user can access them
-    - `/api/addresses`
-        - CRUD endpoints for addresses
-    - `/api/restaurants`
-        - get active restaurants and
-        - their categories/dishes
-    - `/api/profile`
-        - profile management (updating password & address)
-        - restaurant management
-- _authenticated & restricted_ endpoints: only users with given role can access
-    - `/api/restaurant-owner`
-        - CRUD endpoints for managing the menu
-        - accessing orders and updating their status
-        - managing opening hours
-        - accessing analytics
-
 ## Shared Components and Backend Services
 
-### User Registration & Authentication
-
-Related code-parts:
-
-- `server/src/routes/auth.routes.ts`
-- `server/src/middleware/auth.ts`
-- `client/src/commons/interceptors/authenticator.interceptor.ts`
-- `client/src/commons/guards/auth.guard.ts`
-- `client/src/commons/services/authentication.service.ts`
-- `client/src/layout/login/*`
-- `client/src/layout/signup/*`
-
-#### Login
-
-```mermaid
-sequenceDiagram
-
-    actor User
-    participant Frontend
-    participant Router
-    participant AuthenticationService
-    participant HttpClient
-    box HttpHandler
-    participant authenticatorInterceptor
-    participant serverErrorInterceptor
-    participant HttpBackend
-    end
-
-    User ->> Frontend: provides Credentials
-    activate Frontend
-    Frontend ->> AuthenticationService: requests authentication
-    activate AuthenticationService
-    AuthenticationService ->> HttpClient: POST request to login
-    activate HttpClient
-    HttpClient ->> authenticatorInterceptor: forwards to registered interceptors
-    activate authenticatorInterceptor
-    Note over authenticatorInterceptor: sets auth-header
-    authenticatorInterceptor ->> serverErrorInterceptor: forwards to next interceptor
-    activate serverErrorInterceptor
-    serverErrorInterceptor ->> HttpBackend: forwards to final HttpHandler
-    activate HttpBackend
-    HttpBackend ->> serverErrorInterceptor: provides server response
-    deactivate HttpBackend
-    Note over serverErrorInterceptor: validates response format<br/> & catches errors
-    serverErrorInterceptor ->> authenticatorInterceptor:forwards server response
-    deactivate serverErrorInterceptor
-    authenticatorInterceptor ->> HttpClient: forwards server response
-    deactivate authenticatorInterceptor
-    HttpClient ->> AuthenticationService: forwards  server response
-    deactivate HttpClient
-    note over AuthenticationService: saves token, sets<br/>user-roles & id
-    deactivate AuthenticationService
-    AuthenticationService ->> Frontend: sends success message
-    deactivate Frontend
-    Frontend ->> Router: activates route
-```
-
-#### Generic Request Flow
+### Generic Request Flow
 
 _Note_: this is the idealised architecture we aimed for. However, not all parts of the example below are implemented in this exact manner.
 
@@ -533,7 +527,68 @@ sequenceDiagram
     deactivate Component
 ```
 
+### User Registration & Authentication
+
+implemented by: Armin Lachini
+
+Related code-parts:
+
+- `server/src/routes/auth.routes.ts`
+- `server/src/middleware/auth.ts`
+- `client/src/commons/interceptors/authenticator.interceptor.ts`
+- `client/src/commons/guards/auth.guard.ts`
+- `client/src/commons/services/authentication.service.ts`
+- `client/src/layout/login/*`
+- `client/src/layout/signup/*`
+
+#### Login
+
+```mermaid
+sequenceDiagram
+
+    actor User
+    participant Frontend
+    participant Router
+    participant AuthenticationService
+    participant HttpClient
+    box HttpHandler
+    participant authenticatorInterceptor
+    participant serverErrorInterceptor
+    participant HttpBackend
+    end
+
+    User ->> Frontend: provides Credentials
+    activate Frontend
+    Frontend ->> AuthenticationService: requests authentication
+    activate AuthenticationService
+    AuthenticationService ->> HttpClient: POST request to login
+    activate HttpClient
+    HttpClient ->> authenticatorInterceptor: forwards to registered interceptors
+    activate authenticatorInterceptor
+    Note over authenticatorInterceptor: sets auth-header
+    authenticatorInterceptor ->> serverErrorInterceptor: forwards to next interceptor
+    activate serverErrorInterceptor
+    serverErrorInterceptor ->> HttpBackend: forwards to final HttpHandler
+    activate HttpBackend
+    HttpBackend ->> serverErrorInterceptor: provides server response
+    deactivate HttpBackend
+    Note over serverErrorInterceptor: validates response format<br/> & catches errors
+    serverErrorInterceptor ->> authenticatorInterceptor:forwards server response
+    deactivate serverErrorInterceptor
+    authenticatorInterceptor ->> HttpClient: forwards server response
+    deactivate authenticatorInterceptor
+    HttpClient ->> AuthenticationService: forwards  server response
+    deactivate HttpClient
+    note over AuthenticationService: saves token, sets<br/>user-roles & id
+    deactivate AuthenticationService
+    AuthenticationService ->> Frontend: sends success message
+    deactivate Frontend
+    Frontend ->> Router: activates route
+```
+
 ### Profile Management
+
+implemented by: Armin Lachini
 
 Related code-parts:
 
@@ -547,6 +602,8 @@ Related code-parts:
 
 ### Responsive UI
 
+implemented by: Armin Lachini
+
 All components use CSS media queries with a 640px breakpoint:
 
 - `@media (max-width: 640px)` for mobile-specific styles
@@ -555,6 +612,8 @@ All components use CSS media queries with a 640px breakpoint:
 - tables/lists adapt to narrower viewports
 
 ### Error Handling
+
+implemented by: Armin Lachini
 
 Related code-parts:
 
@@ -575,6 +634,8 @@ Related code-parts:
 
 ### Async Handler
 
+implemented by: Armin Lachini
+
 Related code-parts:
 
 - `server/src/middleware/async-handler.ts`
@@ -583,6 +644,8 @@ Related code-parts:
     - eliminates the need for try-catch blocks in every async route
 
 ### Navigation & Routing
+
+implemented by: Armin Lachini
 
 Related code-parts:
 
@@ -595,6 +658,8 @@ Related code-parts:
     - mounts all route handlers and middleware
 
 ### Distance Simulation
+
+implemented by: Armin Lachini
 
 Related code-parts:
 
@@ -609,3 +674,11 @@ Related code-parts:
 # Extra Tasks
 
 # Setup Instructions
+
+- open the project using the `freelivery.workspace` file
+- install the recommended extensions
+- run `npm i` in the project root, the `postinstall` will take care of the nested folders
+- set the environment variables (`sample.env`) as you need in a `.env`-file
+- the complete development setup can be started using the `Full Stack: Debug Client + Server` task in VS-Code
+    - if you're in a different IDE you can start the project using `docker compose up -d`
+    - DB-migrations run automatically on the first startup, or whenever the volume is pruned using `docker compose down -v`
