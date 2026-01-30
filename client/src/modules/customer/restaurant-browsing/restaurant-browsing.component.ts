@@ -15,7 +15,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Restaurant } from '../customer.model';
 
 import { CustomerService } from '../customer.service';
-import { RestaurantService } from './restaurant-browsing.service';
+import { RestaurantBrowsingService } from './restaurant-browsing.service';
 
 @Component({
     selector: 'app-restaurant-browsing',
@@ -38,7 +38,7 @@ import { RestaurantService } from './restaurant-browsing.service';
     styleUrls: ['./restaurant-browsing.component.css'],
 })
 export class RestaurantBrowsingComponent implements OnInit {
-    private restaurantService = inject(RestaurantService);
+    private restaurantBrowsingService = inject(RestaurantBrowsingService);
     private CustomerService = inject(CustomerService);
     private router = inject(Router);
 
@@ -59,7 +59,8 @@ export class RestaurantBrowsingComponent implements OnInit {
     async loadRestaurants() {
         this.loading.set(true);
         try {
-            const restaurants = await this.restaurantService.getRestaurants();
+            const restaurants =
+                await this.restaurantBrowsingService.getRestaurants();
 
             this.restaurants.set(restaurants);
             this.filteredRestaurants.set(restaurants);

@@ -13,7 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CartService } from '../cart-page/cart.service';
 import { MenuItem, Restaurant } from '../customer.model';
-import { RestaurantService } from '../restaurant-browsing/restaurant-browsing.service';
+import { RestaurantBrowsingService } from '../restaurant-browsing/restaurant-browsing.service';
 
 //import { RestaurantService } from '../services/restaurant.service';
 import { CustomerService } from '../customer.service';
@@ -35,7 +35,7 @@ import { CustomerService } from '../customer.service';
 })
 export class ViewMenuComponent {
     private route = inject(ActivatedRoute);
-    private RestaurantService = inject(RestaurantService);
+    private RestaurantBrowsingService = inject(RestaurantBrowsingService);
     private CustomerService = inject(CustomerService);
     private cartService = inject(CartService);
     private snackBar = inject(MatSnackBar);
@@ -59,7 +59,7 @@ export class ViewMenuComponent {
         this.loading.set(true);
         try {
             const { restaurant, menu, categories } =
-                await this.RestaurantService.getRestaurantWithMenu(
+                await this.RestaurantBrowsingService.getRestaurantWithMenu(
                     this.restaurantId()
                 );
 

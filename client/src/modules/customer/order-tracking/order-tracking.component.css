@@ -27,6 +27,7 @@
     color: #666;
 }
 
+.chat-card,
 .tracking-card {
     border: var(--border-c) 2px solid;
     border-radius: 16px;
@@ -35,6 +36,14 @@
 
 mat-card-content {
     padding: 2rem;
+}
+
+.connection-status {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #10b981;
+    font-weight: 600;
 }
 
 .delivery-info {
@@ -63,6 +72,45 @@ mat-card-content {
     margin: 0;
     font-size: 1.5rem;
     font-weight: 700;
+}
+
+.location-info {
+    display: flex;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.loaction-item {
+    flex: 1;
+    min-width: 200px;
+    border-radius: 12px;
+    padding: 1rem;
+    align-items: center;
+    gap: 0.5rem;
+    background: white;
+}
+
+.location-item i {
+    font-size: 1.5rem;
+    color: #667eea;
+}
+
+.location-item div {
+    display: flex;
+}
+
+.location-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+}
+
+.location-coords {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+    margin-top: 0.25rem;
 }
 
 .progress-wrapper {
@@ -205,6 +253,7 @@ mat-card-actions {
     justify-content: flex-end;
 }
 
+.chat-button,
 .refresh-button,
 .feedback-button {
     padding: 0 1.5rem;
@@ -220,9 +269,127 @@ mat-card-actions {
     align-items: center;
 }
 
+.chat-button:hover,
 .refresh-button:hover,
 .feedback-button:hover {
     background: color-mix(in srgb, var(--border-c) 40%, white);
+}
+
+.chat-card {
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e5e7eb;
+    margin-bottom: 1rem;
+}
+
+.chat-header h3 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.2rem;
+    color: #111827;
+}
+
+.chat-messages {
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    max-height: 450px;
+    background: #f9fafb;
+}
+
+.no-messages {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6b7280;
+}
+
+.no-messages i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #d1d5db;
+}
+
+.message {
+    margin-bottom: 1rem;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.sender-name {
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #111827;
+}
+
+.message-time {
+    font-size: 0.7rem;
+    color: #9ca3af;
+}
+
+.message-content {
+    padding: 0.7rem 1rem;
+    border-radius: 12px;
+    max-width: 80%;
+}
+
+.customer-message .message-content {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    margin-left: auto;
+    border-bottom-left-radius: 4px;
+}
+
+.restaurant-message .message-content {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    margin-left: auto;
+    border-bottom-left-radius: 4px;
+}
+
+.chat-input {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.message-field {
+    flex: 1;
+    margin: 0;
+}
+
+.send-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    height: 56px;
+    padding: 0 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    display: flex;
+    gap: 0.5rem;
+}
+.send-button:disabled {
+    cursor: not-allowed;
 }
 
 @media (max-width: 768px) {
@@ -239,6 +406,7 @@ mat-card-actions {
         flex-direction: column;
     }
 
+    .chat-button,
     .refresh-button,
     .feedback-button {
         width: 100%;
@@ -250,9 +418,21 @@ mat-card-actions {
         flex-wrap: wrap;
     }
 
+    .loaction-info {
+        flex-direction: column;
+    }
+
+    .location-item {
+        min-width: 100%;
+    }
+
     .item-info {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
+    }
+
+    .message-content {
+        max-width: 90%;
     }
 }

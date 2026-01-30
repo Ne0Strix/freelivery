@@ -6,6 +6,10 @@
         </button>
         <h1>Order #{{ orderId }}</h1>
         <p>Status: {{ currentStatus }}</p>
+        <span class="connection-status" *ngIf="isConnected">
+            <i class="fa-solid fa-circle"></i>
+            Live
+        </span>
     </header>
 
     <mat-card class="tracking-card">
@@ -14,7 +18,52 @@
                 <i class="fa-solid fa-clock"></i>
                 <div>
                     <h3>Estimated Delivery</h3>
-                    <p>{{ deliveryTime }} minutes</p>
+                    <p>
+                        {{
+                            deliveryTime > 0
+                                ? deliveryTime + 'minuteds'
+                                : 'Delivered!'
+                        }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="location-info">
+                <div class="location-item">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <div>
+                        <span class="location-label"
+                            >Your current location</span
+                        >
+                        <span class="location-coords"
+                            >({{ userLocation.x }}, {{ userLocation.y }})</span
+                        >
+                    </div>
+                </div>
+                <div class="location-item">
+                    <i class="fa-solid fa-utensils"></i>
+                    <div>
+                        <span class="location-label">Restaurant</span>
+                        <span class="location-coords"
+                            >({{ restaurantLocation.x }},
+                            {{ restaurantLocation.y }})</span
+                        >
+                    </div>
+                </div>
+                <div class="location-item">
+                    <i class="fa-solid fa-route"></i>
+                    <div>
+                        <span class="location-label">Distance</span>
+                        <span class="location-coords">
+                            {{
+                                wsService.calculateDistance(
+                                    userLocation,
+                                    restaurantLocation
+                                )
+                            }}
+                            units
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -23,23 +72,45 @@
                     <div class="progress-line"></div>
 
                     <div class="progress-step" [class.active]="currentStep(1)">
-                        <div class="step-circle">1</div>
-                        <span class="step-label">Ordered</span>
+                        <div class="step-circle">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                        <span class="step-label">Placed</span>
                     </div>
 
                     <div class="progress-step" [class.active]="currentStep(2)">
-                        <div class="step-circle">2</div>
-                        <span class="step-label">Preparing</span>
+                        <div class="step-circle">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <span class="step-label">Accepted</span>
                     </div>
 
                     <div class="progress-step" [class.active]="currentStep(3)">
-                        <div class="step-circle">3</div>
-                        <span class="step-label">Ready</span>
+                        <div class="step-circle">
+                            <i class="fa-solid fa-kitchen-set"></i>
+                        </div>
+                        <span class="step-label">Preparing</span>
                     </div>
 
                     <div class="progress-step" [class.active]="currentStep(4)">
-                        <div class="step-circle">4</div>
-                        <span class="step-label"> Delivered</span>
+                        <div class="step-circle">
+                            <i class="fa-solid fa-box"></i>
+                        </div>
+                        <span class="step-label">Ready</span>
+                    </div>
+
+                    <div class="progress-step" [class.active]="currentStep(5)">
+                        <div class="step-circle">
+                            <i class="fa-solid fa-motorcycle"></i>
+                        </div>
+                        <span class="step-label">On the way</span>
+                    </div>
+
+                    <div class="progress-step" [class.active]="currentStep(6)">
+                        <div class="step-circle">
+                            <i class="fa-solid fa-house"></i>
+                        </div>
+                        <span class="step-label">Delivered</span>
                     </div>
                 </div>
             </div>
@@ -47,7 +118,7 @@
             <div class="order-items">
                 <h3>Order Details</h3>
                 <div class="items-list">
-                    <div *ngFor="let item of sampleItems" class="item-row">
+                    <div *ngFor="let item of orderItems" class="item-row">
                         <div class="item-info">
                             <span class="item-name">{{ item.name }}</span>
                             <span class="item-quantity"
@@ -72,24 +143,87 @@
         </mat-card-content>
 
         <mat-card-actions>
+            <button mat-button class="chat-button" (click)="toggleChat()">
+                <i class="fa-solid fa-message"></i>
+                {{ showChat ? 'Hide Chat' : 'Chat with Restaurant' }}
+            </button>
             <button
                 *ngIf="currentStatus !== 'delivered'"
                 mat-button
                 class="refresh-button"
                 (click)="refreshStatus()"
             >
-                <i class="fa-solid fa-rotate"></i>
-                Update order status
+                <i class="fa solid fa-rotate"></i>
+                Refresh Status
             </button>
             <button
-                *ngIf="currentStatus === 'delivered'"
+                *ngIf="currentStatus == 'delivered'"
                 mat-button
                 class="feedback-button"
                 routerLink="/customer/feedback"
             >
-                <i class="fa solid fa-comment"></i>
-                Rate our service by leaving a feedback
+                <i class="fa-solid fa-comment"></i>
+                Leave a feedback
             </button>
         </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="chat-card" *ngIf="showChat">
+        <mat-card-content>
+            <div class="chat-header">
+                <h3>
+                    <i class="fa-solid fa-message"></i>
+                    Chat with Restaurant
+                </h3>
+                <button mat-icon-button (click)="toggleChat()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+
+            <div class="chat-messages">
+                <div *ngIf="chatMessages.length === 0" class="no-messages">
+                    <i class="fa-solid fa-comments"></i>
+                    <p>
+                        Start a conversation with the restaurant by sending a
+                        message!
+                    </p>
+                </div>
+
+                <div
+                    *ngFor="let msg of chatMessages"
+                    class="message"
+                    [class.customer-message]="msg.senderType === 'customer'"
+                    [class.restaurant-message]="msg.senderType === 'restaurant'"
+                >
+                    <div class="message-header">
+                        <span class="sender-name"> {{ msg.senderName }}</span>
+                        <span class="message-time">
+                            {{ msg.timestamp | date: 'shortTime' }}</span
+                        >
+                    </div>
+                    <div class="message-content">{{ msg.message }}</div>
+                </div>
+            </div>
+
+            <div class="chat-input">
+                <mat-form-field appearance="outline" class="message-field">
+                    <input
+                        matInput
+                        [(ngModel)]="newMessage"
+                        placeholder="Type your message and start a conversation with us..."
+                        (keyup.enter)="sendMessage()"
+                    />
+                </mat-form-field>
+                <button
+                    mat-raised-button
+                    class="send-button"
+                    (click)="sendMessage()"
+                    [disabled]="!newMessage.trim()"
+                >
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Send message
+                </button>
+            </div>
+        </mat-card-content>
     </mat-card>
 </div>
