@@ -6,22 +6,22 @@ import { CustomerService } from '../customer.service';
     providedIn: 'root',
 })
 export class RestaurantBrowsingService {
-    private CustomerService = inject(CustomerService);
+    private customerService = inject(CustomerService);
 
     async getRestaurants(): Promise<Restaurant[]> {
-        return await this.CustomerService.getRestaurants();
+        return await this.customerService.getRestaurants();
     }
 
     async getRestaurantById(id: number): Promise<Restaurant> {
-        return await this.CustomerService.getRestaurantById(id);
+        return await this.customerService.getRestaurantById(id);
     }
 
     async getRestaurantMenu(restaurantId: number): Promise<MenuItem[]> {
-        return await this.CustomerService.getRestaurantMenu(restaurantId);
+        return await this.customerService.getRestaurantMenu(restaurantId);
     }
 
     async getRestaurantCategories(restaurantId: number): Promise<string[]> {
-        return await this.CustomerService.getRestaurantCategories(restaurantId);
+        return await this.customerService.getRestaurantCategories(restaurantId);
     }
 
     async getRestaurantWithMenu(restaurantId: number): Promise<{

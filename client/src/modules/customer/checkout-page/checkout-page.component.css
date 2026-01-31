@@ -1,25 +1,35 @@
 .checkout-container {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 24px;
 }
 
 .checkout-header {
-    margin-bottom: 2rem;
+    margin-bottom: 32px;
+}
+
+.checkout-header button {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    gap: 0.5rem;
+    color: #4f46e5;
 }
 
 .checkout-header h1 {
-    font-size: 2rem;
-    margin: 1rem 0 1rem;
+    font-size: 28px;
+    margin: 16px 0 8px 0;
+    font-weight: 600;
     color: #333;
 }
 
 .checkout-header p {
     color: #666;
     font-size: 1rem;
+    margin: 0;
 }
 
-.checkout-container {
+.checkout-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
@@ -27,6 +37,17 @@
 
 .order-summary-card {
     height: fit-content;
+    border-radius: 16px;
+    border: var(--border-c, #e5e7eb) 2px solid;
+}
+
+.order-summary-card mat-card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.order-summary-card mat-card-content {
+    padding: 1.5rem;
 }
 
 .order-summary-card h3 {
@@ -35,6 +56,7 @@
     color: #333;
     font-size: 1.2rem;
     gap: 0.5;
+    font-weight: 600;
 }
 
 .restaurant-info {
@@ -44,10 +66,11 @@
     background: #f8f9fa;
     border-radius: 8px;
     margin-bottom: 1.5rem;
+    gap: 0.5rem;
 }
 
 .restaurant-info i {
-    color: #ff6b35;
+    color: #4caf50;
     font-size: 1.2rem;
 }
 
@@ -71,6 +94,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem 0;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .item-row:last-child {
@@ -86,6 +110,7 @@
 .item-name {
     font-weight: 600;
     color: #333;
+    font-size: 1rem;
 }
 
 .item-quantity {
@@ -100,18 +125,22 @@
 
 .price-breakdown {
     padding-top: 1rem;
-    border-top: 2px solid #f0f0f0;
+    border-top: 2px solid #e5e7eb;
 }
 
+.price-row-discount,
+.price-row-total,
 .price-row {
     display: flex;
     justify-content: space-between;
     color: #666;
-    padding: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .price-row.discount {
-    color: #28a745;
+    color: #059669;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .price-row.discount i {
@@ -119,11 +148,14 @@
 }
 
 .price-row.total {
-    font-size: 1.2rem;
-    font-weight: 600;
-    border-top: 1px solid #333;
+    font-size: 1.4rem;
+    font-weight: 700;
+    border-top: 2px solid #333;
     margin-top: 0.5rem;
     padding-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: none;
 }
 
 .payment-section {
@@ -131,9 +163,16 @@
     gap: 1rem;
     flex-direction: column;
 }
+
+app-paymentt-method {
+    display: block;
+    width: 100%;
+}
+
 .payment-action-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: var(--border-c) 2px solid;
     color: white;
+    border-radius: 16px;
 }
 
 .pay-button {
@@ -142,11 +181,14 @@
     justify-content: center;
     cursor: pointer;
     border-radius: 12px;
-    color: #667eea;
+    border: var(--border-c, #667eea) 2px solid;
+    color: #333;
+    background: color-mix(in srgb, var(--border-c, #667eea) 40%, white);
     font-weight: 600;
     font-size: 1.2rem;
     padding: 1rem;
     width: 100%;
+    height: 56px;
     gap: 0.5rem;
 }
 

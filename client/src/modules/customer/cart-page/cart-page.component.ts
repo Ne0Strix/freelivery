@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { PaymentMethodComponent } from '../payment-method/payment-method.component';
+
 import { CartItem, CartService } from './cart.service';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-cart-page',
@@ -27,73 +28,101 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         MatInputModule,
         MatProgressSpinnerModule,
         RouterLink,
-        PaymentMethodComponent,
     ],
     templateUrl: './cart-page.component.html',
     styleUrls: ['./cart-page.component.css'],
 })
 export class CartPageComponent implements OnInit {
-    itemsInCart: CartItem[] = [];
-    subtotal: number = 0;
-    totalPrice: number = 0;
-    promoInput: string = '';
-    promoApplied: boolean = false;
-    discountValue: number = 0;
-    isProcessingOrder: boolean = false;
-    errorMessage: string = '';
-    selectedPaymentMethod: string = 'card';
-    restaurantId?: number;
-    restaurantName?: string;
+    private cartService = inject(CartService);
+    private router = inject(Router);
+    private snackBar = inject(MatSnackBar);
 
-    constructor(
-        private cartService: CartService,
-        private router: Router
-    ) {}
+    cartItems = signal<CartItem[]>([]);
+    currentRestaurant = signal<{ id: number; name: string } | null>(null);
+    loading = signal<boolean>(false);
+
+    subtotal = signal<number>(0);
+    deliveryFee = signal<number>(2.5);
+    serviceFee = signal<number>(2.0);
+    total = signal<number>(0);
+
+    promoInput = '';
+    promoApplied = false;
+    discountValue = 0;
+    errorMessage = '';
 
     ngOnInit(): void {
         this.loadCartData();
-        this.updateTotal();
     }
 
     loadCartData(): void {
-        const cartData = this.cartService.getCartData();
-        this.itemsInCart = cartData.items;
-        this.restaurantId = cartData.restaurantId;
-        this.restaurantName = cartData.restaurantName;
+        try {
+            const items = this.cartService.getCart();
+            const restaurant = this.cartService.getCurrentRestaurant();
+
+            this.cartItems.set(items);
+            this.currentRestaurant.set(restaurant);
+
+            this.calculateTotal();
+        } catch (error) {
+            console.error('Error loading cart:', error);
+            this.snackBar.open('Error loading cart', 'Close', {
+                duration: 3000,
+            });
+        }
     }
 
-    updateTotal(): void {
-        this.subtotal = this.itemsInCart.reduce(
-            (sum, item) => sum + item.price * item.quantity,
-            0
+    calculateTotal(): void {
+        const subTotal = this.cartService.getSubtotal();
+        this.subtotal.set(subTotal);
+
+        let total = this.cartService.getTotal(
+            this.deliveryFee(),
+            this.serviceFee()
         );
-        this.totalPrice = Math.max(this.subtotal - this.discountValue, 0);
+
+        if (this.promoApplied) {
+            total -= this.discountValue;
+        }
+        this.total.set(total);
     }
 
-    changeQuantity(itemIndex: number, change: number): void {
-        const item = this.itemsInCart[itemIndex];
+    changeQuantity(index: number, change: number): void {
+        const items = this.cartItems();
+        const item = items[index];
+        if (!item) return;
+
         const newQuantity = item.quantity + change;
 
         if (newQuantity < 1) {
-            this.cartService.removeFromCart(item.dishId);
-            this.itemsInCart.splice(itemIndex, 1);
-        } else {
-            item.quantity = newQuantity;
-            this.cartService.saveCartToLocal(
-                this.itemsInCart,
-                this.restaurantId,
-                this.restaurantName
-            );
+            return;
         }
-        this.updateTotal();
+
+        try {
+            this.cartService.changeQuantity(item.dishId, newQuantity);
+            this.loadCartData();
+            this.snackBar.open('Cart updated', 'Close', { duration: 1500 });
+        } catch (error) {
+            console.error('Error updating quantity', error);
+            this.snackBar.open('Error updating cart', 'Close', {
+                duration: 3000,
+            });
+        }
     }
 
-    removeItem(itemId: number): void {
-        this.cartService.removeFromCart(itemId);
-        this.itemsInCart = this.itemsInCart.filter(
-            (item) => item.dishId !== itemId
-        );
-        this.updateTotal();
+    removeItem(dishId: number): void {
+        try {
+            this.cartService.removeFromCart(dishId);
+            this.loadCartData();
+            this.snackBar.open('Item removed from cart', 'Close', {
+                duration: 2500,
+            });
+        } catch (error) {
+            console.error('Error removing item:', error);
+            this.snackBar.open('Error removing item', 'Close', {
+                duration: 2500,
+            });
+        }
     }
 
     applyPromoCode(): void {
@@ -107,72 +136,72 @@ export class CartPageComponent implements OnInit {
             this.promoApplied = true;
             this.errorMessage = '';
             this.promoInput = '';
-            this.updateTotal();
+            this.calculateTotal();
         } else {
             this.errorMessage = 'Invalid promo code.';
             this.promoApplied = false;
             this.discountValue = 0;
-            this.updateTotal();
+            this.calculateTotal();
         }
     }
 
     clearCart(): void {
-        if (confirm('Clear all items?')) {
-            this.itemsInCart = [];
-            this.cartService.clearCart();
-            this.promoApplied = false;
-            this.discountValue = 0;
-            this.restaurantId = undefined;
-            this.restaurantName = undefined;
-            this.updateTotal();
+        const confirmClear = confirm(
+            'Are you sure you want to clear your cart?'
+        );
+
+        if (confirmClear) {
+            try {
+                this.cartService.clearCart();
+                this.loadCartData();
+                this.snackBar.open('Cart cleared', 'Close', { duration: 2500 });
+            } catch (error) {
+                console.error('Error clearing item:', error);
+                this.snackBar.open('Error clearing item', 'Close', {
+                    duration: 2500,
+                });
+            }
         }
     }
 
-    onPaymentMethodChange(method: string): void {
-        this.selectedPaymentMethod = method;
+    proceedToCheckout(): void {
+        const validation = this.cartService.isCartValid();
+
+        if (!validation.valid) {
+            this.snackBar.open(validation.errors.join(', '), 'Close', {
+                duration: 2500,
+            });
+            return;
+        }
+
+        const checkoutData = {
+            items: this.cartItems(),
+            restaurant: this.currentRestaurant(),
+            subtotal: this.subtotal(),
+            deliveryFee: this.deliveryFee(),
+            serviceFee: this.serviceFee(),
+            discount: this.discountValue,
+            total: this.total(),
+            promoApplied: this.promoApplied,
+        };
+
+        localStorage.setItem('checkout_data', JSON.stringify(checkoutData));
+        this.router.navigate(['/customer/checkout']);
     }
 
-    async confirmOrder(): Promise<void> {
-        if (this.itemsInCart.length === 0) {
-            this.errorMessage = 'Cart is empty!';
-            return;
-        }
-
-        if (!this.restaurantId) {
-            this.errorMessage = 'Restaurant information is not given';
-            return;
-        }
-
-        if (!this.selectedPaymentMethod) {
-            this.errorMessage = 'Please select a payment method';
-            return;
-        }
-
-        this.isProcessingOrder = true;
-        this.errorMessage = '';
-
-        try {
-            const result = await this.cartService.submitOrderToServer(
-                this.restaurantId,
-                this.itemsInCart,
-                this.promoApplied ? 'PROMO26' : undefined,
-                this.selectedPaymentMethod
-            );
-
-            this.cartService.clearCart();
-
-            alert(`Order #${result.order_number} is placed!`);
-
-            this.router.navigate(['/customer/tracking' + result.order_number]);
-        } catch (error) {
-            console.error('Order unsuccessful: ', error);
-            this.errorMessage = 'Order failed. Place a new order, please!';
-        } finally {
-            this.isProcessingOrder = false;
-        }
+    getItemTotal(item: CartItem): number {
+        return item.price * item.quantity;
     }
 
-    goToRestaurant(): void {
-        this.router.navigate(['/customer/restaurants']);
+    get itemsInCart(): CartItem[] {
+        return this.cartItems();
+    }
+
+    get restaurantName(): string | undefined {
+        return this.currentRestaurant()?.name;
+    }
+
+    get totalPrice(): number {
+        return this.total();
     }
 }

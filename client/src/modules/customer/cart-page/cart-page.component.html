@@ -119,10 +119,6 @@
             </mat-card>
 
             <div class="sidebar">
-                <app-payment-method
-                    [selectedMethod]="selectedPaymentMethod"
-                    (methodChange)="onPaymentMethodChange($event)"
-                ></app-payment-method>
                 <mat-card class="order-summary">
                     <mat-card-header>
                         <h3>Order Summary</h3>
@@ -165,14 +161,24 @@
                         <div class="price-breakdown">
                             <div class="price-row">
                                 <span> Subtotal</span>
-                                <span> € {{ subtotal.toFixed(2) }}</span>
+                                <span> € {{ subtotal().toFixed(2) }}</span>
+                            </div>
+
+                            <div class="price-row">
+                                <span> Delivery Fee</span>
+                                <span> € {{ deliveryFee().toFixed(2) }}</span>
+                            </div>
+
+                            <div class="price-row">
+                                <span> Service Fee</span>
+                                <span> € {{ serviceFee().toFixed(2) }}</span>
                             </div>
 
                             @if (promoApplied) {
                                 <div class="price-row discount">
                                     <span> Discount</span>
                                     <span>
-                                        -€ {{ discountValue.toFixed(2) }}</span
+                                        € {{ discountValue.toFixed(2) }}</span
                                     >
                                 </div>
                             }
@@ -192,21 +198,11 @@
                         <button
                             mat-button
                             class="checkout-button"
-                            (click)="confirmOrder()"
-                            [disabled]="isProcessingOrder"
+                            (click)="proceedToCheckout()"
                         >
-                            @if (isProcessingOrder) {
-                                Processing...
-                            } @else {
-                                <i class="fa-solid fa-lock"></i>
-                                Proceed to payment
-                            }
+                            <i class="fa-solid fa-arrow-right"></i>
+                            Proceed to Checkout
                         </button>
-
-                        <p class="checkout-note">
-                            <i class="fa-solid fa-info-circle"></i>
-                            Redirecting you to order tracking
-                        </p>
                     </mat-card-content>
                 </mat-card>
             </div>

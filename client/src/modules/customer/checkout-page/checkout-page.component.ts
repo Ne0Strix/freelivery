@@ -70,6 +70,7 @@ export class CheckoutComponent implements OnInit {
     }
 
     onPaymentMethodChange(methodId: string): void {
+        console.log('Payment method changed to:', methodId);
         this.selectedPaymentMethod.set(methodId);
     }
 
@@ -87,6 +88,7 @@ export class CheckoutComponent implements OnInit {
         setTimeout(() => {
             const orderNumber = Math.floor(Math.random() * 700000) + 100000;
 
+            console.log('Payment was successfull for order #' + orderNumber);
             const orderData = {
                 orderNumber: orderNumber,
                 restaurantId: data.restaurant?.id,
@@ -110,6 +112,8 @@ export class CheckoutComponent implements OnInit {
             );
 
             this.cartService.clearCart();
+            console.log('Cart cleared');
+
             localStorage.removeItem('checkout_data');
 
             this.isProcessing.set(false);
@@ -120,9 +124,13 @@ export class CheckoutComponent implements OnInit {
                 { duration: 2500 }
             );
 
+            console.log(
+                'Redirecting you to: /customer/tracking/' + orderNumber
+            );
+
             setTimeout(() => {
                 this.router.navigate(['/customer/tracking', orderNumber]);
-            }, 2500);
+            }, 1500);
         }, 2500);
     }
 
