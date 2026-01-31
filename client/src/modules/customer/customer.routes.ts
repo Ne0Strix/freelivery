@@ -26,7 +26,7 @@ export default [
     },
     { path: 'checkout', component: CheckoutComponent },
     {
-        path: 'tracking',
+        path: 'tracking/:id',
         component: OrderTrackingComponent,
     },
     {

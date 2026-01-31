@@ -156,6 +156,7 @@
     display: flex;
     justify-content: space-between;
     border-bottom: none;
+    color: black;
 }
 
 .payment-section {
@@ -164,7 +165,7 @@
     flex-direction: column;
 }
 
-app-paymentt-method {
+app-payment-method {
     display: block;
     width: 100%;
 }
@@ -181,9 +182,9 @@ app-paymentt-method {
     justify-content: center;
     cursor: pointer;
     border-radius: 12px;
-    border: var(--border-c, #667eea) 2px solid;
-    color: #333;
-    background: color-mix(in srgb, var(--border-c, #667eea) 40%, white);
+    color: black;
+    background: color-mix(in srgb, var(--border-c) 60%, white);
+    border: var(--border-c) 2px solid;
     font-weight: 600;
     font-size: 1.2rem;
     padding: 1rem;
@@ -194,10 +195,12 @@ app-paymentt-method {
 
 .pay-button:hover:not(:disabled) {
     transform: translateY(-2px);
+    background: color-mix(in srgb, var(--border-c) 60%, white);
 }
 
 .pay-button:disabled {
     cursor: not-allowed;
+    background: color-mix(in srgb, var(--border-c) 60%, white);
 }
 
 .pay-button i {

@@ -3,7 +3,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 
 export interface PaymentMethodOption {
@@ -14,7 +16,7 @@ export interface PaymentMethodOption {
 }
 
 @Component({
-    selector: 'app-paymentt-method',
+    selector: 'app-payment-method',
     standalone: true,
     imports: [
         CommonModule,
@@ -23,6 +25,8 @@ export interface PaymentMethodOption {
         MatCardModule,
         MatIconModule,
         MatRadioModule,
+        MatInputModule,
+        MatFormFieldModule,
     ],
     templateUrl: './paymentt-method.component.html',
     styleUrls: ['./paymentt-method.component.css'],
@@ -30,6 +34,7 @@ export interface PaymentMethodOption {
 export class PaymentMethodComponent {
     @Input() selectedMethod: string = 'card';
     @Output() methodChange = new EventEmitter<string>();
+    @Output() cardInfoChange = new EventEmitter<any>();
 
     paymentMethods: PaymentMethodOption[] = [
         {
@@ -46,8 +51,37 @@ export class PaymentMethodComponent {
         },
     ];
 
+    cardInfo = {
+        name: '',
+        number: '',
+        expiry: '',
+        cvv: '',
+    };
+
+    ngOnInit() {
+        this.showCardInfo();
+    }
+
+    private showCardInfo(): void {
+        this.cardInfoChange.emit(this.cardInfo);
+    }
+
     selectPaymentMethod(methodId: string): void {
         this.selectedMethod = methodId;
         this.methodChange.emit(methodId);
+    }
+
+    clearCardInfo(): void {
+        this.cardInfo = {
+            name: '',
+            number: '',
+            expiry: '',
+            cvv: '',
+        };
+        this.showCardInfo();
+    }
+
+    onCardInfoChange(): void {
+        this.showCardInfo();
     }
 }

@@ -1,6 +1,7 @@
 .payment-method-card {
     border: var(--border-c, #667eea) 2px solid;
     border-radius: 12px;
+    display: block;
 }
 
 .payment-method-card mat-card-header {
@@ -89,6 +90,78 @@ mat-card-header h3 i {
     font-size: 0.8rem;
 }
 
+.card-form {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+}
+
+.form-section {
+    margin-bottom: 1rem;
+}
+
+.form-section h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.row-fields {
+    margin-top: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+.row-fields mat-form-field {
+    width: 100%;
+}
+.card-chip {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    color: #ffd700;
+}
+
+.card-number {
+    text-align: center;
+    margin: 1.5rem 0;
+    font-size: 1.1rem;
+}
+
+.card-expiry,
+.card-name {
+    display: none;
+}
+
+.card-type {
+    position: absolute;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    top: 1rem;
+}
+
+.cash-info {
+    padding: 0.7rem;
+    border-radius: 12px;
+    margin-top: 1rem;
+    background: #f0fdf4;
+}
+
+.cash-info p {
+    margin: 0;
+    gap: 0.5rem;
+    align-items: center;
+    display: flex;
+    font-size: 0.9rem;
+}
+
 @media (max-width: 768px) {
     .payment-option {
         padding: 0.75rem;
@@ -105,5 +178,15 @@ mat-card-header h3 i {
 
     .payment-info p {
         font-size: 0.8rem;
+    }
+
+    .card-view {
+        min-height: 70px;
+        padding: 0.7rem;
+    }
+
+    .card-number {
+        font-size: 0.9rem;
+        margin: 1rem 0;
     }
 }

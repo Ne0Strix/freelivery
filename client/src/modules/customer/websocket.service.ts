@@ -9,6 +9,7 @@ export interface ChatMessage {
     message: string;
     timestamp: Date;
     orderId: string;
+    showPopup?: boolean;
 }
 
 export interface OrderStatusUpdate {
@@ -62,7 +63,7 @@ export class WebSocketService {
         this.socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
 
-            if (data.type === 'message_caht') {
+            if (data.type === 'message_chat') {
                 this.messagesSubject.next(data.payload as ChatMessage);
             } else if (data.type === 'update_status') {
                 this.statusUpdatesSubject.next(
@@ -92,8 +93,33 @@ export class WebSocketService {
         } else {
             console.log('Sending message:', message);
 
+            if (!message.timestamp) {
+                message.timestamp = new Date();
+            }
+
+            if (!message.id) {
+                message.id = this.generateId();
+            }
+
             setTimeout(() => {
                 this.messagesSubject.next(message);
+
+                if (message.senderType === 'customer') {
+                    setTimeout(() => {
+                        const restaurantReply: ChatMessage = {
+                            id: this.generateId(),
+                            senderId: 'restaurant_staff',
+                            senderName: 'Restaurant staff',
+                            senderType: 'restaurant',
+                            message:
+                                'Thank you for the message. We will get to you soon,',
+                            timestamp: new Date(),
+                            orderId: message.orderId,
+                            showPopup: false,
+                        };
+                        this.messagesSubject.next(restaurantReply);
+                    }, 2000);
+                }
             }, 100);
         }
     }
@@ -180,6 +206,7 @@ export class WebSocketService {
             'accepted',
             'preparing',
             'ready',
+            'delivering',
             'delivered',
         ];
 
@@ -210,21 +237,27 @@ export class WebSocketService {
     simulateRestaurantResponse(orderId: string): void {
         const restaurantResponse = [
             {
-                delay: 6000,
+                delay: 3000,
                 text: 'Dear Customer! Your order has been received and is waiting for confirmation.',
+                showPopup: true,
             },
             {
                 delay: 18000,
                 text: ' Your order has been confirmed and we are currently working on it.',
+                showPopup: true,
             },
 
             {
-                delay: 30000,
+                delay: 25000,
                 text: 'Your order is almost ready! Our delivery driver will pick it up soon!!',
+
+                showPopup: false,
             },
             {
                 delay: 50000,
                 text: 'Your order is done. The delivery driver will bring it to you shortly!',
+
+                showPopup: true,
             },
         ];
 
@@ -238,6 +271,7 @@ export class WebSocketService {
                     message: msg.text,
                     timestamp: new Date(),
                     orderId: orderId,
+                    showPopup: msg.showPopup,
                 };
                 this.messagesSubject.next(message);
             }, msg.delay);
