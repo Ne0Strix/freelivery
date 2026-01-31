@@ -274,7 +274,7 @@ export class UserService {
 
         let decoded: { sub: number };
         try {
-            decoded = jwt.verify(token, secret) as { sub: number };
+            decoded = jwt.verify(token, secret) as unknown as { sub: number };
         } catch {
             throw new ValidationError('Invalid or expired reset token');
         }

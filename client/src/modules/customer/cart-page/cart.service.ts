@@ -11,12 +11,6 @@ export interface CartItem {
     imageUrl?: string;
 }
 
-export interface CartData {
-    items: CartItem[];
-    restaurantId?: number;
-    restaurantName?: string;
-}
-
 @Injectable({
     providedIn: 'root',
 })
@@ -24,102 +18,77 @@ export class CartService {
     private readonly STORAGE_KEY = 'user_cart_items';
     private readonly RESTAURANT_KEY = 'cart_restaurant_info';
 
-    getCustomerCart(): CartItem[] {
-        const cartData = this.getCartData();
-        return cartData.items;
+    getCart(): CartItem[] {
+        try {
+            const cartJson = localStorage.getItem(this.STORAGE_KEY);
+            if (!cartJson) return [];
+            return JSON.parse(cartJson) as CartItem[];
+        } catch (error) {
+            console.error('Error reading cart:', error);
+            return [];
+        }
     }
 
-    getCartData(): CartData {
-        const savedItems = localStorage.getItem(this.STORAGE_KEY);
-        const savedRestaurant = localStorage.getItem(this.RESTAURANT_KEY);
-
-        const items = savedItems ? JSON.parse(savedItems) : [];
-        const restaurantInfo = savedRestaurant
-            ? JSON.parse(savedRestaurant)
-            : {};
-
-        return {
-            items,
-            restaurantId: restaurantInfo.restaurantId,
-            restaurantName: restaurantInfo.restaurantName,
-        };
-    }
-
-    saveCartToLocal(
-        items: CartItem[],
-        restaurantId?: number,
-        restaurantName?: string
-    ): void {
-        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(items));
-
-        if (restaurantId && restaurantName) {
-            localStorage.setItem(
-                this.RESTAURANT_KEY,
-                JSON.stringify({
-                    restaurantId,
-                    restaurantName,
-                })
-            );
+    getCurrentRestaurant(): { id: number; name: string } | null {
+        try {
+            const restaurantJson = localStorage.getItem(this.RESTAURANT_KEY);
+            if (!restaurantJson) return null;
+            return JSON.parse(restaurantJson);
+        } catch (error) {
+            console.error('Error reading restaurant:', error);
+            return null;
         }
     }
 
     addToCart(
-        item: CartItem,
+        item: Omit<CartItem, 'quantity'> & { quantity?: number },
         restaurantId?: number,
         restaurantName?: string
     ): void {
-        const cartData = this.getCartData();
-        const currentCart = cartData.items;
+        const currentRestaurant = this.getCurrentRestaurant();
 
-        if (
-            currentCart.length > 0 &&
-            cartData.restaurantId &&
-            restaurantId &&
-            cartData.restaurantId !== restaurantId
-        ) {
+        if (currentRestaurant && currentRestaurant.id !== restaurantId) {
             const confirmClear = confirm(
-                `The cart is not empty and contains item from ${cartData.restaurantName}. Do you want to clear the cart?`
+                `The cart is not empty and contains items from ${currentRestaurant.name}. Do you want to clear the cart?`
             );
 
             if (confirmClear) {
-                this.clearCart();
-                currentCart.length = 0;
-            } else {
                 return;
             }
+
+            this.clearCart();
         }
-        const index = currentCart.findIndex(
+
+        localStorage.setItem(
+            this.RESTAURANT_KEY,
+            JSON.stringify({ id: restaurantId, name: restaurantName })
+        );
+
+        const cart = this.getCart();
+        const itemExists = cart.findIndex(
             (cartItem) => cartItem.dishId === item.dishId
         );
-        if (index !== -1) {
-            currentCart[index].quantity += item.quantity;
+
+        if (itemExists >= 0) {
+            cart[itemExists].quantity += item.quantity || 1;
         } else {
-            currentCart.push({
+            cart.push({
                 ...item,
-                restaurantId: restaurantId || item.restaurantId,
-                restaurantName: restaurantName || item.restaurantName,
-            });
+                quantity: item.quantity || 1,
+                restaurantId,
+                restaurantName,
+            } as CartItem);
         }
 
-        this.saveCartToLocal(
-            currentCart,
-            restaurantId || cartData.restaurantId,
-            restaurantName || cartData.restaurantName
-        );
+        this.saveCart(cart);
     }
-    removeFromCart(removeDish: number): void {
-        const cartData = this.getCartData();
-        let currentCart = cartData.items;
-        currentCart = currentCart.filter((item) => item.dishId !== removeDish);
 
-        if (currentCart.length === 0) {
-            this.clearCart();
-        } else {
-            this.saveCartToLocal(
-                currentCart,
-                cartData.restaurantId,
-                cartData.restaurantName
-            );
+    removeFromCart(dishId: number): void {
+        const cart = this.getCart().filter((item) => item.dishId !== dishId);
+        this.saveCart(cart);
+
+        if (cart.length === 0) {
+            localStorage.removeItem(this.RESTAURANT_KEY);
         }
     }
 
@@ -129,17 +98,16 @@ export class CartService {
             return;
         }
 
-        const cartData = this.getCartData();
-        const currentCart = this.getCustomerCart();
-        const index = currentCart.findIndex((item) => item.dishId === dishId);
+        const cartData = this.getCart();
+        const index = cartData.findIndex((item) => item.dishId === dishId);
 
-        if (index !== -1) {
-            currentCart[index].quantity = newQ;
-            this.saveCartToLocal(
-                currentCart,
-                cartData.restaurantId,
-                cartData.restaurantName
-            );
+        if (index >= 0) {
+            if (newQ === 0) {
+                cartData.splice(index, 1);
+            } else {
+                cartData[index].quantity = newQ;
+            }
+            this.saveCart(cartData);
         }
     }
 
@@ -148,52 +116,55 @@ export class CartService {
         localStorage.removeItem(this.RESTAURANT_KEY);
     }
 
-    getTotal(): number {
-        const items = this.getCustomerCart();
-        return items.reduce(
+    getTotal(deliveryFee: number = 0, serviceFee: number = 0): number {
+        return this.getSubtotal() + deliveryFee + serviceFee;
+    }
+
+    getSubtotal(): number {
+        const cart = this.getCart();
+        return cart.reduce(
             (total, item) => total + item.price * item.quantity,
             0
         );
     }
 
     getCartCount(): number {
-        const items = this.getCustomerCart();
+        const items = this.getCart();
         return items.reduce((total, item) => total + item.quantity, 0);
     }
 
-    async submitOrderToServer(
-        restaurantId: number,
-        items: CartItem[],
-        discountCode?: string,
-        paymentMethod?: string
-    ): Promise<{ order_number: number }> {
-        console.log('Order:', {
-            restaurantId,
-            items,
-            discountCode,
-            paymentMethod,
-        });
+    private saveCart(cart: CartItem[]): void {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(cart));
+        } catch (error) {
+            console.error('Error saving cart', error);
+        }
+    }
 
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const orderNumber = Math.floor(Math.random() * 10000) + 1000;
+    cartNotEmpty(restaurantId: number): boolean {
+        const currentRestaurant = this.getCurrentRestaurant();
+        return currentRestaurant?.id === restaurantId;
+    }
 
-                const orderData = {
-                    orderNumber,
-                    restaurantId,
-                    items,
-                    discountCode,
-                    paymentMethod,
-                    orderDate: new Date().toISOString(),
-                    status: 'placed',
-                };
-                localStorage.setItem(
-                    `order_${orderNumber}`,
-                    JSON.stringify(orderData)
-                );
+    isCartValid(): {
+        valid: boolean;
+        errors: string[];
+    } {
+        const errors: string[] = [];
+        const cart = this.getCart();
 
-                resolve({ order_number: orderNumber });
-            }, 1000);
-        });
+        if (cart.length === 0) {
+            errors.push('Cart is empty');
+        }
+
+        const restaurant = this.getCurrentRestaurant();
+        if (!restaurant) {
+            errors.push('No restaurant selected');
+        }
+
+        return {
+            valid: errors.length === 0,
+            errors,
+        };
     }
 }

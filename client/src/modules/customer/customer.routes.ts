@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { CartPageComponent } from './cart-page/cart-page.component';
+import { CheckoutComponent } from './checkout-page/checkout-page.component';
 import { CustomerHomeComponent } from './customer-home/customer-home.component';
 import { FeedbackComponent } from './feedback/feedback.component';
 import { OrderTrackingComponent } from './order-tracking/order-tracking.component';
@@ -23,6 +24,7 @@ export default [
         path: 'cart',
         component: CartPageComponent,
     },
+    { path: 'checkout', component: CheckoutComponent },
     {
         path: 'tracking',
         component: OrderTrackingComponent,

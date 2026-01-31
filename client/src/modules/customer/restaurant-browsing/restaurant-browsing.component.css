@@ -38,7 +38,7 @@
 
 .search-bar {
     margin-bottom: 1rem;
-    flex-wrap: wrap;
+    flex-wrap: relative;
 }
 
 .search-bar input {
@@ -47,6 +47,7 @@
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     font-size: 1rem;
+    box-sizing: border-box;
 }
 
 .sort-bar input:focus {
@@ -59,6 +60,7 @@
     top: 50%;
     color: #6b7280;
     transform: translateY(-50%);
+    pointer-events: none;
 }
 
 .filter-chips {
@@ -169,7 +171,7 @@
     position: absolute;
     left: 10px;
     bottom: 10px;
-    background: rgba(0, 0, 0, 0.8);
+    background: #f59e0b;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -204,9 +206,9 @@
 .restaurant-meta {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.5rem;
-    flex-wrap: wrap;
+    flex-direction: column;
     margin-bottom: 0.75rem;
 }
 
@@ -217,11 +219,13 @@
     border-radius: 8px;
     font-size: 0.75rem;
     font-weight: 600;
+    width: fit-content;
 }
 
 .min-order {
     color: #6b7280;
     font-size: 0.8rem;
+    font-weight: 600;
 }
 
 .description {

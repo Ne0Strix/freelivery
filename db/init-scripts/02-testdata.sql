@@ -137,6 +137,8 @@ INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price,
   (28, 1, 5, 'Großer Brauner', 'Verlängerter Kaffee mit Milch', 3.80, NULL, true),
   (29, 1, 5, 'Wiener Melange', 'Klassischer Wiener Kaffee', 4.20, NULL, true);
 
+
+
 -- =====================
 -- Categories for Heuriger zum Weinberg (restaurant_id = 2, owned by restaurant-owner)
 -- =====================
@@ -612,33 +614,52 @@ INSERT INTO category (category_id, restaurant_id, name, description) VALUES
 -- ==================================
 -- DISHES- Pizzeria Piccola Napoli
 -- ==================================
-INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
 (45, 5, 10, 'Pizza Margherita', 'Pizza with fresh tomato sauce, mozzarella and basil', 8.50, NULL, true),
-(46, 5, 10, 'Pizza Tonno e Cipolla', 'Pizza with fresh tomato sauce, mozzarella, tuna and onions', 9.50, NULL, true),
+(46, 5, 10, 'Pizza Prosciutto', 'Pizza with fresh tomato sauce, mozzarella, prosciutto and basil', 9.50, NULL, true),
 (47, 5, 10, 'Pizza Salame', 'Pizza with fresh tomato sauce, mozzarella and salami', 10.50, NULL, true),
-(48, 5, 10, 'Pizza con Patatine Fritte', 'Pizza with fresh tomato sauce, mozzarella and fried potatoes', 10.50, NULL, true),
+(48, 5, 10, 'Pizza con Patatine Fritte e carne', 'Pizza with fresh tomato sauce, mozzarella, beef meat and fried potatoes', 10.50, NULL, true),
 (49, 5, 10, 'Pizza Buffala', 'Pizza with fresh tomato sauce, buffala mozzarella and basil', 10.50, NULL, true);
 
-INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
 (50, 5, 11, 'Pasta al pomodoro', 'Homemade pasta with fresh tomato sauce and basil', 8.50, NULL, true),
-(51, 5, 11, 'Pasta al Ragu', 'Homemade pasta with ragu', 13.50, NULL, true),
+(51, 5, 11, 'Spaghetti al Ragu', 'Homemade pasta with ragu', 13.50, NULL, true),
 (52, 5, 11, 'Pasta in Forno', 'Homemade pasta cooked in the wood oven, with fresh tomato sauce, mozzarella and basil', 15.50, NULL, true),
-(53, 5, 11,'Pasta aglio olio e peperoncino', 'Homemade pasta with garlic,oil and chili peppers', 13.50, NULL, true),
+(53, 5, 11,'Spaghetti aglio olio e peperoncino', 'Homemade pasta with garlic,oil and chili peppers', 13.50, NULL, true);
 
 
-INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
 (54, 5, 12, 'Tiramisu', 'Authentic italian tiramisu with mascarpone and coffee flavours savoiardi', 5.70, NULL, true),
 (55, 5, 12,'Cannoli siciliani', 'Homemade cannoli with creame cheese', 6.50, NULL, true),
-(56, 5, 12,'Piccola napoli special gelato ', 'Homemade mango flavoured gelato with peanuts and cashew on top', 4.00, NULL, true),
+(56, 5, 12,'Piccola napoli special gelato ', 'Homemade mango flavoured gelato with peanuts and cashew on top', 4.00, NULL, true);
 
-INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
 (57, 5, 13,'Acqua naturale', 'Natural water (0.5l)', 2.70, NULL, true),
 (58, 5, 13,'Acqua Frizzante', 'Sparkling water (0.5l)', 2.70, NULL, true),
 (59, 5, 13,'Orange juice ', 'Fresh orange juice', 3.00, NULL, true),
-(60, 5, 13,'Strawberry-mango juice ', 'Fresh strawberry-mango juice', 3.00, NULL, true),
+(60, 5, 13,'Strawberry-mango juice ', 'Fresh strawberry-mango juice', 3.00, NULL, true);
 
 
+UPDATE dish SET image_url = 'worls-cuisine-with-delicious-food.jpg' WHERE dish_id = 45;
+UPDATE dish SET image_url = 'https://unsplash.com/photos/close-up-on-round-pizza-with-abundant-delicious-garnish-of-prosciutto-mozzarella-tomato-slices-and-basil-leaves-served-on-wooden-board-dP7MgFCuNHY' WHERE dish_id = 46;
+UPDATE dish SET image_url = 'https://unsplash.com/photos/a-pepperoni-pizza-is-shown-on-a-table-4ZYep8v0DgY' WHERE dish_id = 47;
+UPDATE dish SET image_url = 'https://stock.adobe.com/it/search?k=%22pizza+con+patatine+fritte%22&asset_id=498220870' WHERE dish_id = 48;
+UPDATE dish SET image_url = 'https://stock.adobe.com/it/search?filters%5Bcontent_type%3Aphoto%5D=1&filters%5Bcontent_type%3Aillustration%5D=1&filters%5Bcontent_type%3Azip_vector%5D=1&filters%5Bcontent_type%3Avideo%5D=1&filters%5Bcontent_type%3Atemplate%5D=1&filters%5Bcontent_type%3A3d%5D=1&filters%5Bcontent_type%3Aimage%5D=1&k=pizza+bufala&order=relevance&search_page=1&search_type=usertyped&acp=&aco=pizza+bufala&get_facets=0&asset_id=420753004' WHERE dish_id = 49;
 
+
+UPDATE dish SET image_url = 'https://unsplash.com/photos/a-white-plate-topped-with-pasta-covered-in-sauce-w0GyGNyGo6Y' WHERE dish_id = 50;
+UPDATE dish SET image_url = 'https://unsplash.com/photos/pasta-dish-in-stainless-steel-bowl-_CO7YZ501g4' WHERE dish_id = 51;
+UPDATE dish SET image_url = 'https://unsplash.com/photos/a-casserole-dish-is-being-cooked-in-the-oven-pXqoZGM4kPY' WHERE dish_id = 52;
+UPDATE dish SET image_url = 'https://www.sicilianicreativiincucina.it/wp-content/uploads/2024/01/spaghetti-aglio-olio-1170x878.jpg' WHERE dish_id = 53;
+
+UPDATE dish SET image_url = 'https://unsplash.com/photos/a-person-picking-up-a-piece-of-cake-on-a-plate-pzRS_xF8brE' WHERE dish_id = 54;
+UPDATE dish SET image_url = 'https://unsplash.com/photos/a-plate-of-food-DvvHAtbmlag' WHERE dish_id = 55;
+UPDATE dish SET image_url = 'https://unsplash.com/photos/a-scoop-of-ice-cream-sitting-on-top-of-a-table-CdP2h2Or8Pc' WHERE dish_id = 56;
+
+UPDATE dish SET image_url = 'https://unsplash.com/photos/blue-and-white-labeled-bottle-1rOjZMHCQtU' WHERE dish_id = 57;
+UPDATE dish SET image_url = 'https://www.istockphoto.com/photo/pouring-mineral-water-in-the-glass-gm451992561-29747712?utm_source=unsplash&utm_medium=affiliate&utm_campaign=srp_photos_bottom&utm_content=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2Fsparkling-water&utm_term=sparkling+water%3A%3A%3A%3A8a235074-e869-48fd-8bab-dfff0afe57fe' WHERE dish_id = 58;
+UPDATE dish SET image_url = 'https://unsplash.com/photos/a-glass-of-orange-juice-on-a-table-with-sliced-oranges-87sqRxRPXZM' WHERE dish_id = 59;
+UPDATE dish SET image_url = 'https://unsplash.com/photos/a-glass-of-orange-juice-and-strawberries-on-a-table-mAj9Oe-CwFE' WHERE dish_id = 60;
 -- =======================================
 -- CATEGORIES- DISHES- CHICAGO BURGER SHOP
 -- =======================================
@@ -652,21 +673,21 @@ INSERT INTO category (category_id, restaurant_id, name, description) VALUES
 -- ==================================
 -- DISHES- CHICAGO BURGER SHOP 
 -- ==================================
-INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
 (61, 6, 14,'Classic Chicago Burger', 'Fresh beef patty, cheese, lettuce, tomato, pickles and chicago style sauce ', 11.50, NULL, true),
 (62, 6, 14,'Double Beef Burger', 'Two fresh beef patties, cheese, lettuce, tomato, pickles,egg and chicago style sauce ', 13.50, NULL, true),
 (63, 6, 14,'Chicken Burger', 'Fried chicken, tomatoes, pickles, lettuce, BBQ and mayo sauce', 10.50, NULL, true),
 (64, 6, 14,'Spicy Chicken Burger', 'Spicy flavoured fried chicken, tomatoes, pickles and spicy mayo sauce', 12.50, NULL, true),
 (65, 6, 14,'Veggie Burger', 'Potato based patty, tomato, pickles, lettuce, caramelized onions and mayo', 15.50, NULL, true);
 
-INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
 (66, 6, 15,'Crispy french fries', 'Delicious french fries', 5.30, NULL, true),
 (67, 6, 15,'Mexican style potatoes', 'Potatoes with spicy chilly peppers', 7.50, NULL, true),
 (68, 6, 15,'Fried onion Rings', 'Fried onion rings', 5.30, NULL, true),
 (69, 6, 15,'Nachos & guacamole', 'Nachos with homemade guacamole sauce', 8.00, NULL, true);
 
 
-INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
 (70, 6, 16, 'Classic oreo Milkshake', 'Classic oreo Milksahke with heavy cream on top', 5.70, NULL, true),
 (71, 6, 16, 'Mixed Berries Milkshake', 'Fresh mixed berries milkshake', 6.40, NULL, true),
 (72, 6, 16, 'Vanilla Milkshake', 'Classic Vanilla milkshake', 4.50, NULL, true),
@@ -690,29 +711,29 @@ INSERT INTO category (category_id, restaurant_id, name, description) VALUES
 -- ==================================
 -- DISHES- SHANGAI PALACE
 -- ==================================
-INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
 (75, 7, 17,'Crispy chicken Roll', 'Fried chicken, avocado, spicy mayo, sea weed (10 pieces)', 10.00, NULL, true),
 (76, 7, 17,'Salmon Roll', 'Fresh raw salmon, avocado, cucumber, teriyaki sauce(10 pieces)', 11.00, NULL, true),
 (77, 7, 17,'Crab Roll', 'Cooked crab, lettuce, cucumber, dark soya sauce (10 pieces)', 10.50, NULL, true),
 (78, 7, 17,'Veggie Roll', 'Avocado, cucumber, zucchini, carrots (10 pieces)', 10.50, NULL, true);
 
 
-INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
+INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price, image_url, is_Available) VALUES
 (79, 7, 18,'Classic udon noodles', 'Udon noodles with eggs, shrimps, zucchini, cabbage and carrots', 8.30, NULL, true),
 (80, 7, 18,'Spicy udon noodles', 'Udon noodles with sliced beef meat, egg, caramelized onions and dragon pepper', 9.50, NULL, true),
 (81, 7, 18,'Classic udon noodles without shrimps', 'Udon noodles with eggs, cabbage, zucchini and carrots', 7.80, NULL, true);
 
 
 
-INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url,is_Available) VALUES
+INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price, image_url,is_Available) VALUES
 (82, 7, 19, 'Spicy udon noodles soup', 'Udon noodles soup with sliced beef meat, boiled egg, caramelized onions and dragon pepper', 9.70, NULL, true),
 (83, 7, 19, 'Classic udon noodles soup', 'Udon noodle soup with boiled egg, mushroom, cabbage, tofu', 9.40, NULL, true),
 (84, 7, 19, 'Chicken udon noodles soup', 'Udon noodle soup with chicken, tomato sauce, onions', 7.50, NULL, true),
 (85, 7, 19, 'Fanta (0.2l)', 'Classic Fanta', 2.50, NULL, true),
-(86, 7, 19, 'Sparkling Water (0.5l)', 'Sparkling Water', 3.50, NULL, true),
+(86, 7, 19, 'Sparkling Water (0.5l)', 'Sparkling Water', 3.50, NULL, true);
 
 
-INSERT INTO dish (dish, restaurant_id, category_id, name, description, price, image_url,is_Available) VALUES
+INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price, image_url,is_Available) VALUES
 (87, 7, 20,'Chocholate mochi', 'Chocholate flavoured mochi with chocolate ice cream', 8.30, NULL, true),
 (88, 7, 20,'Pistachio mochi', 'Pistachio flavoured mochi with pistachio ice cream', 9.50, NULL, true),
 (89, 7, 20, 'Mango mochi', 'Mango flavoured mochi with Mango ice cream', 7.80, NULL, true);
