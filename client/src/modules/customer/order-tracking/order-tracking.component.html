@@ -168,7 +168,7 @@
         </mat-card-actions>
     </mat-card>
 
-    <mat-card class="chat-card" *ngIf="showChat">
+    <mat-card class="chat-card" [hidden]="!showChat">
         <mat-card-content>
             <div class="chat-header">
                 <h3>

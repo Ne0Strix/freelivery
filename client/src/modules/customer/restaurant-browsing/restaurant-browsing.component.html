@@ -60,7 +60,10 @@
                 <div class="image-placeholder">
                     <i class="fa-solid fa-utensils"></i>
                 </div>
-                <div class="closed-overlay" *ngIf="!restaurant.isOpen">
+                <div
+                    class="closed-overlay"
+                    *ngIf="!restaurant.isOpen === false"
+                >
                     <span>CLOSED</span>
                 </div>
 

@@ -33,6 +33,7 @@ interface OrderData {
     PaymentMethod?: string;
     orderDate: string;
     status: string;
+    restaurantLocation?: Location;
 }
 @Component({
     selector: 'app-order-tracking',
@@ -66,6 +67,8 @@ export class OrderTrackingComponent implements OnInit, OnDestroy {
     isConnected: boolean = false;
     showChat: boolean = false;
 
+    private lastPopupMessage: string = '';
+
     statusOrder = [
         'placed',
         'accepted',
@@ -85,8 +88,23 @@ export class OrderTrackingComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.orderId = this.route.snapshot.paramMap.get('id') || '1234';
+        console.log('Order ID from route:', this.orderId);
+
+        this.getUserLocation();
         this.loadOrderData();
         this.initializeWebSocket();
+    }
+
+    private getUserLocation(): void {
+        const userData = JSON.parse(
+            localStorage.getItem('currentUser') || '{}'
+        );
+
+        if (userData.location) {
+            this.userLocation = userData.location;
+        } else {
+            this.userLocation = { x: 5, y: 3 };
+        }
     }
 
     private loadOrderData(): void {
@@ -106,6 +124,12 @@ export class OrderTrackingComponent implements OnInit, OnDestroy {
             this.orderData = JSON.parse(orderDataS);
             this.orderItems = this.orderData?.items || [];
             this.currentStatus = this.orderData?.status || 'placed';
+
+            if (this.orderData?.restaurantLocation) {
+                this.restaurantLocation = this.orderData.restaurantLocation;
+            } else {
+                this.restaurantLocation = { x: 6, y: 7 };
+            }
         } catch (error) {
             console.error('Invalid order data:', error);
             this.snackBar.open('Failed to load order details', 'Close', {
@@ -126,16 +150,26 @@ export class OrderTrackingComponent implements OnInit, OnDestroy {
 
         this.wsService.messages$
             .pipe(takeUntil(this.destroy$))
-            .subscribe((message) => {
-                this.chatMessages.push(message);
+            .subscribe((message: any) => {
+                this.chatMessages = [...this.chatMessages, message];
                 this.cdr.markForCheck();
+                this.scroll();
 
-                if (message.senderType === 'restaurant') {
+                const messageKey = `${message.senderName}:${message.message}`;
+                if (
+                    message.senderType === 'restaurant' &&
+                    message.showPopup !== false &&
+                    this.lastPopupMessage !== messageKey
+                ) {
+                    this.lastPopupMessage = messageKey;
+
                     this.snackBar.open(
                         `${message.senderName}: ${message.message}`,
                         'Close',
                         {
-                            duration: 5000,
+                            duration: 4000,
+                            verticalPosition: 'top',
+                            horizontalPosition: 'right',
                         }
                     );
                 }
@@ -156,13 +190,23 @@ export class OrderTrackingComponent implements OnInit, OnDestroy {
                 }
                 this.cdr.markForCheck();
 
-                this.snackBar.open(
-                    `Order status updated: ${update.status}`,
-                    'Close',
-                    {
-                        duration: 3000,
-                    }
-                );
+                const statuses = [
+                    'accepted',
+                    'preparing',
+                    'ready',
+                    'delivered',
+                ];
+                if (statuses.includes(update.status)) {
+                    this.snackBar.open(
+                        `Order status updated: ${update.status}`,
+                        'Close',
+                        {
+                            duration: 3000,
+                            verticalPosition: 'top',
+                            horizontalPosition: 'right',
+                        }
+                    );
+                }
             });
 
         this.wsService.simulateStatusUpdates(
@@ -174,6 +218,15 @@ export class OrderTrackingComponent implements OnInit, OnDestroy {
         this.wsService.simulateRestaurantResponse(this.orderId);
 
         this.updateDeliveryTime();
+    }
+
+    private scroll(): void {
+        setTimeout(() => {
+            const chatContainer = document.querySelector('.chat-messages');
+            if (chatContainer) {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }, 100);
     }
 
     ngOnDestroy(): void {
@@ -190,8 +243,16 @@ export class OrderTrackingComponent implements OnInit, OnDestroy {
     }
 
     currentStep(stepNumber: number): boolean {
-        const currentStep = this.statusOrder.indexOf(this.currentStatus) + 1;
-        return stepNumber <= currentStep;
+        let currentIndex = this.statusOrder.indexOf(this.currentStatus);
+
+        if (this.currentStatus === 'delivered' && currentIndex === -1) {
+            currentIndex = this.statusOrder.indexOf('delivered');
+        }
+
+        if (currentIndex === -1) {
+            currentIndex = 0;
+        }
+        return stepNumber <= currentIndex + 1;
     }
 
     refreshStatus(): void {

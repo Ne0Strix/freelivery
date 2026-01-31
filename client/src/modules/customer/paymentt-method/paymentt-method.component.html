@@ -1,0 +1,97 @@
+<mat-card class="payment-method-card">
+    <mat-card-header>
+        <h3>
+            <i class="fa-solid fa-credit-card"></i>
+            Payment Method
+        </h3>
+    </mat-card-header>
+
+    <mat-card-content>
+        <div class="payment-methods">
+            <div
+                *ngFor="let method of paymentMethods"
+                class="payment-option"
+                [class.selected]="selectedMethod === method.id"
+                (click)="selectPaymentMethod(method.id)"
+            >
+                <div class="payment-radio">
+                    <input
+                        type="radio"
+                        [id]="method.id"
+                        [value]="method.id"
+                        [(ngModel)]="selectedMethod"
+                        name="paymentMethod"
+                    />
+                </div>
+                <div class="payment-icon">
+                    <i [class]="method.icon"></i>
+                </div>
+                <div class="payment-info">
+                    <h4>{{ method.name }}</h4>
+                    <p>{{ method.description }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-form" *ngIf="selectedMethod === 'card'">
+            <div class="form-section">
+                <h4>
+                    <i class="fa-solid fa-user"></i>
+                    Cardholder Name
+                </h4>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Cardholder Name</mat-label>
+                    <input matInput [(ngModel)]="cardInfo.name" required />
+                </mat-form-field>
+            </div>
+
+            <div class="form-section">
+                <h4>
+                    <i class="fa-solid fa-credit-card"></i>
+                    Card Details
+                </h4>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Card Number</mat-label>
+                    <input
+                        matInput
+                        [(ngModel)]="cardInfo.number"
+                        maxlength="19"
+                        (input)="('•••• •••• •••• ••••')"
+                        placeholder="xxxx-xxxx-xxxx-xxxx"
+                        required
+                    />
+                </mat-form-field>
+
+                <div class="row-fields">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Expiry Date</mat-label>
+                        <input
+                            matInput
+                            [(ngModel)]="cardInfo.expiry"
+                            placeholder="MM/YY"
+                            maxlength="5"
+                            required
+                        />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>CVV</mat-label>
+                        <input
+                            matInput
+                            type="password"
+                            [(ngModel)]="cardInfo.cvv"
+                            placeholder="123"
+                            maxlength="3"
+                            required
+                        />
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
+        <div class="cash-information" *ngIf="selectedMethod === 'cash'">
+            <i class="fa-solid fa-info-circle"></i>
+            <p>Pay with cash at order arrival.</p>
+        </div>
+    </mat-card-content>
+</mat-card>

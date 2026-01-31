@@ -238,7 +238,7 @@ export class CustomerService {
                     ? parseFloat(restaurant.rating)
                     : restaurant.rating || 4.0,
 
-            deliveryTime: restaurant.deliveryTime || '30-45 min',
+            deliveryTime: restaurant.deliveryTime || '45-50 min',
 
             isOpen: this.isRestaurantOpen(restaurant),
 
@@ -247,13 +247,18 @@ export class CustomerService {
     }
 
     private isRestaurantOpen(restaurant: Restaurant): boolean {
-        if (restaurant.status === 'CLOSED' || restaurant.status === 'SUSPENDED')
-            return false;
-        if (restaurant.status === 'OPEN' || restaurant.status === 'ACTIVE')
-            return true;
-
-        const hour = new Date().getHours();
-        return hour >= 8 && hour < 22;
+        if (restaurant.status) {
+            const status = restaurant.status.toUpperCase();
+            if (status === 'CLOSED' || status === 'SUSPENDED') {
+                console.log('Restaurant:', restaurant.name + ' is closed');
+                return false;
+            }
+            if (status === 'OPEN' || status === 'ACTIVE') {
+                return true;
+            }
+        }
+        console.log('Default as open', restaurant.name);
+        return true;
     }
 
     private formatAddress(restaurant: Restaurant): string {

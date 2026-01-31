@@ -355,7 +355,7 @@ mat-card-content {
     width: 100%;
     background: color-mix(in srgb, var(--border-c) 40%, white);
     border: var(--border-c) 2px solid;
-    color: white;
+    color: black;
     border: none;
     padding: 1rem;
     height: 48px;

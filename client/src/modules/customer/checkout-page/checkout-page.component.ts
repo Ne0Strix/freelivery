@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -18,6 +18,13 @@ interface CheckoutData {
     discount: number;
     total: number;
     promoApplied: boolean;
+}
+
+interface CardInfo {
+    name: string;
+    number: string;
+    expiry: string;
+    cvv: string;
 }
 
 @Component({
@@ -39,8 +46,12 @@ export class CheckoutComponent implements OnInit {
     private snackBar = inject(MatSnackBar);
     private cartService = inject(CartService);
 
+    @ViewChild(PaymentMethodComponent)
+    paymentComponent!: PaymentMethodComponent;
+
     checkoutData = signal<CheckoutData | null>(null);
     selectedPaymentMethod = signal<string>('card');
+    cardInfo = signal<CardInfo | null>(null);
     isProcessing = signal<boolean>(false);
 
     ngOnInit(): void {
@@ -74,6 +85,10 @@ export class CheckoutComponent implements OnInit {
         this.selectedPaymentMethod.set(methodId);
     }
 
+    onCardInfoChange(cardInfo: CardInfo): void {
+        this.cardInfo.set(cardInfo);
+    }
+
     async processPayment(): Promise<void> {
         const data = this.checkoutData();
 
@@ -82,6 +97,24 @@ export class CheckoutComponent implements OnInit {
                 duration: 2500,
             });
             return;
+        }
+
+        if (this.selectedPaymentMethod() === 'card') {
+            const cardInfo = this.cardInfo();
+            if (
+                !cardInfo ||
+                !cardInfo.name ||
+                !cardInfo.number ||
+                !cardInfo.expiry ||
+                !cardInfo.cvv
+            ) {
+                this.snackBar.open(
+                    'Please fill all the card details',
+                    'Close',
+                    { duration: 2500 }
+                );
+                return;
+            }
         }
         this.isProcessing.set(true);
 
@@ -116,6 +149,11 @@ export class CheckoutComponent implements OnInit {
 
             localStorage.removeItem('checkout_data');
 
+            if (this.paymentComponent) {
+                this.paymentComponent.clearCardInfo();
+            }
+            this.cardInfo.set(null);
+
             this.isProcessing.set(false);
 
             this.snackBar.open(
@@ -129,7 +167,15 @@ export class CheckoutComponent implements OnInit {
             );
 
             setTimeout(() => {
-                this.router.navigate(['/customer/tracking', orderNumber]);
+                this.router
+                    .navigate(['/customer/tracking', orderNumber])
+                    .then((success) => {
+                        console.log('Redirection is working:', success);
+                    })
+                    .catch((error) => {
+                        console.error('Redirection failed:', error);
+                        this.router.navigate(['/customer/home']);
+                    });
             }, 1500);
         }, 2500);
     }
