@@ -163,7 +163,7 @@ export class CartPageComponent implements OnInit {
 
             alert(`Order #${result.order_number} is placed!`);
 
-            this.router.navigate(['/customer/track', result.order_number]);
+            this.router.navigate(['/customer/tracking' + result.order_number]);
         } catch (error) {
             console.error('Order unsuccessful: ', error);
             this.errorMessage = 'Order failed. Place a new order, please!';
