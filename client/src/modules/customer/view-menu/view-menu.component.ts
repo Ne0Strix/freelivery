@@ -15,7 +15,6 @@ import { CartService } from '../cart-page/cart.service';
 import { MenuItem, Restaurant } from '../customer.model';
 import { RestaurantBrowsingService } from '../restaurant-browsing/restaurant-browsing.service';
 
-//import { RestaurantService } from '../services/restaurant.service';
 import { CustomerService } from '../customer.service';
 
 @Component({
@@ -36,7 +35,7 @@ import { CustomerService } from '../customer.service';
 export class ViewMenuComponent {
     private route = inject(ActivatedRoute);
     private RestaurantBrowsingService = inject(RestaurantBrowsingService);
-    private CustomerService = inject(CustomerService);
+    private customerService = inject(CustomerService);
     private cartService = inject(CartService);
     private snackBar = inject(MatSnackBar);
 
@@ -133,16 +132,35 @@ export class ViewMenuComponent {
     }
 
     async addToCart(item: MenuItem) {
+        const restaurant = this.restaurant();
+        if (!restaurant) {
+            this.snackBar.open(
+                'Restaurant information not available',
+                'Close',
+                {
+                    duration: 3000,
+                }
+            );
+            return;
+        }
         const cartItem = {
             dishId: item.dishId,
             name: item.name,
             price: item.price,
             quantity: 1,
             restaurantId: this.restaurantId(),
+            restaurantName: restaurant.name,
+            description: item.description,
+            imageUrl: item.imageUrl,
         };
 
         try {
-            this.cartService.addToCart(cartItem);
+            this.cartService.addToCart(
+                cartItem,
+                this.restaurantId(),
+                restaurant.name
+            );
+
             this.snackBar.open(`Added ${item.name}`, 'Close', {
                 duration: 3000,
             });
@@ -157,10 +175,8 @@ export class ViewMenuComponent {
 
     async loadCartCount() {
         try {
-            const cart = this.cartService.getCustomerCart();
-            this.cartCount.set(
-                cart.reduce((sum: number, item: any) => sum + item.quantity, 0)
-            );
+            const count = this.cartService.getCartCount();
+            this.cartCount.set(count);
         } catch (error) {
             console.error('Error loading cart:', error);
         }

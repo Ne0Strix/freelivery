@@ -39,7 +39,7 @@ import { RestaurantBrowsingService } from './restaurant-browsing.service';
 })
 export class RestaurantBrowsingComponent implements OnInit {
     private restaurantBrowsingService = inject(RestaurantBrowsingService);
-    private CustomerService = inject(CustomerService);
+    private customerService = inject(CustomerService);
     private router = inject(Router);
 
     restaurants = signal<Restaurant[]>([]);
@@ -153,7 +153,7 @@ export class RestaurantBrowsingComponent implements OnInit {
 
     async loadCartCount() {
         try {
-            const count = await this.CustomerService.getCartCount();
+            const count = await this.customerService.getCartCount();
             this.cartCount.set(count);
         } catch (error) {
             console.error('Could not load cart count:', error);
