@@ -9,6 +9,7 @@ export interface MenuItem {
     description: string;
     price: number;
     isAvailable: boolean;
+    imageUrl: string;
 }
 
 export class CustomerService {
@@ -29,6 +30,7 @@ export class CustomerService {
             description: row.description,
             price: parseFloat(row.price),
             isAvailable: row.is_available,
+            imageUrl: row.image_url,
         };
     }
 }

@@ -1,0 +1,206 @@
+<div class="cart-container">
+    <header class="cart-header">
+        <button mat-button type="button" routerLink="/customer/home">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Dashboard
+        </button>
+        <h1>Your shopping cart</h1>
+        <p>{{ itemsInCart.length }} items in cart</p>
+    </header>
+
+    @if (itemsInCart.length === 0) {
+        <mat-card class="empty-cart">
+            <mat-card-content>
+                <i class="fa-solid fa-cart-shopping empty-icon"></i>
+                <h2>The cart is empty</h2>
+                <p>Browse menus to add new items to the cart</p>
+                <button
+                    mat-flat-button
+                    class="browse-button"
+                    routerLink="/customer/restaurants"
+                >
+                    <i class="fa-solid fa-utensils"></i>
+                    Browse Restaurants
+                </button>
+            </mat-card-content>
+        </mat-card>
+    } @else {
+        <div class="cart-content">
+            <mat-card class="cart-items-card">
+                <mat-card-header>
+                    <div class="cart-header-content">
+                        <h3>Cart items ({{ itemsInCart.length }})</h3>
+                        <p class="restaurant-name" *ngIf="restaurantName">
+                            <i class="fa-solid fa-store"></i>
+                            {{ restaurantName }}
+                        </p>
+                    </div>
+
+                    <button
+                        mat-button
+                        class="clear-button"
+                        (click)="clearCart()"
+                    >
+                        <i class="fa-solid fa-trash"></i>
+                        Clear all
+                    </button>
+                </mat-card-header>
+
+                <mat-card-content>
+                    @for (
+                        item of itemsInCart;
+                        let i = $index;
+                        track item.dishId
+                    ) {
+                        <div class="cart-item">
+                            <div class="item-image" *ngIf="item.imageUrl">
+                                <img [src]="item.imageUrl" [alt]="item.name" />
+                            </div>
+                            <div
+                                class="item-image-placeholder"
+                                *ngIf="!item.imageUrl"
+                            >
+                                <i class="fa-solid fa-utensils"></i>
+                            </div>
+                            <div class="item-info">
+                                <h3>{{ item.name }}</h3>
+                                <p
+                                    class="item-description"
+                                    *ngIf="item.description"
+                                >
+                                    {{ item.description }}
+                                </p>
+                                <p class="unit-price">
+                                    €{{ item.price.toFixed(2) }} each
+                                </p>
+                            </div>
+                            <div class="item-controls">
+                                <div class="quantity-control">
+                                    <button
+                                        type="button"
+                                        (click)="changeQuantity(i, -1)"
+                                        [disabled]="item.quantity <= 1"
+                                    >
+                                        <i class="fa-solid fa-minus"></i>
+                                    </button>
+                                    <span class="quantity">
+                                        {{ item.quantity }}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        (click)="changeQuantity(i, 1)"
+                                    >
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="item-subtotal">
+                                    <span class="subtotal-label">
+                                        Subtotal</span
+                                    >
+                                    <span class="subtotal-amount"
+                                        >€{{
+                                            (
+                                                item.price * item.quantity
+                                            ).toFixed(2)
+                                        }}</span
+                                    >
+                                </div>
+                                <button
+                                    type="button"
+                                    class="remove-button"
+                                    (click)="removeItem(item.dishId)"
+                                >
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </mat-card-content>
+            </mat-card>
+
+            <div class="sidebar">
+                <mat-card class="order-summary">
+                    <mat-card-header>
+                        <h3>Order Summary</h3>
+                    </mat-card-header>
+
+                    <mat-card-content>
+                        <div class="promo-section">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width"
+                            >
+                                <mat-label> Promo Code</mat-label>
+                                <input
+                                    matInput
+                                    [(ngModel)]="promoInput"
+                                    placeholder="Enter promo code"
+                                    [disabled]="promoApplied"
+                                />
+                            </mat-form-field>
+                            <button
+                                mat-button
+                                class="apply-promo-button"
+                                (click)="applyPromoCode()"
+                                [disabled]="promoApplied || !promoInput.trim()"
+                            >
+                                <i class="fa-solid fa-tag"></i>
+                            </button>
+
+                            @if (promoApplied) {
+                                <div class="promo-success">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    <span>
+                                        Promo Applied! You saved €
+                                        {{ discountValue.toFixed(2) }}</span
+                                    >
+                                </div>
+                            }
+                        </div>
+
+                        <div class="price-breakdown">
+                            <div class="price-row">
+                                <span> Subtotal</span>
+                                <span> € {{ subtotal().toFixed(2) }}</span>
+                            </div>
+
+                            <div class="price-row">
+                                <span> Delivery Fee</span>
+                                <span> € {{ deliveryFee().toFixed(2) }}</span>
+                            </div>
+
+                            @if (promoApplied) {
+                                <div class="price-row discount">
+                                    <span> Discount</span>
+                                    <span>
+                                        € {{ discountValue.toFixed(2) }}</span
+                                    >
+                                </div>
+                            }
+
+                            <div class="price-row total">
+                                <span> Total</span>
+                                <span> € {{ totalPrice.toFixed(2) }}</span>
+                            </div>
+                        </div>
+
+                        @if (errorMessage) {
+                            <div class="error-message">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                                {{ errorMessage }}
+                            </div>
+                        }
+                        <button
+                            mat-button
+                            class="checkout-button"
+                            (click)="proceedToCheckout()"
+                        >
+                            <i class="fa-solid fa-arrow-right"></i>
+                            Proceed to Checkout
+                        </button>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    }
+</div>
