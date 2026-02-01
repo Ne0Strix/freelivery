@@ -57,6 +57,10 @@ The `restaurant-owner@freelivery.com` user provides all testdata for the given f
     - a daily breakdown of the last weeks
     - identifying most ordered dishes.
 
+### Customer
+
+TODO add implemented features here
+
 ## Frontend
 
 ```
@@ -131,6 +135,10 @@ The `restaurant-owner@freelivery.com` user provides all testdata for the given f
         - manipulating restaurant-owner specific entities
 - other folders in the module
     - contain form-elements and other reusable components
+
+#### Customer
+
+TODO give short description of customer-frontend here
 
 ## Backend
 
@@ -292,6 +300,8 @@ flowchart TD
 ```
 
 ### Customer
+
+TODO add customer specific backend information here
 
 ## Database
 
