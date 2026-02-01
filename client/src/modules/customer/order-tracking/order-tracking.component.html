@@ -131,6 +131,15 @@
                             }}</span
                         >
                     </div>
+
+                    <div class="item-row" *ngIf="hasDeliveryFee()">
+                        <div class="item-info">
+                            <span class="item-name">Delivery Fee</span>
+                        </div>
+                        <span class="item-price"
+                            >€{{ getDeliveryFee().toFixed(2) }}</span
+                        >
+                    </div>
                 </div>
 
                 <div class="order-total">

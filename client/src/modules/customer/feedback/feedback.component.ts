@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
 @Component({
@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
         FormsModule,
         MatButtonModule,
         MatCardModule,
+        MatSnackBarModule,
         MatFormFieldModule,
         MatInputModule,
         MatIconModule,
@@ -40,9 +41,13 @@ export class FeedbackComponent {
         'Excellent!!!',
     ];
 
+    ngOnInit() {
+        console.log('FeedbackComponent initialized');
+    }
     constructor(
         private router: Router,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private cdr: ChangeDetectorRef
     ) {}
 
     getRatingText(): string {
@@ -61,7 +66,6 @@ export class FeedbackComponent {
             });
             return;
         }
-
         console.log('Feedback:', {
             rating: this.ratingSelected,
             comment: this.comment,
@@ -70,9 +74,15 @@ export class FeedbackComponent {
 
         this.showSuccessMessage = true;
 
-        this.snackBar.open('Thank you for the feedback!', 'Close', {
-            duration: 3000,
-        });
+        setTimeout(() => {
+            this.resetFeedback();
+            this.cdr.detectChanges();
+            console.log('Reset everything;', {
+                rating: this.ratingSelected,
+                comment: this.comment,
+                showSuccessMessage: this.showSuccessMessage,
+            });
+        }, 2500);
     }
 
     resetFeedback(): void {

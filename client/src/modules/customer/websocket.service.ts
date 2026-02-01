@@ -32,6 +32,7 @@ export class WebSocketService {
     private messagesSubject = new Subject<ChatMessage>();
     private connectionStatusSubject = new BehaviorSubject<boolean>(false);
     private statusUpdatesSubject = new Subject<OrderStatusUpdate>();
+    private simulateOrders = new Set<string>();
 
     public messages$ = this.messagesSubject.asObservable();
     public statusUpdates$ = this.statusUpdatesSubject.asObservable();
@@ -112,7 +113,7 @@ export class WebSocketService {
                             senderName: 'Restaurant staff',
                             senderType: 'restaurant',
                             message:
-                                'Thank you for the message. We will get to you soon,',
+                                'Thank you for the message. We will get to you soon.',
                             timestamp: new Date(),
                             orderId: message.orderId,
                             showPopup: false,
@@ -142,6 +143,7 @@ export class WebSocketService {
             this.socket.close();
             this.socket = null;
             this.connectionStatusSubject.next(false);
+            this.simulateOrders.clear();
         }
     }
 
@@ -170,11 +172,11 @@ export class WebSocketService {
 
         switch (status) {
             case 'placed':
-                return base + 25;
+                return base + 15;
             case 'accepted':
-                return base + 20;
+                return base + 15;
             case 'preparing':
-                return base + 10;
+                return base + 13;
             case 'ready':
                 return base;
             case 'delivered':
@@ -210,11 +212,10 @@ export class WebSocketService {
             'delivered',
         ];
 
-        let currentIndex = 0;
+        const delay = [1000, 8000, 20000, 35000, 50000, 65000];
 
-        const interval = setInterval(() => {
-            if (currentIndex < statusOrder.length) {
-                const status = statusOrder[currentIndex];
+        statusOrder.forEach((status, index) => {
+            setTimeout(() => {
                 const update: OrderStatusUpdate = {
                     orderId: orderId,
                     status: status,
@@ -227,37 +228,54 @@ export class WebSocketService {
                 };
 
                 this.statusUpdatesSubject.next(update);
-                currentIndex++;
-            } else {
-                clearInterval(interval);
-            }
-        }, 15000);
+            }, delay[index]);
+        });
     }
 
     simulateRestaurantResponse(orderId: string): void {
+        if (this.simulateOrders.has(orderId)) {
+            console.log('Restaurant response alredy simulated for:', orderId);
+            return;
+        }
         const restaurantResponse = [
             {
                 delay: 3000,
                 text: 'Dear Customer! Your order has been received and is waiting for confirmation.',
                 showPopup: true,
+                triggerAfterStatus: 'placed',
             },
             {
-                delay: 18000,
+                delay: 10000,
                 text: ' Your order has been confirmed and we are currently working on it.',
                 showPopup: true,
+                triggerAfterStatus: 'accepted',
             },
 
             {
-                delay: 25000,
+                delay: 22000,
                 text: 'Your order is almost ready! Our delivery driver will pick it up soon!!',
 
                 showPopup: false,
+                triggerAfterStatus: 'preparing',
             },
             {
-                delay: 50000,
+                delay: 37000,
                 text: 'Your order is done. The delivery driver will bring it to you shortly!',
 
                 showPopup: true,
+                triggerAfterStatus: 'ready',
+            },
+            {
+                delay: 52000,
+                text: 'Your order is on the way!',
+                showPopup: true,
+                triggerAfterStatus: 'delivering',
+            },
+            {
+                delay: 67000,
+                text: 'Your order was delivered. Enjoy!',
+                showPopup: true,
+                triggerAfterStatus: 'delivered',
             },
         ];
 

@@ -43,7 +43,6 @@ export class CartPageComponent implements OnInit {
 
     subtotal = signal<number>(0);
     deliveryFee = signal<number>(2.5);
-    serviceFee = signal<number>(2.0);
     total = signal<number>(0);
 
     promoInput = '';
@@ -76,10 +75,7 @@ export class CartPageComponent implements OnInit {
         const subTotal = this.cartService.getSubtotal();
         this.subtotal.set(subTotal);
 
-        let total = this.cartService.getTotal(
-            this.deliveryFee(),
-            this.serviceFee()
-        );
+        let total = this.cartService.getTotal(this.deliveryFee());
 
         if (this.promoApplied) {
             total -= this.discountValue;
@@ -179,7 +175,6 @@ export class CartPageComponent implements OnInit {
             restaurant: this.currentRestaurant(),
             subtotal: this.subtotal(),
             deliveryFee: this.deliveryFee(),
-            serviceFee: this.serviceFee(),
             discount: this.discountValue,
             total: this.total(),
             promoApplied: this.promoApplied,

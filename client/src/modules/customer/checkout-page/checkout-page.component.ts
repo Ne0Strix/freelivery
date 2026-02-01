@@ -129,7 +129,6 @@ export class CheckoutComponent implements OnInit {
                 items: data.items,
                 subtotal: data.subtotal,
                 deliveryFee: data.deliveryFee,
-                serviceFee: data.serviceFee,
                 discount: data.discount,
                 total: data.total,
                 paymentMethod: this.selectedPaymentMethod(),

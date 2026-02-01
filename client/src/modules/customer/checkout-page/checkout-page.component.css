@@ -183,7 +183,7 @@ app-payment-method {
     cursor: pointer;
     border-radius: 12px;
     color: black;
-    background: color-mix(in srgb, var(--border-c) 60%, white);
+    background: color-mix(in srgb, var(--border-c) 50%, white);
     border: var(--border-c) 2px solid;
     font-weight: 600;
     font-size: 1.2rem;
@@ -195,12 +195,12 @@ app-payment-method {
 
 .pay-button:hover:not(:disabled) {
     transform: translateY(-2px);
-    background: color-mix(in srgb, var(--border-c) 60%, white);
+    background: color-mix(in srgb, var(--border-c) 50%, white);
 }
 
 .pay-button:disabled {
     cursor: not-allowed;
-    background: color-mix(in srgb, var(--border-c) 60%, white);
+    background: color-mix(in srgb, var(--border-c) 50%, white);
 }
 
 .pay-button i {

@@ -32,6 +32,7 @@
                     <textarea
                         matInput
                         [(ngModel)]="comment"
+                        [ngModelOptions]="{ standalone: true }"
                         placeholder="Tell us more about your experience.."
                         rows="4"
                     ></textarea>
