@@ -116,8 +116,8 @@ export class CartService {
         localStorage.removeItem(this.RESTAURANT_KEY);
     }
 
-    getTotal(deliveryFee: number = 0, serviceFee: number = 0): number {
-        return this.getSubtotal() + deliveryFee + serviceFee;
+    getTotal(deliveryFee: number = 0): number {
+        return this.getSubtotal() + deliveryFee;
     }
 
     getSubtotal(): number {

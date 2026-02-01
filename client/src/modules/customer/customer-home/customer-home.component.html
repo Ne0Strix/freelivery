@@ -17,14 +17,14 @@
                 <p>Browse restaurants and explore delicious dishes</p>
             </mat-card-content>
             <mat-card-actions>
-                <a
+                <button
                     mat-flat-button
                     class="navigate-button"
                     routerLink="/customer/restaurants"
                 >
                     <i class="fa-solid fa-arrow-right"></i>
                     Browse Restaurants
-                </a>
+                </button>
             </mat-card-actions>
         </mat-card>
 
@@ -39,14 +39,14 @@
                 <p>Checkout items, modify your order, and procees to payment</p>
             </mat-card-content>
             <mat-card-actions>
-                <a
+                <button
                     mat-flat-button
                     class="navigate-button"
                     routerLink="/customer/cart"
                 >
                     <i class="fa-solid fa-arrow-right"></i>
                     View cart items
-                </a>
+                </button>
             </mat-card-actions>
         </mat-card>
 
@@ -61,14 +61,14 @@
                 <p>Track your order in real time!</p>
             </mat-card-content>
             <mat-card-actions>
-                <a
+                <button
                     mat-flat-button
                     class="navigate-button"
-                    routerLink="/customer/tracking"
+                    (click)="navigateToTracking()"
                 >
                     <i class="fa-solid fa-arrow-right"></i>
-                    Track My Orders
-                </a>
+                    Track Your Orders
+                </button>
             </mat-card-actions>
         </mat-card>
 
@@ -86,14 +86,14 @@
                 </p>
             </mat-card-content>
             <mat-card-actions>
-                <a
+                <button
                     mat-flat-button
                     class="navigate-button"
                     routerLink="/customer/feedback"
                 >
                     <i class="fa-solid fa-arrow-right"></i>
                     Send us your feedback
-                </a>
+                </button>
             </mat-card-actions>
         </mat-card>
     </div>

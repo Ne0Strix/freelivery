@@ -4,19 +4,22 @@
             <i class="fa-solid fa-arrow-left"></i>
             Back to Restaurant Browsing
         </button>
-        <div class="header-conter">
-            <h1>{{ restaurant()?.name || 'Restaurant Menu' }}</h1>
-            <p *ngIf="restaurant()">
-                {{ restaurant()?.cuisineType }} •
-                {{ restaurant()?.deliveryTime }}
-            </p>
+
+        <div class="menu-title-row">
+            <div class="header-content">
+                <h1>{{ restaurant()?.name || 'Restaurant Menu' }}</h1>
+                <p *ngIf="restaurant()">
+                    {{ restaurant()?.cuisineType }}
+                </p>
+            </div>
+
+            <button class="cart-button" routerLink="/customer/cart">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span class="cart-count" *ngIf="cartCount() > 0">
+                    {{ cartCount() }}</span
+                >
+            </button>
         </div>
-        <button class="cart-button" routerLink="/customer/cart">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span class="cart-count" *ngIf="cartCount() > 0">
-                {{ cartCount() }}</span
-            >
-        </button>
     </header>
 
     <div class="category-filter" *ngIf="categories().length > 1">

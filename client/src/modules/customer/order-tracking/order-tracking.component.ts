@@ -10,8 +10,9 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatFormField } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
@@ -29,11 +30,12 @@ interface OrderData {
     orderNumber: number;
     restaurantId: number;
     items: OrderItem[];
-    discountCode?: string;
+    deliveryFee?: number;
     PaymentMethod?: string;
     orderDate: string;
     status: string;
     restaurantLocation?: Location;
+    total?: number;
 }
 @Component({
     selector: 'app-order-tracking',
@@ -45,7 +47,8 @@ interface OrderData {
         MatButtonModule,
         MatChipsModule,
         MatIconModule,
-        MatFormField,
+        MatFormFieldModule,
+        MatInputModule,
         FormsModule,
     ],
     templateUrl: './order-tracking.component.html',
@@ -68,6 +71,7 @@ export class OrderTrackingComponent implements OnInit, OnDestroy {
     showChat: boolean = false;
 
     private lastPopupMessage: string = '';
+    private showPopupMessages = new Set();
 
     statusOrder = [
         'placed',
@@ -151,25 +155,32 @@ export class OrderTrackingComponent implements OnInit, OnDestroy {
         this.wsService.messages$
             .pipe(takeUntil(this.destroy$))
             .subscribe((message: any) => {
-                this.chatMessages = [...this.chatMessages, message];
+                console.log('Messages received:', message);
+                this.chatMessages = [...this.chatMessages, message].sort(
+                    (a, b) =>
+                        new Date(a.timestamp).getTime() -
+                        new Date(b.timestamp).getTime()
+                );
                 this.cdr.markForCheck();
-                this.scroll();
 
-                const messageKey = `${message.senderName}:${message.message}`;
+                setTimeout(() => this.scroll(), 50);
+
+                const messageKey = `${message.id}`;
                 if (
                     message.senderType === 'restaurant' &&
-                    message.showPopup !== false &&
-                    this.lastPopupMessage !== messageKey
+                    message.showPopup == true &&
+                    !this.showPopupMessages.has(messageKey)
                 ) {
-                    this.lastPopupMessage = messageKey;
+                    this.showPopupMessages.add(messageKey);
 
                     this.snackBar.open(
                         `${message.senderName}: ${message.message}`,
                         'Close',
                         {
-                            duration: 4000,
+                            duration: 5000,
                             verticalPosition: 'top',
                             horizontalPosition: 'right',
+                            panelClass: ['custom-snackbar'],
                         }
                     );
                 }
@@ -178,6 +189,7 @@ export class OrderTrackingComponent implements OnInit, OnDestroy {
         this.wsService.statusUpdates$
             .pipe(takeUntil(this.destroy$))
             .subscribe((update) => {
+                console.log('Status update:', update);
                 this.currentStatus = update.status;
                 this.deliveryTime = update.estimatedDeliveryTime;
 
@@ -221,12 +233,10 @@ export class OrderTrackingComponent implements OnInit, OnDestroy {
     }
 
     private scroll(): void {
-        setTimeout(() => {
-            const chatContainer = document.querySelector('.chat-messages');
-            if (chatContainer) {
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }
-        }, 100);
+        const chatContainer = document.querySelector('.chat-messages');
+        if (chatContainer) {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
     }
 
     ngOnDestroy(): void {
@@ -235,11 +245,17 @@ export class OrderTrackingComponent implements OnInit, OnDestroy {
         this.wsService.disconnect();
     }
 
-    get totalPrice(): number {
+    get itemsSubtotal(): number {
         return this.orderItems.reduce(
             (sum, item) => sum + item.price * item.quantity,
             0
         );
+    }
+
+    get totalPrice(): number {
+        const subtotal = this.itemsSubtotal;
+        const deliveryFee = this.orderData?.deliveryFee || 0;
+        return subtotal + deliveryFee;
     }
 
     currentStep(stepNumber: number): boolean {
@@ -269,6 +285,9 @@ export class OrderTrackingComponent implements OnInit, OnDestroy {
 
     toggleChat(): void {
         this.showChat = !this.showChat;
+        if (this.showChat) {
+            setTimeout(() => this.scroll(), 100);
+        }
     }
 
     sendMessage(): void {
@@ -304,7 +323,7 @@ export class OrderTrackingComponent implements OnInit, OnDestroy {
             accepted: 'Order accepted',
             preparing: 'Preparing order',
             ready: 'Order is ready',
-            delivery: 'Order is being delivered',
+            delivering: 'Order is being delivered',
             delivered: 'Order delivered',
         };
         return statusLabel[status] || status;
@@ -327,5 +346,13 @@ export class OrderTrackingComponent implements OnInit, OnDestroy {
             default:
                 return 'fa-circle';
         }
+    }
+
+    getDeliveryFee(): number {
+        return this.orderData?.deliveryFee || 0;
+    }
+
+    hasDeliveryFee(): boolean {
+        return !!this.orderData?.deliveryFee && this.orderData.deliveryFee > 0;
     }
 }

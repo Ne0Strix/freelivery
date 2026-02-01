@@ -353,7 +353,7 @@ mat-card-content {
 
 .checkout-button {
     width: 100%;
-    background: color-mix(in srgb, var(--border-c) 40%, white);
+    background: color-mix(in srgb, var(--border-c) 50%, white);
     border: var(--border-c) 2px solid;
     color: black;
     border: none;
@@ -371,10 +371,12 @@ mat-card-content {
 
 .checkout-button:hover:not(:disabled) {
     transform: translateY(-2px);
+    background: color-mix(in srgb, var(--border-c) 50%, white);
 }
 
 .checkout-button:disabled {
     cursor: not-allowed;
+    background: color-mix(in srgb, var(--border-c) 40%, white);
 }
 
 @media (max-width: 768px) {
