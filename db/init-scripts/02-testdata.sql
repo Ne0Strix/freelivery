@@ -648,26 +648,6 @@ INSERT INTO dish (dish_id, restaurant_id, category_id, name, description, price,
 (60, 5, 13,'Strawberry-mango juice ', 'Fresh strawberry-mango juice', 3.00, NULL, true);
 
 
-UPDATE dish SET image_url = 'worls-cuisine-with-delicious-food.jpg' WHERE dish_id = 45;
-UPDATE dish SET image_url = 'https://unsplash.com/photos/close-up-on-round-pizza-with-abundant-delicious-garnish-of-prosciutto-mozzarella-tomato-slices-and-basil-leaves-served-on-wooden-board-dP7MgFCuNHY' WHERE dish_id = 46;
-UPDATE dish SET image_url = 'https://unsplash.com/photos/a-pepperoni-pizza-is-shown-on-a-table-4ZYep8v0DgY' WHERE dish_id = 47;
-UPDATE dish SET image_url = 'https://stock.adobe.com/it/search?k=%22pizza+con+patatine+fritte%22&asset_id=498220870' WHERE dish_id = 48;
-UPDATE dish SET image_url = 'https://stock.adobe.com/it/search?filters%5Bcontent_type%3Aphoto%5D=1&filters%5Bcontent_type%3Aillustration%5D=1&filters%5Bcontent_type%3Azip_vector%5D=1&filters%5Bcontent_type%3Avideo%5D=1&filters%5Bcontent_type%3Atemplate%5D=1&filters%5Bcontent_type%3A3d%5D=1&filters%5Bcontent_type%3Aimage%5D=1&k=pizza+bufala&order=relevance&search_page=1&search_type=usertyped&acp=&aco=pizza+bufala&get_facets=0&asset_id=420753004' WHERE dish_id = 49;
-
-
-UPDATE dish SET image_url = 'https://unsplash.com/photos/a-white-plate-topped-with-pasta-covered-in-sauce-w0GyGNyGo6Y' WHERE dish_id = 50;
-UPDATE dish SET image_url = 'https://unsplash.com/photos/pasta-dish-in-stainless-steel-bowl-_CO7YZ501g4' WHERE dish_id = 51;
-UPDATE dish SET image_url = 'https://unsplash.com/photos/a-casserole-dish-is-being-cooked-in-the-oven-pXqoZGM4kPY' WHERE dish_id = 52;
-UPDATE dish SET image_url = 'https://www.sicilianicreativiincucina.it/wp-content/uploads/2024/01/spaghetti-aglio-olio-1170x878.jpg' WHERE dish_id = 53;
-
-UPDATE dish SET image_url = 'https://unsplash.com/photos/a-person-picking-up-a-piece-of-cake-on-a-plate-pzRS_xF8brE' WHERE dish_id = 54;
-UPDATE dish SET image_url = 'https://unsplash.com/photos/a-plate-of-food-DvvHAtbmlag' WHERE dish_id = 55;
-UPDATE dish SET image_url = 'https://unsplash.com/photos/a-scoop-of-ice-cream-sitting-on-top-of-a-table-CdP2h2Or8Pc' WHERE dish_id = 56;
-
-UPDATE dish SET image_url = 'https://unsplash.com/photos/blue-and-white-labeled-bottle-1rOjZMHCQtU' WHERE dish_id = 57;
-UPDATE dish SET image_url = 'https://www.istockphoto.com/photo/pouring-mineral-water-in-the-glass-gm451992561-29747712?utm_source=unsplash&utm_medium=affiliate&utm_campaign=srp_photos_bottom&utm_content=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2Fsparkling-water&utm_term=sparkling+water%3A%3A%3A%3A8a235074-e869-48fd-8bab-dfff0afe57fe' WHERE dish_id = 58;
-UPDATE dish SET image_url = 'https://unsplash.com/photos/a-glass-of-orange-juice-on-a-table-with-sliced-oranges-87sqRxRPXZM' WHERE dish_id = 59;
-UPDATE dish SET image_url = 'https://unsplash.com/photos/a-glass-of-orange-juice-and-strawberries-on-a-table-mAj9Oe-CwFE' WHERE dish_id = 60;
 -- =======================================
 -- CATEGORIES- DISHES- CHICAGO BURGER SHOP
 -- =======================================
