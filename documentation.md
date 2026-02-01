@@ -59,7 +59,46 @@ The `restaurant-owner@freelivery.com` user provides all testdata for the given f
 
 ### Customer
 
-TODO add implemented features here
+The Customer module provides an overview of the food delivery experience from the customer's side. The module is what users see, use and interact with. Users can browse restaurants, order food, choose their preferred paying method and track their order in real time.
+
+### Customers can:
+
+### _Browse Restaurants_
+
+- Check all available restaurants in the area
+- Filter restaurants by cuisine type
+- Search for restaurants by name
+- Filter restaurants by highest rated && quickest delivery time
+
+#### _Place an order_
+
+- Placing an order by choosing a menu item
+- Adding menu items to cart
+
+#### _Cart view_
+
+- View the cart and its items
+- Update the cart by removing and adding new items and items quanitty
+- Clearing the cart
+- Applying the promo code 'PROMO26'
+- Proceeding to checkout
+
+#### _Choose a payment method_
+
+- The user can choose a preferred payment method:
+    - by **cash** at order arrival
+    - by **card** directly in the website by giving the card details
+
+#### _Track orders in Real-Time_
+
+- The user can see the order tracking **live** through:
+    - **status updates** - get notified when the order is being prepared, ready, delivering and delivered
+    - **chat with restaurant** - viewing the order updates, live, through the chat by the restaurant and messaging the restaurant
+    - **delivery time estimates** - know when to expect the order
+
+#### _Review the Experience after Order Delivery_
+
+- The user can review the service provided by selecting a preferred review emoji and by writing a comment
 
 ## Frontend
 
@@ -138,7 +177,68 @@ TODO add implemented features here
 
 #### Customer
 
-TODO give short description of customer-frontend here
+| Path                     | Component                   | Description                |
+| ------------------------ | --------------------------- | -------------------------- |
+| `/customer`              | CustomerHomeComponent       | Main dashboard             |
+| `/customer/home`         | CustomerHomeComponent       | Alternative dashboard path |
+| `/customer/restaurants`  | RestaurantBrowsingComponent | Browse all restaurants     |
+| `/customer/menu/:id`     | ViewMenuComponent           | View restaurant menu       |
+| `/customer/cart`         | CartPageComponent           | Shopping cart              |
+| `/customer/checkout`     | CheckoutComponent           | Place order                |
+| `/customer/tracking/:id` | OrderTrackingComponent      | Track order status         |
+| `/customer/feedback`     | FeedbackComponent           | Submit feedback            |
+
+#### CustomerService
+
+- Main HTTP customer for customer-related API calls
+- Methods used:
+    - getRestaurants(): get all active restaurants
+    - getRestaurantById(id): get restaurant details
+    - getRestaurantMenu(id): get menu items
+    - getRestairantCategories(id): get menu categories
+    - getCartCount(): get total cart items
+
+#### RestaurantBrowsingService
+
+- Delegated to CustomerService for data fetching
+- getRestaurantWithMenu(): paralled data loading
+- Promise.all(): API calls
+
+#### CartService
+
+- Manage cart state in localStorage
+- Methods used:
+    - addToCart(): add items with restaurant validation
+    - removeFromCart(): remove item by dishId
+    - changeQuantity(): update item quantity
+    - clearCart(): empty cart
+    - getTotal(): calculate final price with delivery fee
+
+#### WebSocketService
+
+- Simulates real- time Websocket connection for order tracking
+- Emits order status updates through RxJS
+- Calculates delivery time based on grid distance
+- Simulates restaurant chat messaes
+- Methods used:
+    - connect(): initialize Websocket connection
+    - disconnect(): disconnect Websocket connection
+    - sendMessage(): send chat message
+    - calculateDistance(): Calculating distance based on grid coordinates
+    - simulateStatusUpdates(): simulates automatic status changes
+
+#### customer.service.ts
+
+- Business logic for customer operations
+- Order data validation before creation
+- Manages order status transitions
+
+#### customer.repository.ts
+
+- Database queries for customer data
+- Fetching restaurants with availabity status
+- Menu items retrival by restaurant
+- Create and update orders
 
 ## Backend
 
@@ -301,7 +401,53 @@ flowchart TD
 
 ### Customer
 
-TODO add customer specific backend information here
+The customer provides features like:
+
+- Database queries for customer data
+- Fetches restaurants with availability status
+- Menu items retrieval by restaurant
+- Creates and updates orders
+
+```mermaid
+flowchart TD
+    subgraph CustomerModule["Customer Module"]
+        CH[CustomerHomeComponent]
+        RB[RestaurantBrowsingComponent]
+        VM[ViewMenuComponent]
+        CP[CartPageComponent]
+        CO[CheckoutComponent]
+        PM[PaymentMethodComponent]
+        OT[OrderTrackingComponent]
+        FB[FeedbackComponent]
+    end
+
+    subgraph Services
+        CS[CustomerService]
+        RBS[RestaurantBrowsingService]
+        CartS[CartService]
+        WSS[WebSocketService]
+    end
+
+    subgraph Backend
+        CR[customer.routes.ts]
+        CServ[customer.service.ts]
+        CRepo[customer.repository.ts]
+    end
+
+    CH --> CS
+    RB --> RBS
+    VM --> RBS
+    VM --> CartS
+    CP --> CartS
+    CO --> CartS
+    OT --> WSS
+    FB --> CS
+
+    RBS --> CS
+    CS --> CR
+    CR --> CServ
+    CServ --> CRepo
+```
 
 ## Database
 
@@ -456,6 +602,26 @@ classDiagram
         date: updated_at
     }
 ```
+
+### Customer (Restaurant data)
+
+Seed data:
+
+- user `customer` has data for testing the customer module including:
+    - three additional restaurants for browsing and ordering:
+        - Pizzeria Piccola Napoli (Italian cuisine)
+        - Chicago Burger Shop (American cuisine)
+        - Shanghai Palace (Japanese cuisine)
+    - complete menus with categories and dishes for each restaurant
+    - grid coordinates for delivery distance calculation
+
+**Restaurant Details:**
+
+| Restaurant              | Cuisine  | Address                      | Grid Location | Min Order | Max Distance | Service Fee |
+| ----------------------- | -------- | ---------------------------- | ------------- | --------- | ------------ | ----------- |
+| Pizzeria Piccola Napoli | ITALIAN  | Neutilusweg 25, Klagenfurt   | (-1, 3)       | €10.00    | 25 units     | 2.00%       |
+| Chicago Burger Shop     | AMERICAN | Friedensgasse 48, Klagenfurt | (3, -2)       | €10.00    | 50 units     | 3.00%       |
+| Shanghai Palace         | JAPANESE | Kramergasse 2, Klagenfurt    | (2, 5)        | €12.00    | 40 units     | 3.00%       |
 
 ### Order
 
@@ -739,6 +905,123 @@ Related code-parts:
     - stores `max_delivery_distance` on restaurants
 
 # Extra Tasks
+
+implemented by: Miriam Manasreh (customer start-up & extra task details)
+
+## Real-Time Order Tracking
+
+implemented by: Miriam Asreh
+
+The order tracking component simulates WebSocket communication to provide customers with live order updates. This creates an engaging, real-time experience only by using WebSocket simulation.
+
+### Key features
+
+1. **WebSocket Simulation**
+    - Connection simulation: simulates WebSocket handshake and connection duration
+    - Connection status: Visual indicator, indicating status when connected, ex ("Live")
+    - Automatic reconnection: simulates reconnection attempts if connection disappears
+
+2. **Real-time state updates**
+    - Order status automatically progresses based on specific timing intervals
+    - Dynamic ETA: delivery time updated based on current status and distance
+    - Order status changes:
+        1. Placed -> Accepted
+        2. Accepted -> Preparing
+        3. Preparing -> Ready
+        4. Ready -> Delivering
+        5. Delivering -> Delivered
+
+3. **Live-Chat System**
+    - Bi-directional Communication: Restaurant and customer send and receive messages
+    - Customer received messages by restaurant staff at each status update
+    - Customer sends messages to restaurant. Restaurant replies by default with "Thank you for the message. We will get back to you soon"
+    - Chat history is preserved throughout the order tracking duration
+    - Constant Popup Notifications: restaurant messages also appear as snackbar notification
+
+4. **Location-Based Tracking**
+    - Grid Coordinate System: Users and Restaurants are assigned (x,y) coordinates
+    - Distance Calculation: Real-time distance updates as order progresses
+    - Visual Representation: Visual representation of order journey from order placement to delivery
+
+5. **Status Visualization**
+    - Progress Bar: visual order journey representation
+    - Live updates: UI updates after each status update
+
+### Implementation Details
+
+**WebSocket Service Architecture:**
+
+```typescript
+// Core WebSocket simulation structure
+class WebSocketService {
+    private connectionStatus = new BehaviorSubject<boolean>(false);
+    private messages = new Subject<ChatMessage>();
+    private statusUpdates = new Subject<StatusUpdate>();
+
+    connect(orderId: string, userId: string): void {
+        // Simulate connection establishment
+        setTimeout(() => {
+            this.connectionStatus.next(true);
+            this.simulateStatusUpdates(orderId);
+            this.simulateRestaurantResponse(orderId);
+        }, 1000);
+    }
+
+    simulateStatusUpdates(orderId: string): void {
+        // Timeline-based status progression
+        const timeline = [
+            { delay: 30000, status: 'accepted' },
+            { delay: 90000, status: 'preparing' },
+            { delay: 300000, status: 'ready' },
+            { delay: 1000, status: 'delivering' },
+            { delay: this.calculateDeliveryTime(), status: 'delivered' },
+        ];
+    }
+}
+```
+
+**Chat Message Structure:**
+
+```typescript
+interface ChatMessage {
+    id: string;
+    senderId: string;
+    senderName: string;
+    senderType: 'customer' | 'restaurant';
+    message: string;
+    timestamp: Date;
+    orderId: string;
+    showPopup?: boolean; // For important notifications
+}
+```
+
+**Order Status Changes:**
+
+```typescript
+const statusTimeline = {
+    placed: { duration: '0-30s', action: 'Order received' },
+    accepted: { duration: '30s-2m', action: 'Restaurant confirmed' },
+    preparing: { duration: '2-8m', action: 'Food preparation' },
+    ready: { duration: '0-1m', action: 'Ready for delivery' },
+    delivering: { duration: 'Distance-based', action: 'Out for delivery' },
+    delivered: { duration: 'Final', action: 'Order completed' },
+};
+```
+
+**Challenges:**
+
+1. Real-time communication simulation - using Websocket **simulation** connection
+2. Coordinate updates - ensuring status updates, chat messages and pop up messages are in sync
+3. Visual representation
+
+## Key Features Summary
+
+1. Restaurant Filtering: restaurant search and filtering
+2. Cart Constraints: restaurant-specific cart
+3. Order Tracking: real-time updates with visual representation
+4. Payment Section: payment method options
+5. Feedback Submission: post-delivery feedback submission
+6. Real-Time Communication: Websocket chat simulation and status updates
 
 # Setup Instructions
 
