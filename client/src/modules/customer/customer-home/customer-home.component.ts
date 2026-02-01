@@ -174,11 +174,33 @@ export class CustomerHomeComponent implements OnInit {
     }
 
     navigateToTracking(): void {
-        const orderId = Object.keys(localStorage).filter((key) =>
+        const orderKeys = Object.keys(localStorage).filter((key) =>
             key.startsWith('order_')
         );
 
-        if (orderId.length === 0) {
+        orderKeys.forEach((key) => {
+            try {
+                const orderData = JSON.parse(localStorage.getItem(key) || '{}');
+                if (orderData.status === 'delivered') {
+                    console.log(`Delivered order removed: ${key}`);
+                    localStorage.removeItem(key);
+                }
+            } catch (error) {
+                console.error(`Failed to find order ${key}:`, error);
+                localStorage.removeItem(key);
+            }
+        });
+
+        const activeOrderKeys = Object.keys(localStorage).filter((key) =>
+            key.startsWith('order_')
+        );
+
+        console.log('Active order keys:', activeOrderKeys);
+        console.log('Active order keys length:', activeOrderKeys.length);
+
+        if (activeOrderKeys.length === 0) {
+            console.log('Opening dialog');
+
             const dialogRef = this.dialog.open(NoOrderDialogComponent, {
                 width: '450px',
                 disableClose: false,
@@ -186,6 +208,7 @@ export class CustomerHomeComponent implements OnInit {
             });
 
             dialogRef.afterClosed().subscribe((result) => {
+                console.log('Dialog result:', result);
                 if (result === true) {
                     this.router.navigate(['/customer/restaurants']);
                 }
@@ -193,9 +216,9 @@ export class CustomerHomeComponent implements OnInit {
             return;
         }
 
-        orderId.sort().reverse();
+        activeOrderKeys.sort().reverse();
 
-        const mostRecentOrderId = orderId[0];
+        const mostRecentOrderId = activeOrderKeys[0];
 
         if (mostRecentOrderId) {
             const order = mostRecentOrderId.replace('order_', '');
