@@ -1030,5 +1030,6 @@ const statusTimeline = {
 - run `npm i` in the project root
 - set the environment variables (`sample.env`) as you need in a `.env`-file
 - the complete development setup can be started using the `Full Stack: Debug Client + Server` task in VS-Code
-    - if you're in a different IDE you can start the project using `docker compose up -d`
+    - if you're in a different IDE you can start the project using `docker compose up` in the root directory
     - DB-migrations run automatically on the first startup, or whenever the volume is pruned using `docker compose down -v`
+- the web-ui can be accessed on [http://localhost:4200](http://localhost:4200)
