@@ -233,15 +233,15 @@ restaurantName: string;
 
 ```mermaid
 flowchart TD
-subgraph CustomerModule["Customer Module"]
-CH[CustomerHomeComponent]
-RB[RestaurantBrowsingComponent]
-VM[ViewMenuComponent]
-CP[CartPageComponent]
-CO[CheckoutComponent]
-OT[OrderTrackingComponent]
-FB[FeedbackComponent]
-end
+    subgraph CustomerModule["Customer Module"]
+        CH[CustomerHomeComponent]
+        RB[RestaurantBrowsingComponent]
+        VM[ViewMenuComponent]
+        CP[CartPageComponent]
+        CO[CheckoutComponent]
+        OT[OrderTrackingComponent]
+        FB[FeedbackComponent]
+    end
 
     subgraph Services
         CS[CustomerService]
@@ -304,11 +304,11 @@ end
 
 ```mermaid
 sequenceDiagram
-actor Customer
-participant VM as ViewMenuComponent
-participant CartS as CartService
-participant LS as LocalStorage
-participant CP as CartPageComponent
+    actor Customer
+    participant VM as ViewMenuComponent
+    participant CartS as CartService
+    participant LS as LocalStorage
+    participant CP as CartPageComponent
 
     Customer->>VM: Click "Add to Cart"
     VM->>CartS: addToCart(item, restaurantId)
