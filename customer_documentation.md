@@ -47,6 +47,7 @@ The Customer module provides an overview of the food delivery experience from th
 
 ## Frontend Structure
 
+```
 client/src/modules/customer/
 ├── customer-home/ # Dashboard with navigation cards
 ├── restaurant-browsing/ # Restaurant list with filters
@@ -60,18 +61,22 @@ client/src/modules/customer/
 ├── customer.routes.ts # Module routing configuration
 ├── customer.service.ts # HTTP client for backend API
 └── websocket.service.ts # Real-time order updates
+```
 
 ## Backend Structure
 
+```
 server/src/modules/customer/
 ├── customer.routes.ts # API endpoints for customer actions
 ├── customer.service.ts # Business logic - processing orders
 
 server/src/domains/restaurant/
 ├── restaurant.routes.ts # Restaurant data logic
+```
 
 ## Key Data Models:
 
+```
 interface Restaurant {
 restaurantId: number;
 name: string;
@@ -82,7 +87,9 @@ deliveryTime: string;
 isOpen: boolean;
 minOrderAmount?: number;
 }
+```
 
+```
 interface MenuItem {
 dishId: number;
 name: string;
@@ -92,7 +99,9 @@ category: string;
 imageUrl?: string;
 isAvailable?: boolean;
 }
+```
 
+```
 interface CartItem {
 dishId: number;
 name: string;
@@ -101,19 +110,24 @@ quantity: number;
 restaurantId: number;
 restaurantName: string;
 }
+```
+
+---
 
 ## Module Routes
 
-customer.routes.ts defines:
+| Route                    | Component                   | Description                           |
+| ------------------------ | --------------------------- | ------------------------------------- |
+| `/customer`              | CustomerHomeComponent       | Main dashboard                        |
+| `/customer/home`         | CustomerHomeComponent       | Other path to dashboard               |
+| `/customer/restaurants`  | RestaurantBrowsingComponent | Browsing all restaurants              |
+| `/customer/menu/:id`     | ViewMenuComponent           | View restaurant menu items            |
+| `/customer/cart`         | CartPageComponent           | Shopping cart                         |
+| `/customer/checkout`     | CheckoutComponent           | Placing the order                     |
+| `/customer/tracking/:id` | OrderTrackingComponent      | Order id for real time order tracking |
+| `/customer/feedback`     | FeedbackComponent           | Post-delivery feedback                |
 
-/customer CustomerHomeComponent Main dashboard
-/customer/home CustomerHomeComponent Other path to dashboard
-/customer/restaurants RestaurantBrowsingComponent Browsing all restaurants
-/customer/menu/:id ViewMenuComponent View restaurant menu items
-/customer/cart CartPageComponent Shopping cart
-/customer/checkout CheckoutComponent Placing the order
-/customer/tracking/:id OrderTrackingComponent Order id for real time order tracking
-/customer/feedback FeedbackComponent Post-delivery feedback
+---
 
 ## Customer route component details
 
@@ -160,12 +174,12 @@ customer.routes.ts defines:
 - Displays order details and current status
 - Show estimated delivery time based on distance
 - Order progress preview in 6 stages:
-    1. Placed (at order placement)
-    2. Accepted
-    3. Preparing
-    4. Ready
-    5. On the way
-    6. Delivered
+    1. **Placed** (at order placement)
+    2. **Accepted**
+    3. **Preparing**
+    4. **Ready**
+    5. **On the way**
+    6. **Delivered**
 - Calculates distance using grid coordinates
 
 ### FeedbackComponent
@@ -180,27 +194,27 @@ customer.routes.ts defines:
 
 - Main HTTP customer for customer-related API calls
 - Methods used:
-    - getRestaurants(): get all active restaurants
-    - getRestaurantById(id): get restaurant details
-    - getRestaurantMenu(id): get menu items
-    - getRestairantCategories(id): get menu categories
-    - getCartCount(): get total cart items
+    - `getRestaurants()`: get all active restaurants
+    - `getRestaurantById(id)`: get restaurant details
+    - `getRestaurantMenu(id)`: get menu items
+    - `getRestairantCategories(id)`: get menu categories
+    - `getCartCount()`: get total cart items
 
 ### RestaurantBrowsingService
 
 - Delegated to CustomerService for data fetching
-- getRestaurantWithMenu(): paralled data loading
-- Promise.all(): API calls
+- `getRestaurantWithMenu()`: parallel data loading
+- `Promise.all()`: API calls
 
 ### CartService
 
 - Manage cart state in localStorage
 - Methods used:
-    - addToCart(): add items with restaurant validation
-    - removeFromCart(): remove item by dishId
-    - changeQuantity(): update item quantity
-    - clearCart(): empty cart
-    - getTotal(): calculate final price with delivery fee
+    - `addToCart()`: add items with restaurant validation
+    - `removeFromCart()`: remove item by dishId
+    - `changeQuantity()`: update item quantity
+    - `clearCart()`: empty cart
+    - `getTotal()`: calculate final price with delivery fee
 
 ### WebSocketService
 
@@ -209,12 +223,15 @@ customer.routes.ts defines:
 - Calculates delivery time based on grid distance
 - Simulates restaurant chat messaes
 - Methods used:
-    - connect(): initialize Websocket connection
-    - disconnect(): disconnect Websocket connection
-    - sendMessage(): send chat message
-    - calculateDistance(): Calculating distance based on grid coordinates
-    - simulateStatusUpdates(): simulates automatic status changes
+    - `connect()`: initialize Websocket connection
+    - `disconnect()`: disconnect Websocket connection
+    - `sendMessage()`: send chat message
+    - `calculateDistance()`: Calculating distance based on grid coordinates
+    - `simulateStatusUpdates()`: simulates automatic status changes
 
+## Architrcture flow
+
+```mermaid
 flowchart TD
 subgraph CustomerModule["Customer Module"]
 CH[CustomerHomeComponent]
@@ -252,17 +269,23 @@ end
     CS --> CR
     CR --> CServ
     CServ --> CRepo
+```
 
 ## Backend Implementation
 
+### API endpoints
+
 - Provides endpoints for customer operations
-- Routes require customer role via requireRole middleware
+- Routes require customer role via `requireRole` middleware
 - Endpoints used:
-    - GET /api/customer/restaurants- lists active restaurants
-    - GET /api/customer/restaurants/:id- restaurants details
-    - GET /api/customer/restaurants/:id/menu- menu items
-    - POST /api/customer/orders- order placement
-    - GET /api/customer/orders/:id- orders details
+
+| Method | Endpoint                             | Description              |
+| ------ | ------------------------------------ | ------------------------ |
+| GET    | `/api/customer/restaurants`          | Lists active restaurants |
+| GET    | `/api/customer/restaurants/:id`      | Restaurant details       |
+| GET    | `/api/customer/restaurants/:id/menu` | Menu items               |
+| POST   | `/api/customer/orders`               | Order placement          |
+| GET    | `/api/customer/orders/:id`           | Order details            |
 
 ### customer.service.ts
 
@@ -279,6 +302,7 @@ end
 
 ## Cart Management Structure
 
+```mermaid
 sequenceDiagram
 actor Customer
 participant VM as ViewMenuComponent
@@ -301,17 +325,25 @@ participant CP as CartPageComponent
     CartS->>LS: Retrieve cart data
     LS->>CP: Return cart items
     CP->>Customer: Display cart
+```
 
 ## Distance and Delivery simulations
 
-- Assign fictional coordinates to users and restaurants (e.g., (x, y))
-- Compute distances such as Manhattan distance: - 𝐷𝑖𝑠𝑡𝑎𝑛𝑐𝑒 = |𝑥1 − 𝑥2| + |𝑦1 − 𝑦2|
+- Assign fictional coordinates to users and restaurants (e.g., `(x, y)`)
+- Compute distances such as Manhattan distance:
+
+```
+- 𝐷𝑖𝑠𝑡𝑎𝑛𝑐𝑒 = |𝑥1 − 𝑥2| + |𝑦1 − 𝑦2|
+```
+
 - Example:
 
+```
 User location: (5, 3)
 Restaurant location: (6, 7)
 Distance: |5-6| + |3-7| = 1 + 4 = 5 units
 Estimated delivery: 5 × 5 = 25 minutes (base) + 15 (prep) = 40 minutes
+```
 
 ## EXTRA TASK
 
@@ -321,11 +353,11 @@ The order tracking component simulates WebSocket communication to provide custom
 
 ### Key features
 
-1. WebSocket Simulation
+1. **WebSocket Simulation**
     - Connection simulation: simulates WebSocket handshake and connection duration
     - Connection status: Visual indicator, indicating status when connected, ex ("Live")
     - Automatic reconnection: simulates reconnection attempts if connection disappears
-2. Real-time state updates
+2. **Real-time state updates**
     - Order status automatically progresses based on specific timing intervals
     - Dynamic ETA: delivery time updated based on current status and distance
     - Order status changes:
@@ -334,20 +366,20 @@ The order tracking component simulates WebSocket communication to provide custom
     3. Preparing -> Ready
     4. Ready -> Delivering
     5. Delivering -> Delivered
-3. Live-Chat System
+3. **Live-Chat System**
 
 - Bi-directional Communication: Restaurant and customer send and receive messages.
 - Customer received messages by restaurant staff at each status update. - Customer sends messages to restaurant. Restaurant replies by default with "Thank you for the message. We will get back to you soon"
 - Chat history is preserved throughout the order tracking duration
 - Constant Popup Notifications: restaurant messages also appear as snackbar notificaton
 
-4. Location-Based Tracking
+4. **Location-Based Tracking**
 
-- Grid Coordinate System: Users and Restaurants are assigned (x,y) coordinates
+- Grid Coordinate System: Users and Restaurants are assigned `(x,y)`coordinates
 - Distance Calculation: Real-time distance updates as order progresses
 - Visual Representation: Visual representation of order journey from order placement to delivery
 
-5. Status Visualization
+    5.**Status Visualization**
 
 - Progress Bard: visual order journey representation
 - Live updates: UI updates after each status update
@@ -356,58 +388,64 @@ The order tracking component simulates WebSocket communication to provide custom
 
 WebSocket Service Architecture
 
+```typescript
 // Core WebSocket simulation structure
 class WebSocketService {
-private connectionStatus = new BehaviorSubject<boolean>(false);
-private messages = new Subject<ChatMessage>();
-private statusUpdates = new Subject<StatusUpdate>();
+    private connectionStatus = new BehaviorSubject<boolean>(false);
+    private messages = new Subject<ChatMessage>();
+    private statusUpdates = new Subject<StatusUpdate>();
 
-connect(orderId: string, userId: string): void {
-// Simulate connection establishment
-setTimeout(() => {
-this.connectionStatus.next(true);
-this.simulateStatusUpdates(orderId);
-this.simulateRestaurantResponse(orderId);
-}, 1000);
+    connect(orderId: string, userId: string): void {
+        // Simulate connection establishment
+        setTimeout(() => {
+            this.connectionStatus.next(true);
+            this.simulateStatusUpdates(orderId);
+            this.simulateRestaurantResponse(orderId);
+        }, 1000);
+    }
+
+    simulateStatusUpdates(orderId: string): void {
+        // Timeline-based status progression
+        const timeline = [
+            { delay: 30000, status: 'accepted' },
+            { delay: 90000, status: 'preparing' },
+            { delay: 300000, status: 'ready' },
+            { delay: 1000, status: 'delivering' },
+            { delay: this.calculateDeliveryTime(), status: 'delivered' },
+        ];
+    }
 }
+```
 
-simulateStatusUpdates(orderId: string): void {
-// Timeline-based status progression
-const timeline = [
-{ delay: 30000, status: 'accepted' },
-{ delay: 90000, status: 'preparing' },
-{ delay: 300000, status: 'ready' },
-{ delay: 1000, status: 'delivering' },
-{ delay: this.calculateDeliveryTime(), status: 'delivered' }
-];
-}
-}
+### Chat Message Structure
 
-Chat Message Structure
-
+```typescript
 interface ChatMessage {
-id: string;
-senderId: string;
-senderName: string;
-senderType: 'customer' | 'restaurant';
-message: string;
-timestamp: Date;
-orderId: string;
-showPopup?: boolean; // For important notifications
+    id: string;
+    senderId: string;
+    senderName: string;
+    senderType: 'customer' | 'restaurant';
+    message: string;
+    timestamp: Date;
+    orderId: string;
+    showPopup?: boolean; // For important notifications
 }
+```
 
-Order-Status changes
+### Order-Status changes
 
+```typescript
 const statusTimeline = {
-placed: { duration: '0-30s', action: 'Order received' },
-accepted: { duration: '30s-2m', action: 'Restaurant confirmed' },
-preparing: { duration: '2-8m', action: 'Food preparation' },
-ready: { duration: '0-1m', action: 'Ready for delivery' },
-delivering: { duration: 'Distance-based', action: 'Out for delivery' },
-delivered: { duration: 'Final', action: 'Order completed' }
+    placed: { duration: '0-30s', action: 'Order received' },
+    accepted: { duration: '30s-2m', action: 'Restaurant confirmed' },
+    preparing: { duration: '2-8m', action: 'Food preparation' },
+    ready: { duration: '0-1m', action: 'Ready for delivery' },
+    delivering: { duration: 'Distance-based', action: 'Out for delivery' },
+    delivered: { duration: 'Final', action: 'Order completed' },
 };
+```
 
-Challenges
+### Challenges
 
 1. Real-time communication simulation- using Websocket **simulation** connection
 2. Coordinate updates- ensuring status updates, chat messages and pop up messages are in sync
@@ -415,12 +453,12 @@ Challenges
 
 ## Key Features Summary
 
-1. Restaurant Filtering: restaurant search and filtering
-2. Cart Constraints: restaurant-specific cart
-3. Order Tracking: real-time updates with visual representation
-4. Payment Section: payment method options
-5. Feedback Dubmission: post-delivery feedback submission
-6. Real-Time Communication: Websocket chat simulation and status updates
+1. **Restaurant Filtering**: restaurant search and filtering
+2. **Cart Constraints**: restaurant-specific cart
+3. **Order Tracking**: real-time updates with visual representation
+4. **Payment Section**: payment method options
+5. **Feedback Dubmission**: post-delivery feedback submission
+6. **Real-Time Communication**: Websocket chat simulation and status updates
 
 ## Setup instructions
 
@@ -429,7 +467,7 @@ Important:
 -npm
 -Angular CLI
 
-Backend Setup
+#### Backend Setup
 
 1. Navigate to server directory:
     - Type: **cd server**
@@ -443,8 +481,9 @@ Backend Setup
     - Then: **taskkill /PID [PID] /F**
 5. Restart the server:
     - Type: **npm start**
+    - It would show that the Server is usign port 3000
 
-Frontend Setup
+#### Frontend Setup
 
 1. Open new terminal and navigate to client directory:
     - Type: **cd client**
@@ -462,11 +501,11 @@ Frontend Setup
    "secure": false,
    "changeOrigin": true
    }
-   } - **Important**: Docker usage was unverified due to persistent installation difficultied on the development laptop. This proxy configuration was used instead of the colleage's for easier website check!!
+   } - **Important**: Docker usage was unverified due to persistent installation difficulties on the development laptop. This proxy configuration was used instead of the colleage's for easier website check!!
 4. Start Angular development server:
     - Type: **ng serve**
 5. Access application:
-    - Open browser and navigate to: http://localhost:----
+    - Open browser and navigate to: http://localhost:xxxx
     - Use the following test credentials:
         - Email: **customer@freelivery.com**
         - Password: **customer**
