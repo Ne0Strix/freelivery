@@ -490,6 +490,8 @@ Important:
 2. Install dependencies:
    -Type: **npm install**
 3. Configure proxy for API calls: - Make sure proxy.conf.json in client module has this code:
+
+```typescript
    {
    "/api": {
    "target": "http://localhost:3000",
@@ -501,7 +503,11 @@ Important:
    "secure": false,
    "changeOrigin": true
    }
-   } - **Important**: Docker usage was unverified due to persistent installation difficulties on the development laptop. This proxy configuration was used instead of the colleage's for easier website check!!
+   }
+```
+
+- **Important**: Docker usage was unverified due to persistent installation difficulties on the development laptop. This proxy configuration was used instead of the colleage's for easier website check!!
+
 4. Start Angular development server:
     - Type: **ng serve**
 5. Access application:
